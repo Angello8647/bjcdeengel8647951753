@@ -447,74 +447,7 @@
 		    align-items: center;
 		    justify-content: center;
 		}
-		/* Container voor de zwevende beurtpunten boven de spelerskaarten */
-		.current-score-container {
-		    position: relative;
-		    width: 100%;
-		    height: 80px;      /* genoeg ruimte voor de zwevende balk */
-		    margin-bottom: 10px;
-		}
-        /* Naam bovenaan in het current-score-display */
-        .current-score-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #2d3748;
-            background: rgba(0,0,0,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            width: 90%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* Actieve speler (zichtbaar) */
-		.current-score-display.active {
-		    display: flex;
-		    z-index: 20;
-		}
-        
-        .current-score-display.inactive {
-            display: none;
-        }
-        
-        /* Linker blok (speler 1) */
-		.current-score-display.player1-current {
-		    left: 0;
-		    background: white;
-		    color: black;
-		    border: 3px solid #3182ce;
-		}
-    
-        /* Rechter blok (speler 2) */
-		.current-score-display.player2-current {
-		    right: 0;
-		    background: #f1c40f;
-		    color: black;
-		    border: 3px solid #3182ce;
-		}
-        
-        .current-score-label {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #2d3748;
-        }
-        
-        .current-score-name {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #2d3748;
-            background: rgba(0,0,0,0.05);
-            padding: 3px 10px;
-            border-radius: 15px;
-            max-width: 90%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+		
     
         /* Het grote cijfer van de beurtpunten */
 		.current-score-value {
