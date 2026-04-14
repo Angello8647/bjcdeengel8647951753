@@ -4347,209 +4347,141 @@ window.showPage = function(pageNum) {
                 updateScoringPage();
             }
 
-            function updateScoringPage() {
-                const player1Card = document.getElementById('player1Card');
-                const player2Card = document.getElementById('player2Card');
-                const headerDiv = document.querySelector('#page5 .header div:first-child');
-                const totalTurns = state.player1.turns.length + state.player2.turns.length;
-                
-                if (state.matchEnded || totalTurns === 0) {
-                    headerDiv.style.display = 'block';  // Toon knoppen
-                } else {
-                    headerDiv.style.display = 'none';   // Verberg knoppen
-                }
-                
-                const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
-                const btnNameElement = document.getElementById('currentPlayerBtnName');
-                if (btnNameElement) {
-                    btnNameElement.textContent = currentName;
-                }
-                
-                player1Card.className = state.player1.isWhite ? 
-                    'player-card player-white' : 'player-card player-yellow';
-                player2Card.className = state.player2.isWhite ? 
-                    'player-card player-white' : 'player-card player-yellow';
-                
-                if (state.currentPlayer === 1) {
-                    player1Card.classList.add('player-active');
-                    player2Card.classList.add('player-inactive');
-                } else {
-                    player1Card.classList.add('player-inactive');
-                    player2Card.classList.add('player-active');
-                }
-
-                updateCurrentTurnSize();
-                
-                const avg1 = state.player1.turns.length > 0 ? 
-                    (state.player1.score / state.player1.turns.length).toFixed(2) : '0.00';
-                const avg2 = state.player2.turns.length > 0 ? 
-                    (state.player2.score / state.player2.turns.length).toFixed(2) : '0.00';
-                const needed1 = Math.max(0, state.player1.target - state.player1.score);
-                const needed2 = Math.max(0, state.player2.target - state.player2.score);
-                
-                // Gebruik vaste TSG voor "Te spelen gem."
-                const fixedTSG1 = state.player1.fixedTSG || '−';
-                const fixedTSG2 = state.player2.fixedTSG || '−';
-                
-                const player1TurnsReversed = [...state.player1.turns].reverse();
-                const player2TurnsReversed = [...state.player2.turns].reverse();
-                
-                player1Card.innerHTML = `
-                    <div>
-                        <h3>${state.currentMatch.p1} ${state.player1.isWhite ? '⚪' : '🟡'}</h3>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-icon">🏁</div>
-                                <div>Doel:</div>
-                                <div class="stat-value">${state.player1.target}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">📊</div>
-                                <div>Huidig:</div>
-                                <div class="stat-value">${state.player1.score}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">🔢</div>
-                                <div>Beurten:</div>
-                                <div class="stat-value">${state.player1.turns.length}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">📈</div>
-                                <div>Gemiddelde:</div>
-                                <div class="stat-value">${avg1}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">⚪🟡🔴</div>
-                                <div>Nog nodig:</div>
-                                <div class="stat-value" id="needed1">${needed1}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">⏳</div>
-                                <div>Te spelen gem.:</div>
-                                <div class="stat-value">${fixedTSG1}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">⭐</div>
-                                <div>Hoogste reeks:</div>
-                                <div class="stat-value">${state.player1.highestSeries}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="turns-scroll-container">
-                        <div class="turns-list">
-                            ${player1TurnsReversed.map((turn, index) => {
-                                const beurtNummer = state.player1.turns.length - index;
-                                return `
-                                    <div class="turn-row">
-                                        <span>Beurt ${beurtNummer}:</span>
-                                        <span>${turn} punt${turn !== 1 ? 'en' : ''}</span>
-                                    </div>
-                                `;
-                            }).join('')}
-                            ${state.player1.turns.length === 0 ? 
-                                '<div style="text-align: center; color: #666; padding: 10px; font-size: 0.9em;">Geen beurten</div>' : 
-                                ''}
-                        </div>
-                    </div>
-                `;
-                
-                player2Card.innerHTML = `
-                    <div>
-                        <h3>${state.currentMatch.p2} ${state.player2.isWhite ? '⚪' : '🟡'}</h3>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-icon">🏁</div>
-                                <div>Doel:</div>
-                                <div class="stat-value">${state.player2.target}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">📊</div>
-                                <div>Huidig:</div>
-                                <div class="stat-value">${state.player2.score}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">🔢</div>
-                                <div>Beurten:</div>
-                                <div class="stat-value">${state.player2.turns.length}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">📈</div>
-                                <div>Gemiddelde:</div>
-                                <div class="stat-value">${avg2}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">⚪🟡🔴</div>
-                                <div>Nog nodig:</div>
-                                <div class="stat-value" id="needed2">${needed2}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">⏳</div>
-                                <div>Te spelen gem.:</div>
-                                <div class="stat-value">${fixedTSG2}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-icon">⭐</div>
-                                <div>Hoogste reeks:</div>
-                                <div class="stat-value">${state.player2.highestSeries}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="turns-scroll-container">
-                        <div class="turns-list">
-                            ${player2TurnsReversed.map((turn, index) => {
-                                const beurtNummer = state.player2.turns.length - index;
-                                return `
-                                    <div class="turn-row">
-                                        <span>Beurt ${beurtNummer}:</span>
-                                        <span>${turn} punt${turn !== 1 ? 'en' : ''}</span>
-                                    </div>
-                                `;
-                            }).join('')}
-                            ${state.player2.turns.length === 0 ? 
-                                '<div style="text-align: center; color: #666; padding: 10px; font-size: 0.9em;">Geen beurten</div>' : 
-                                ''}
-                        </div>
-                    </div>
-                `;
-                
-                const currentColor = (state.currentPlayer === 1 && state.player1.isWhite) || 
-                                   (state.currentPlayer === 2 && state.player2.isWhite) ? 'Wit' : 'Geel';
-                const currentBeurtNummer = state.currentPlayer === 1 ? state.player1.beurtNummer : state.player2.beurtNummer;
-                
-                let turnInfo = `<div style="font-weight: bold; margin-bottom: 8px; font-size: 1.1em;">
-                    Beurt ${currentBeurtNummer} voor ${currentName}
-                </div>`;
-                
-                // Voeg specifieke informatie toe over de matchstatus
-                if (state.isNabeurt) {
-                    turnInfo += `<div style="margin-top: 10px; color: #27ae60; font-size: 0.9em; font-weight: bold;">
-                        ⚠️ NABEURT! Speler 1 heeft al gewonnen. Dit is de laatste beurt voor Speler 2.
-                    </div>`;
-                } else if (state.firstToTarget === 1) {
-                    turnInfo += `<div style="margin-top: 10px; color: #27ae60; font-size: 0.9em; font-weight: bold;">
-                        ✅ Speler 1 heeft target bereikt! Dit is een nabeurt voor Speler 2.
-                    </div>`;
-                }
-                
-                document.getElementById('currentPlayerDisplay').innerHTML = `
-                    ${turnInfo}
-                    <div style="margin: 8px 0;">
-                        <span style="background: ${currentColor === 'Wit' ? 'white' : '#f1c40f'}; 
-                                  color: ${currentColor === 'Wit' ? 'black' : 'black'}; 
-                                  padding: 6px 15px; 
-                                  border-radius: 20px; 
-                                  font-size: 0.9em;
-                                  font-weight: bold;">
-                            ${currentColor}
-                        </span>
-                    </div>
-                `;
-                
-                // UPDATE DE SIDE SCORE DISPLAYS
-                updateSideScoreDisplays();
-                
-                updateCurrentScoreDisplay();
-                updateDynamicNeededDisplay();
+			function updateScoringPage() {
+			    const player1Card = document.getElementById('player1Card');
+			    const player2Card = document.getElementById('player2Card');
+			
+			    // Haal de huidige spelernamen op
+			    const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
+			
+			    // Werk de tekst van de header-knoppen bij
+			    const headerEndBtn = document.getElementById('headerEndTurnBtn');
+			    if (headerEndBtn) {
+			        headerEndBtn.innerHTML = `Einde beurt ${currentName}`;
+			    }
+			    const headerUndoBtn = document.getElementById('headerUndoBtn');
+			    if (headerUndoBtn) {
+			        headerUndoBtn.disabled = !lastStateBeforeAdd;
+			    }
+			
+			    // Spelerkaarten stijlen (wit/geel en actief/inactief)
+			    player1Card.className = state.player1.isWhite ? 
+			        'player-card player-white' : 'player-card player-yellow';
+			    player2Card.className = state.player2.isWhite ? 
+			        'player-card player-white' : 'player-card player-yellow';
+			    
+			    if (state.currentPlayer === 1) {
+			        player1Card.classList.add('player-active');
+			        player2Card.classList.add('player-inactive');
+			    } else {
+			        player1Card.classList.add('player-inactive');
+			        player2Card.classList.add('player-active');
+			    }
+			
+			    updateCurrentTurnSize();
+			    
+			    // Gemiddelden en benodigde punten
+			    const avg1 = state.player1.turns.length > 0 ? 
+			        (state.player1.score / state.player1.turns.length).toFixed(2) : '0.00';
+			    const avg2 = state.player2.turns.length > 0 ? 
+			        (state.player2.score / state.player2.turns.length).toFixed(2) : '0.00';
+			    const needed1 = Math.max(0, state.player1.target - state.player1.score);
+			    const needed2 = Math.max(0, state.player2.target - state.player2.score);
+			    
+			    const fixedTSG1 = state.player1.fixedTSG || '−';
+			    const fixedTSG2 = state.player2.fixedTSG || '−';
+			    
+			    const player1TurnsReversed = [...state.player1.turns].reverse();
+			    const player2TurnsReversed = [...state.player2.turns].reverse();
+			    
+			    // Speler 1 kaart
+			    player1Card.innerHTML = `
+			        <div>
+			            <h3>${state.currentMatch.p1} ${state.player1.isWhite ? '⚪' : '🟡'}</h3>
+			            <div class="stats-grid">
+			                <div class="stat-item"><div class="stat-icon">🏁</div><div>Doel:</div><div class="stat-value">${state.player1.target}</div></div>
+			                <div class="stat-item"><div class="stat-icon">📊</div><div>Huidig:</div><div class="stat-value">${state.player1.score}</div></div>
+			                <div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player1.turns.length}</div></div>
+			                <div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${avg1}</div></div>
+			                <div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed1">${needed1}</div></div>
+			                <div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${fixedTSG1}</div></div>
+			                <div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player1.highestSeries}</div></div>
+			            </div>
+			        </div>
+			        <div class="turns-scroll-container">
+			            <div class="turns-list">
+			                ${player1TurnsReversed.map((turn, index) => {
+			                    const beurtNummer = state.player1.turns.length - index;
+			                    return `<div class="turn-row"><span>Beurt ${beurtNummer}:</span><span>${turn} punt${turn !== 1 ? 'en' : ''}</span></div>`;
+			                }).join('')}
+			                ${state.player1.turns.length === 0 ? '<div style="text-align: center; color: #666; padding: 10px;">Geen beurten</div>' : ''}
+			            </div>
+			        </div>
+			    `;
+			    
+			    // Speler 2 kaart
+			    player2Card.innerHTML = `
+			        <div>
+			            <h3>${state.currentMatch.p2} ${state.player2.isWhite ? '⚪' : '🟡'}</h3>
+			            <div class="stats-grid">
+			                <div class="stat-item"><div class="stat-icon">🏁</div><div>Doel:</div><div class="stat-value">${state.player2.target}</div></div>
+			                <div class="stat-item"><div class="stat-icon">📊</div><div>Huidig:</div><div class="stat-value">${state.player2.score}</div></div>
+			                <div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player2.turns.length}</div></div>
+			                <div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${avg2}</div></div>
+			                <div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed2">${needed2}</div></div>
+			                <div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${fixedTSG2}</div></div>
+			                <div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player2.highestSeries}</div></div>
+			            </div>
+			        </div>
+			        <div class="turns-scroll-container">
+			            <div class="turns-list">
+			                ${player2TurnsReversed.map((turn, index) => {
+			                    const beurtNummer = state.player2.turns.length - index;
+			                    return `<div class="turn-row"><span>Beurt ${beurtNummer}:</span><span>${turn} punt${turn !== 1 ? 'en' : ''}</span></div>`;
+			                }).join('')}
+			                ${state.player2.turns.length === 0 ? '<div style="text-align: center; color: #666; padding: 10px;">Geen beurten</div>' : ''}
+			            </div>
+			        </div>
+			    `;
+			    
+			    // Huidige beurtinformatie in het midden
+			    const currentColor = (state.currentPlayer === 1 && state.player1.isWhite) || 
+			                         (state.currentPlayer === 2 && state.player2.isWhite) ? 'Wit' : 'Geel';
+			    const currentBeurtNummer = state.currentPlayer === 1 ? state.player1.beurtNummer : state.player2.beurtNummer;
+			    
+			    let turnInfo = `<div style="font-weight: bold; margin-bottom: 8px; font-size: 1.1em;">
+			        Beurt ${currentBeurtNummer} voor ${currentName}
+			    </div>`;
+			    
+			    if (state.isNabeurt) {
+			        turnInfo += `<div style="margin-top: 10px; color: #27ae60; font-size: 0.9em; font-weight: bold;">
+			            ⚠️ NABEURT! Speler 1 heeft al gewonnen. Dit is de laatste beurt voor Speler 2.
+			        </div>`;
+			    } else if (state.firstToTarget === 1) {
+			        turnInfo += `<div style="margin-top: 10px; color: #27ae60; font-size: 0.9em; font-weight: bold;">
+			            ✅ Speler 1 heeft target bereikt! Dit is een nabeurt voor Speler 2.
+			        </div>`;
+			    }
+			    
+			    document.getElementById('currentPlayerDisplay').innerHTML = `
+			        ${turnInfo}
+			        <div style="margin: 8px 0;">
+			            <span style="background: ${currentColor === 'Wit' ? 'white' : '#f1c40f'}; 
+			                      color: black; 
+			                      padding: 6px 15px; 
+			                      border-radius: 20px; 
+			                      font-size: 0.9em;
+			                      font-weight: bold;">
+			                ${currentColor}
+			            </span>
+			        </div>
+			    `;
+			    
+			    // Overige updates
+			    updateSideScoreDisplays();
+			    updateCurrentScoreDisplay();
+			    updateDynamicNeededDisplay();
+			}
                 
                 // UNDO knop status updaten
                 const undoBtn = document.getElementById('headerUndoBtn');
