@@ -317,43 +317,31 @@
 
         /* NIEUWE STIJLEN VOOR WIT/GEEL SCORE DISPLAYS */
         .side-score-display {
-            flex: 0 0 80px;
-            border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .side-score-display.white {
-            background: white;
-            color: black;
-            border: 2px solid #3182ce;
-        }
-        
-        .side-score-display.yellow {
-            background: #f1c40f;
-            color: black;
-            border: 2px solid #3182ce;
-        }
-        
-        .side-score-name {
-            font-size: 0.8em;
-            margin-bottom: 5px;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 100%;
-        }
-        
-        .side-score-value {
-            font-size: 2em;
-            font-weight: bold;
-        }
+		    flex: 0 0 150px;  /* breder: van 80px naar 150px */
+		    border-radius: 15px;
+		    padding: 20px 10px;
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    justify-content: center;
+		    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+		}
+		
+		.side-score-display.white {
+		    background: white;
+		    border: 3px solid #3182ce;
+		}
+		
+		.side-score-display.yellow {
+		    background: #f1c40f;
+		    border: 3px solid #3182ce;
+		}
+		
+		.side-score-value {
+		    font-size: 3.5rem;  /* groot getal */
+		    font-weight: bold;
+		    line-height: 1.2;
+		}
         
         /* SCORE CONTROLS */
         .score-controls {
@@ -2651,18 +2639,16 @@
             <div class="current-turn-container">
                 <!-- WIT SPELER SCORE (LINKS) -->
                 <div class="side-score-display white" id="whitePlayerDisplay">
-                    <div class="side-score-name" id="whitePlayerName">Wit</div>
-                    <div class="side-score-value" id="whitePlayerScore">0</div>
-                </div>
+				    <div class="side-score-value" id="whitePlayerScore">0</div>
+				</div>
                 
                 <!-- HUIDIGE BEURT INFO (MIDDEN) -->
                 <div class="current-turn" id="currentPlayerDisplay"></div>
                 
                 <!-- GEEL SPELER SCORE (RECHTS) -->
                 <div class="side-score-display yellow" id="yellowPlayerDisplay">
-                    <div class="side-score-name" id="yellowPlayerName">Geel</div>
-                    <div class="side-score-value" id="yellowPlayerScore">0</div>
-                </div>
+				    <div class="side-score-value" id="yellowPlayerScore">0</div>
+				</div>
             </div>
             
             <!-- NIEUWE CURRENT SCORE DISPLAY BOVEN SPELERKAARTEN -->
@@ -3220,20 +3206,12 @@
 
             // NIEUWE FUNCTIE OM WIT/GEEL SCORES BIJ TE WERKEN
             function updateSideScoreDisplays() {
-                // Bepaal wie wit en wie geel is
-                const whitePlayer = state.player1.isWhite ? state.player1 : state.player2;
-                const yellowPlayer = state.player2.isWhite ? state.player1 : state.player2;
-                
-                const whiteName = state.player1.isWhite ? state.currentMatch.p1 : state.currentMatch.p2;
-                const yellowName = state.player2.isWhite ? state.currentMatch.p1 : state.currentMatch.p2;
-                
-                // Update de displays
-                document.getElementById('whitePlayerName').textContent = whiteName;
-                document.getElementById('whitePlayerScore').textContent = whitePlayer.score;
-                
-                document.getElementById('yellowPlayerName').textContent = yellowName;
-                document.getElementById('yellowPlayerScore').textContent = yellowPlayer.score;
-            }
+			    const whitePlayer = state.player1.isWhite ? state.player1 : state.player2;
+			    const yellowPlayer = state.player2.isWhite ? state.player1 : state.player2;
+			    
+			    document.getElementById('whitePlayerScore').textContent = whitePlayer.score;
+			    document.getElementById('yellowPlayerScore').textContent = yellowPlayer.score;
+			}
 
             // ==================== PAGINA FUNCTIES ====================
 window.showPage = function(pageNum) {
