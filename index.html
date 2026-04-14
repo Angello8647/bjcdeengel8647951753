@@ -4265,7 +4265,7 @@ window.showPage = function(pageNum) {
 				
 				updateCurrentScoreDisplay();
 				document.querySelectorAll('.dynamic-needed').forEach(el => el.remove());
-				updateSideScoreDisplays(); // UPDATE SIDE SCORES
+				updateCurrentInputDisplay();
 				updateScoringPage();
             }
 
@@ -4378,7 +4378,7 @@ window.showPage = function(pageNum) {
                 // Werk de UI bij
                 updateCurrentScoreDisplay();
                 document.querySelectorAll('.dynamic-needed').forEach(el => el.remove());
-                updateSideScoreDisplays();
+                updateCurrentInputDisplay();
                 updateScoringPage();
             }
 
