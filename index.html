@@ -2634,9 +2634,9 @@
         <!-- PAGINA 5: Scoring -->
         <div id="page5" class="page">
             <div class="header">
-			    <button class="action-btn confirm-btn" id="headerEndTurnBtn" onclick="addScore()">Einde beurt</button>
+			    <button id="headerLeftBtn" class="action-btn confirm-btn">Einde beurt</button>
 			    <h1 id="matchTitle"></h1>
-			    <button class="action-btn undo-btn" id="headerUndoBtn" onclick="undoLastAdd()" disabled>↩️ Ongedaan</button>
+			    <button id="headerRightBtn" class="action-btn undo-btn" disabled>↩️ Ongedaan</button>
 			</div>
             
             <!-- MATCH ENDED ALERT -->
@@ -2868,6 +2868,35 @@
                 setTimeout(() => errorDiv.style.animation = '', 500);
             }
         }
+		function updateHeaderButtons() {
+		    const leftBtn = document.getElementById('headerLeftBtn');
+		    const rightBtn = document.getElementById('headerRightBtn');
+		    if (!leftBtn || !rightBtn) return;
+		
+		    if (state.matchEnded) {
+		        // Match is afgelopen: toon alleen Hoofdmenu
+		        leftBtn.innerHTML = '🏠 Hoofdmenu';
+		        leftBtn.onclick = function() { showPage(1); };
+		        leftBtn.disabled = false;
+		        leftBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)'; // groen
+		        
+		        rightBtn.innerHTML = '↩️ Ongedaan';
+		        rightBtn.disabled = true;
+		        rightBtn.style.opacity = '0.5';
+		    } else {
+		        // Match bezig
+		        const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
+		        leftBtn.innerHTML = `Einde beurt ${currentName}`;
+		        leftBtn.onclick = function() { addScore(); };
+		        leftBtn.disabled = false;
+		        leftBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)'; // rood
+		        
+		        rightBtn.innerHTML = '↩️ Ongedaan';
+		        rightBtn.disabled = !lastStateBeforeAdd;
+		        rightBtn.style.opacity = rightBtn.disabled ? '0.5' : '1';
+		        rightBtn.onclick = function() { undoLastAdd(); };
+		    }
+		}
 		// ==================== PRESENTER CONTROLS ====================
 		function initPresenterControls() {
 		    document.addEventListener('keydown', function(event) {
