@@ -2912,50 +2912,91 @@
 		    }
 		}
 		// ==================== PRESENTER CONTROLS ====================
+		// Globale variabele voor de Tab-timer
+		let tabPressTimer = null;
+
 		function initPresenterControls() {
+		    // Keydown listener voor alle toetsen
 		    document.addEventListener('keydown', function(event) {
 		        const activePage = document.querySelector('.page.active');
 		        if (!activePage) return;
-		
-		        // Niet reageren in invoervelden
 		        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 		
 		        const key = event.key;
 		
-		        // ========== PAGINA 4: BAL KLEUR SELECTIE ==========
+		        // Pagina 4: bal selectie
 		        if (activePage.id === 'page4') {
 		            switch (key) {
 		                case 'PageUp':
 		                    event.preventDefault();
-		                    // Selecteer speler 1 (witte bal)
-		                    if (typeof window.selectWhitePlayer === 'function') {
-		                        window.selectWhitePlayer(1);
-		                    }
+		                    if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(1);
 		                    break;
 		                case 'PageDown':
 		                    event.preventDefault();
-		                    // Selecteer speler 2 (witte bal)
-		                    if (typeof window.selectWhitePlayer === 'function') {
-		                        window.selectWhitePlayer(2);
-		                    }
+		                    if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(2);
 		                    break;
 		                case 'Tab':
 		                    event.preventDefault();
-		                    // Start match (alleen als een speler is geselecteerd)
-		                    if (typeof window.startMatch === 'function') {
-		                        // Controleer of er een witte speler is gekozen
-		                        if (state.selectedWhitePlayer) {
-		                            window.startMatch();
-		                        } else {
-		                            console.log('Selecteer eerst een speler met PageUp/PageDown');
-		                        }
+		                    // Start match direct (zonder onderscheid kort/lang)
+		                    if (typeof window.startMatch === 'function' && state.selectedWhitePlayer) {
+		                        window.startMatch();
 		                    }
 		                    break;
-		                default:
-		                    break;
+		                default: break;
 		            }
-		            return; // Klaar voor page4
+		            return;
 		        }
+		
+		        // Pagina 5: scoring
+		        if (activePage.id === 'page5') {
+		            if (!state.currentMatch) return;
+		
+		            switch (key) {
+		                case 'PageUp':
+		                    event.preventDefault();
+		                    if (typeof window.changeScore === 'function') window.changeScore(1);
+		                    break;
+		                case 'PageDown':
+		                    event.preventDefault();
+		                    if (typeof window.changeScore === 'function') window.changeScore(-1);
+		                    break;
+		                case 'Tab':
+		                    event.preventDefault();
+		                    // Start timer voor lange druk (altijd, ook als match afgelopen is)
+		                    if (tabPressTimer === null) {
+		                        tabPressTimer = setTimeout(() => {
+		                            // Lange druk: ga naar hoofdmenu
+		                            if (typeof showPage === 'function') {
+		                                showPage(1);
+		                            }
+		                            tabPressTimer = null;
+		                        }, 500); // 0,5 seconde
+		                    }
+		                    break;
+		                default: break;
+		            }
+		            return;
+		        }
+		    });
+		
+		    // Keyup listener speciaal voor Tab op page5 om korte druk te detecteren
+		    document.addEventListener('keyup', function(event) {
+		        const activePage = document.querySelector('.page.active');
+		        if (!activePage || activePage.id !== 'page5') return;
+		        if (event.key !== 'Tab') return;
+		        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+		
+		        // Als er een timer loopt, dan was het een korte druk (geen lange druk)
+		        if (tabPressTimer !== null) {
+		            clearTimeout(tabPressTimer);
+		            tabPressTimer = null;
+		            // Korte actie: einde beurt, maar alleen als match niet afgelopen is
+		            if (!state.matchEnded && typeof window.addScore === 'function') {
+		                window.addScore();
+		            }
+		        }
+		    });
+		}
 		
 		        // ========== PAGINA 5: SCORING ==========
 		        if (activePage.id === 'page5') {
