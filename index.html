@@ -153,22 +153,20 @@
         }
 
 		/* NIEUWE HEADER VOOR PAGE5 (SCORING) */
+		/* Nieuwe header styling */
 		#page5 .header {
 		    display: flex;
 		    justify-content: space-between;
 		    align-items: center;
 		    gap: 20px;
-		    padding: 15px 20px;
-		    background: #2c3e50;
-		    border-radius: 15px;
 		    margin-bottom: 20px;
 		}
 		
 		#page5 .header h1 {
-		    font-size: 2.2rem;  /* dubbel zo groot als voorheen (was ~1.5rem) */
+		    font-size: 2.2rem;
 		    margin: 0;
-		    text-align: center;
 		    flex: 1;
+		    text-align: center;
 		    color: white;
 		}
 		
@@ -176,21 +174,26 @@
 		    font-size: 1.3rem;
 		    padding: 12px 24px;
 		    min-width: 180px;
+		    border: none;
+		    border-radius: 10px;
+		    cursor: pointer;
+		    font-weight: bold;
 		}
 		
 		#page5 .header .undo-btn {
 		    background: #3498db;
+		    color: white;
 		}
 		
 		#page5 .header .confirm-btn {
 		    background: linear-gradient(135deg, #e74c3c, #c0392b);
+		    color: white;
 		}
 		
-		/* Verberg de oude action-buttons div */
+		/* Verberg de oude action-buttons div, maar behoud hem in de DOM */
 		#page5 .action-buttons {
 		    display: none;
 		}
-
         /* Nieuwe style voor header knoppen tijdens match */
         .header-buttons-hidden {
             display: none !important;
