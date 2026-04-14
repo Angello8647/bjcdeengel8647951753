@@ -2833,30 +2833,74 @@
 		function initPresenterControls() {
 		    document.addEventListener('keydown', function(event) {
 		        const activePage = document.querySelector('.page.active');
-		        if (!activePage || activePage.id !== 'page5') return;
-		        if (!state.currentMatch || state.matchEnded) return;
+		        if (!activePage) return;
+		
+		        // Niet reageren in invoervelden
 		        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 		
-		        console.log('Presenter toets:', event.key);
+		        const key = event.key;
 		
-		        switch (event.key) {
-		            case 'PageUp':
-		                event.preventDefault();
-		                window.changeScore(1);
-		                break;
-		            case 'PageDown':
-		                event.preventDefault();
-		                window.changeScore(-1);
-		                break;
-		            case 'Tab':
-		                event.preventDefault();
-		                window.addScore();
-		                break;
-		            default:
-		                break;
+		        // ========== PAGINA 4: BAL KLEUR SELECTIE ==========
+		        if (activePage.id === 'page4') {
+		            switch (key) {
+		                case 'PageUp':
+		                    event.preventDefault();
+		                    // Selecteer speler 1 (witte bal)
+		                    if (typeof window.selectWhitePlayer === 'function') {
+		                        window.selectWhitePlayer(1);
+		                    }
+		                    break;
+		                case 'PageDown':
+		                    event.preventDefault();
+		                    // Selecteer speler 2 (witte bal)
+		                    if (typeof window.selectWhitePlayer === 'function') {
+		                        window.selectWhitePlayer(2);
+		                    }
+		                    break;
+		                case 'Tab':
+		                    event.preventDefault();
+		                    // Start match (alleen als een speler is geselecteerd)
+		                    if (typeof window.startMatch === 'function') {
+		                        // Controleer of er een witte speler is gekozen
+		                        if (state.selectedWhitePlayer) {
+		                            window.startMatch();
+		                        } else {
+		                            console.log('Selecteer eerst een speler met PageUp/PageDown');
+		                        }
+		                    }
+		                    break;
+		                default:
+		                    break;
+		            }
+		            return; // Klaar voor page4
 		        }
+		
+		        // ========== PAGINA 5: SCORING ==========
+		        if (activePage.id === 'page5') {
+		            if (!state.currentMatch || state.matchEnded) return;
+		
+		            switch (key) {
+		                case 'PageUp':
+		                    event.preventDefault();
+		                    if (typeof window.changeScore === 'function') window.changeScore(1);
+		                    break;
+		                case 'PageDown':
+		                    event.preventDefault();
+		                    if (typeof window.changeScore === 'function') window.changeScore(-1);
+		                    break;
+		                case 'Tab':
+		                    event.preventDefault();
+		                    if (typeof window.addScore === 'function') window.addScore();
+		                    break;
+		                default:
+		                    break;
+		            }
+		            return;
+		        }
+		
+		        // Eventueel kun je hier andere pagina's toevoegen (bv. page1, page2, ...)
 		    });
-		    console.log('✅ Presenter: PageUp=+, PageDown=-, Tab=einde beurt');
+		    console.log('✅ Presenter: Page4 (PageUp=speler1, PageDown=speler2, Tab=start) | Page5 (PageUp=+1, PageDown=-1, Tab=einde beurt)');
 		}
 
 
