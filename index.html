@@ -2776,35 +2776,7 @@
 	        <!-- Wordt gevuld door stats.js -->
 	    </div>
 	</div>
-	<!-- PRESENTER -->
-	function initPresenterControls() {
-	    document.addEventListener('keydown', function(event) {
-	        const activePage = document.querySelector('.page.active');
-	        if (!activePage || activePage.id !== 'page5') return;
-	        if (!state.currentMatch || state.matchEnded) return;
-	        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 	
-	        console.log('Presenter toets:', event.key);
-	
-	        switch (event.key) {
-	            case 'PageUp':
-	                event.preventDefault();
-	                window.changeScore(1);
-	                break;
-	            case 'PageDown':
-	                event.preventDefault();
-	                window.changeScore(-1);
-	                break;
-	            case 'Tab':
-	                event.preventDefault();
-	                window.addScore();
-	                break;
-	            default:
-	                break;
-	        }
-	    });
-	    console.log('✅ Presenter: PageUp=+, PageDown=-, Tab=einde beurt');
-	}
 	
 	<!-- BACKUP RECOVERY POPUP -->
 	<div id="backupRecoveryModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
