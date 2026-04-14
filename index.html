@@ -320,29 +320,16 @@
 
         /* NIEUWE STIJLEN VOOR WIT/GEEL SCORE DISPLAYS */
         .side-score-display {
-		    flex: 0 0 200px;   /* vaste breedte voor twee regels */
+		    flex: 0 0 180px;  /* vaste breedte van 180px */
 		    border-radius: 15px;
 		    padding: 15px 10px;
 		    display: flex;
 		    flex-direction: column;
-		    gap: 15px;
 		    align-items: center;
 		    justify-content: center;
+		    font-weight: bold;
 		    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 		}
-
-		.side-score-total, .side-score-current {
-		    text-align: center;
-		    width: 100%;
-		}
-
-		.side-score-label {
-		    display: block;
-		    font-size: 0.9rem;
-		    opacity: 0.8;
-		    margin-bottom: 5px;
-		}
-
 		
 		.side-score-display.white {
 		    background: white;
@@ -357,23 +344,8 @@
 		.side-score-value {
 		    font-size: 4.5rem;
 		    font-weight: bold;
-			line-height: 1;
 		}
-		.side-score-current {
-		    display: flex;
-		    flex-direction: column;
-		    align-items: center;
-		    gap: 5px;
-		}
-		.side-score-current-value {
-		    font-size: 2rem;
-		    font-weight: bold;
-		    background: rgba(0,0,0,0.1);
-		    padding: 5px 15px;
-		    border-radius: 30px;
-		    display: inline-block;
-		}
-		        
+        
         /* SCORE CONTROLS */
         .score-controls {
             display: flex;
@@ -447,7 +419,74 @@
 		    align-items: center;
 		    justify-content: center;
 		}
-		
+		/* Container voor de zwevende beurtpunten boven de spelerskaarten */
+		.current-score-container {
+		    position: relative;
+		    width: 100%;
+		    height: 80px;      /* genoeg ruimte voor de zwevende balk */
+		    margin-bottom: 10px;
+		}
+        /* Naam bovenaan in het current-score-display */
+        .current-score-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2d3748;
+            background: rgba(0,0,0,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Actieve speler (zichtbaar) */
+		.current-score-display.active {
+		    display: flex;
+		    z-index: 20;
+		}
+        
+        .current-score-display.inactive {
+            display: none;
+        }
+        
+        /* Linker blok (speler 1) */
+		.current-score-display.player1-current {
+		    left: 0;
+		    background: white;
+		    color: black;
+		    border: 3px solid #3182ce;
+		}
+    
+        /* Rechter blok (speler 2) */
+		.current-score-display.player2-current {
+		    right: 0;
+		    background: #f1c40f;
+		    color: black;
+		    border: 3px solid #3182ce;
+		}
+        
+        .current-score-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        
+        .current-score-name {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2d3748;
+            background: rgba(0,0,0,0.05);
+            padding: 3px 10px;
+            border-radius: 15px;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     
         /* Het grote cijfer van de beurtpunten */
 		.current-score-value {
@@ -2608,31 +2647,33 @@
             <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
             
             <!-- HUIDIGE BEURT IN HET MIDDEN MET WIT/GEEL SCORES -->
-            <!-- WIT SPELER SCORE (LINKS) -->
-			<div class="side-score-display white" id="whitePlayerDisplay">
-			    <div class="side-score-total">
-			        <span class="side-score-label">Totaal</span>
-			        <span class="side-score-value" id="whitePlayerScore">0</span>
-			    </div>
-			    <div class="side-score-current">
-			        <span class="side-score-label">Deze beurt</span>
-			        <span class="side-score-current-value" id="whiteCurrentInput">0</span>
-			    </div>
-			</div>
-			
-			<!-- GEEL SPELER SCORE (RECHTS) -->
-			<div class="side-score-display yellow" id="yellowPlayerDisplay">
-			    <div class="side-score-total">
-			        <span class="side-score-label">Totaal</span>
-			        <span class="side-score-value" id="yellowPlayerScore">0</span>
-			    </div>
-			    <div class="side-score-current">
-			        <span class="side-score-label">Deze beurt</span>
-			        <span class="side-score-current-value" id="yellowCurrentInput">0</span>
-			    </div>
-			</div>
+            <div class="current-turn-container">
+                <!-- WIT SPELER SCORE (LINKS) -->
+                <div class="side-score-display white" id="whitePlayerDisplay">
+				    <div class="side-score-value" id="whitePlayerScore">0</div>
+				</div>
+                
+                <!-- HUIDIGE BEURT INFO (MIDDEN) -->
+                <div class="current-turn" id="currentPlayerDisplay"></div>
+                
+                <!-- GEEL SPELER SCORE (RECHTS) -->
+                <div class="side-score-display yellow" id="yellowPlayerDisplay">
+				    <div class="side-score-value" id="yellowPlayerScore">0</div>
+				</div>
+            </div>
             
-
+            <!-- NIEUWE CURRENT SCORE DISPLAY BOVEN SPELERKAARTEN -->
+            <div class="current-score-container">
+                <div class="current-score-display player1-current inactive" id="player1CurrentScore">
+                    <div class="current-score-name" id="player1ScoreName">Speler 1</div>
+                    <div class="current-score-value">0</div>
+                </div>
+                
+                <div class="current-score-display player2-current inactive" id="player2CurrentScore">
+                    <div class="current-score-name" id="player2ScoreName">Speler 2</div>
+                    <div class="current-score-value">0</div>
+                </div>
+            </div>
             
             <!-- SCORE CONTROLS MET PLUS EN MINUS KNOBBEN -->
             <div class="score-controls">
@@ -3183,27 +3224,6 @@
 			    document.getElementById('yellowPlayerScore').textContent = yellowPlayer.score;
 			}
 
-			function updateCurrentInputDisplay() {
-			    const whiteContainer = document.querySelector('#whitePlayerDisplay .side-score-current');
-			    const yellowContainer = document.querySelector('#yellowPlayerDisplay .side-score-current');
-			    const whiteValue = document.getElementById('whiteCurrentInput');
-			    const yellowValue = document.getElementById('yellowCurrentInput');
-			
-			    if (!whiteContainer || !yellowContainer) return;
-			
-			    if (state.currentPlayer === 1) {
-			        whiteContainer.style.display = 'flex';
-			        whiteValue.textContent = state.currentInput;
-			        yellowContainer.style.display = 'none';
-			        yellowValue.textContent = '0';
-			    } else {
-			        whiteContainer.style.display = 'none';
-			        whiteValue.textContent = '0';
-			        yellowContainer.style.display = 'flex';
-			        yellowValue.textContent = state.currentInput;
-			    }
-			}
-
             // ==================== PAGINA FUNCTIES ====================
 window.showPage = function(pageNum) {
     // 1. Converteer naar getal als het een string is zoals "Page2"
@@ -3691,19 +3711,27 @@ window.showPage = function(pageNum) {
 			    // Update titel
 			    document.getElementById('matchTitle').textContent = `${state.currentMatch.p1} ⚔️ ${state.currentMatch.p2}`;
 			    
-			    // Update side displays (totale scores)
+			    // Zet namen in de score displays
+			    document.getElementById('player1ScoreName').textContent = state.currentMatch.p1;
+			    document.getElementById('player2ScoreName').textContent = state.currentMatch.p2;
+			    
+			    // Update side displays
 			    updateSideScoreDisplays();
 			    
 			    // Schakel knoppen in
 			    enableScoreButtons();
 			    
-			    // Initialiseer de beurtpunten in de zijblokken (vervangt de oude current-score-display)
-			    updateCurrentInputDisplay();
+			    // Reset current score displays
+			    document.getElementById('player1CurrentScore').querySelector('.current-score-value').textContent = '0';
+			    document.getElementById('player2CurrentScore').querySelector('.current-score-value').textContent = '0';
+			    document.getElementById('player1CurrentScore').classList.remove('inactive');
+			    document.getElementById('player1CurrentScore').classList.add('active');
+			    document.getElementById('player2CurrentScore').classList.remove('active');
+			    document.getElementById('player2CurrentScore').classList.add('inactive');
 			    
-			    // Ga naar scorepagina en update de rest van de UI
 			    showPage(5);
 			    updateScoringPage();
-			};
+			}
 
             // ==================== SCORING FUNCTIES ====================
             window.changeScore = function(delta) {
@@ -3739,8 +3767,8 @@ window.showPage = function(pageNum) {
                 
                 // Normale situatie: voeg delta toe, maar zorg dat het niet negatief wordt
                 state.currentInput = Math.max(0, potentialNewInput);
-                updateCurrentInputDisplay();
-                
+                updateCurrentScoreDisplay();
+                updateDynamicNeededDisplay();
             }
 
             function updateCurrentScoreDisplay() {
@@ -4257,7 +4285,7 @@ window.showPage = function(pageNum) {
 				
 				updateCurrentScoreDisplay();
 				document.querySelectorAll('.dynamic-needed').forEach(el => el.remove());
-				updateCurrentInputDisplay();
+				updateSideScoreDisplays(); // UPDATE SIDE SCORES
 				updateScoringPage();
             }
 
@@ -4370,18 +4398,21 @@ window.showPage = function(pageNum) {
                 // Werk de UI bij
                 updateCurrentScoreDisplay();
                 document.querySelectorAll('.dynamic-needed').forEach(el => el.remove());
-                updateCurrentInputDisplay();
+                updateSideScoreDisplays();
                 updateScoringPage();
             }
 
 			function updateScoringPage() {
 			    const player1Card = document.getElementById('player1Card');
 			    const player2Card = document.getElementById('player2Card');
-			
-			    // Update de header knoppen (Einde beurt / Ongedaan / Hoofdmenu)
-			    updateHeaderButtons();
-			
-			    // Spelerkaarten stijlen (wit/geel en actief/inactief)
+			    const totalTurns = state.player1.turns.length + state.player2.turns.length;
+			    
+			    const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
+			    const btnNameElement = document.getElementById('currentPlayerBtnName');
+			    if (btnNameElement) {
+			        btnNameElement.textContent = currentName;
+			    }
+			    
 			    player1Card.className = state.player1.isWhite ? 
 			        'player-card player-white' : 'player-card player-yellow';
 			    player2Card.className = state.player2.isWhite ? 
@@ -4395,7 +4426,8 @@ window.showPage = function(pageNum) {
 			        player2Card.classList.add('player-active');
 			    }
 			
-			    // Gemiddelden en benodigde punten
+			    updateCurrentTurnSize();
+			    
 			    const avg1 = state.player1.turns.length > 0 ? 
 			        (state.player1.score / state.player1.turns.length).toFixed(2) : '0.00';
 			    const avg2 = state.player2.turns.length > 0 ? 
@@ -4409,112 +4441,158 @@ window.showPage = function(pageNum) {
 			    const player1TurnsReversed = [...state.player1.turns].reverse();
 			    const player2TurnsReversed = [...state.player2.turns].reverse();
 			    
-			    // Speler 1 kaart
 			    player1Card.innerHTML = `
 			        <div>
 			            <h3>${state.currentMatch.p1} ${state.player1.isWhite ? '⚪' : '🟡'}</h3>
 			            <div class="stats-grid">
-			                <div class="stat-item"><div class="stat-icon">🏁</div><div>Doel:</div><div class="stat-value">${state.player1.target}</div></div>
-			                <div class="stat-item"><div class="stat-icon">📊</div><div>Huidig:</div><div class="stat-value">${state.player1.score}</div></div>
-			                <div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player1.turns.length}</div></div>
-			                <div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${avg1}</div></div>
-			                <div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed1">${needed1}</div></div>
-			                <div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${fixedTSG1}</div></div>
-			                <div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player1.highestSeries}</div></div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">🏁</div>
+			                    <div>Doel:</div>
+			                    <div class="stat-value">${state.player1.target}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">📊</div>
+			                    <div>Huidig:</div>
+			                    <div class="stat-value">${state.player1.score}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">🔢</div>
+			                    <div>Beurten:</div>
+			                    <div class="stat-value">${state.player1.turns.length}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">📈</div>
+			                    <div>Gemiddelde:</div>
+			                    <div class="stat-value">${avg1}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">⚪🟡🔴</div>
+			                    <div>Nog nodig:</div>
+			                    <div class="stat-value" id="needed1">${needed1}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">⏳</div>
+			                    <div>Te spelen gem.:</div>
+			                    <div class="stat-value">${fixedTSG1}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">⭐</div>
+			                    <div>Hoogste reeks:</div>
+			                    <div class="stat-value">${state.player1.highestSeries}</div>
+			                </div>
 			            </div>
 			        </div>
 			        <div class="turns-scroll-container">
 			            <div class="turns-list">
 			                ${player1TurnsReversed.map((turn, index) => {
 			                    const beurtNummer = state.player1.turns.length - index;
-			                    return `<div class="turn-row"><span>Beurt ${beurtNummer}:</span><span>${turn} punt${turn !== 1 ? 'en' : ''}</span></div>`;
+			                    return `
+			                        <div class="turn-row">
+			                            <span>Beurt ${beurtNummer}:</span>
+			                            <span>${turn} punt${turn !== 1 ? 'en' : ''}</span>
+			                        </div>
+			                    `;
 			                }).join('')}
-			                ${state.player1.turns.length === 0 ? '<div style="text-align: center; color: #666; padding: 10px;">Geen beurten</div>' : ''}
+			                ${state.player1.turns.length === 0 ? 
+			                    '<div style="text-align: center; color: #666; padding: 10px; font-size: 0.9em;">Geen beurten</div>' : 
+			                    ''}
 			            </div>
 			        </div>
 			    `;
 			    
-			    // Speler 2 kaart
 			    player2Card.innerHTML = `
 			        <div>
 			            <h3>${state.currentMatch.p2} ${state.player2.isWhite ? '⚪' : '🟡'}</h3>
 			            <div class="stats-grid">
-			                <div class="stat-item"><div class="stat-icon">🏁</div><div>Doel:</div><div class="stat-value">${state.player2.target}</div></div>
-			                <div class="stat-item"><div class="stat-icon">📊</div><div>Huidig:</div><div class="stat-value">${state.player2.score}</div></div>
-			                <div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player2.turns.length}</div></div>
-			                <div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${avg2}</div></div>
-			                <div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed2">${needed2}</div></div>
-			                <div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${fixedTSG2}</div></div>
-			                <div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player2.highestSeries}</div></div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">🏁</div>
+			                    <div>Doel:</div>
+			                    <div class="stat-value">${state.player2.target}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">📊</div>
+			                    <div>Huidig:</div>
+			                    <div class="stat-value">${state.player2.score}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">🔢</div>
+			                    <div>Beurten:</div>
+			                    <div class="stat-value">${state.player2.turns.length}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">📈</div>
+			                    <div>Gemiddelde:</div>
+			                    <div class="stat-value">${avg2}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">⚪🟡🔴</div>
+			                    <div>Nog nodig:</div>
+			                    <div class="stat-value" id="needed2">${needed2}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">⏳</div>
+			                    <div>Te spelen gem.:</div>
+			                    <div class="stat-value">${fixedTSG2}</div>
+			                </div>
+			                <div class="stat-item">
+			                    <div class="stat-icon">⭐</div>
+			                    <div>Hoogste reeks:</div>
+			                    <div class="stat-value">${state.player2.highestSeries}</div>
+			                </div>
 			            </div>
 			        </div>
 			        <div class="turns-scroll-container">
 			            <div class="turns-list">
 			                ${player2TurnsReversed.map((turn, index) => {
 			                    const beurtNummer = state.player2.turns.length - index;
-			                    return `<div class="turn-row"><span>Beurt ${beurtNummer}:</span><span>${turn} punt${turn !== 1 ? 'en' : ''}</span></div>`;
+			                    return `
+			                        <div class="turn-row">
+			                            <span>Beurt ${beurtNummer}:</span>
+			                            <span>${turn} punt${turn !== 1 ? 'en' : ''}</span>
+			                        </div>
+			                    `;
 			                }).join('')}
-			                ${state.player2.turns.length === 0 ? '<div style="text-align: center; color: #666; padding: 10px;">Geen beurten</div>' : ''}
+			                ${state.player2.turns.length === 0 ? 
+			                    '<div style="text-align: center; color: #666; padding: 10px; font-size: 0.9em;">Geen beurten</div>' : 
+			                    ''}
 			            </div>
 			        </div>
 			    `;
 			    
-			    // Huidige beurtinformatie in het midden
-			    const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
 			    const currentColor = (state.currentPlayer === 1 && state.player1.isWhite) || 
-			                         (state.currentPlayer === 2 && state.player2.isWhite) ? 'Wit' : 'Geel';
-			    const currentBeurtNummer = state.currentPlayer === 1 ? state.player1.beurtNummer : state.player2.beurtNummer;
-			    
-			    let turnInfo = `<div style="font-weight: bold; margin-bottom: 8px; font-size: 1.1em;">
-			        Beurt ${currentBeurtNummer}
-			    </div>`;
-			    
-			    if (state.isNabeurt) {
-			        turnInfo += `<div style="margin-top: 10px; color: #27ae60; font-size: 0.9em; font-weight: bold;">
-			            ⚠️ NABEURT! Speler 1 heeft al gewonnen. Dit is de laatste beurt voor Speler 2.
-			        </div>`;
-			    } else if (state.firstToTarget === 1) {
-			        turnInfo += `<div style="margin-top: 10px; color: #27ae60; font-size: 0.9em; font-weight: bold;">
-			            ✅ Speler 1 heeft target bereikt! Dit is een nabeurt voor Speler 2.
-			        </div>`;
-			    }
-			    
-			    document.getElementById('currentPlayerDisplay').innerHTML = `
-			        <div style="text-align: center;">
-			            <div style="font-size: 4rem; font-weight: bold; color: white; line-height: 1.2;">
-			                Beurt ${currentBeurtNummer}
-			            </div>
-			            <div style="margin-top: 15px;">
-			                <span style="background: ${currentColor === 'Wit' ? 'white' : '#f1c40f'}; 
-			                          color: black; 
-			                          font-size: 2rem; 
-			                          font-weight: bold; 
-			                          padding: 8px 30px; 
-			                          border-radius: 50px;
-			                          display: inline-block;">
-			                    ${currentColor}
-			                </span>
-			            </div>
-			            ${turnInfo}
-			        </div>
-			    `;
-			    
-			    // Update totale scores in zijblokken
-			    updateSideScoreDisplays();
-			    
-			    // Update beurtpunten in zijblokken (alleen actieve speler)
-			    updateCurrentInputDisplay();
-			    
-			    // Eventuele extra visuele updates (zoals needed, etc.)
-			    // De needed waarden worden al in de kaarten getoond via innerHTML, maar we updaten de IDs voor dynamische waarden
-			    const needed1El = document.getElementById('needed1');
-			    if (needed1El) needed1El.textContent = needed1;
-			    const needed2El = document.getElementById('needed2');
-			    if (needed2El) needed2El.textContent = needed2;
-			}
+                     				 (state.currentPlayer === 2 && state.player2.isWhite) ? 'Wit' : 'Geel';
+				const currentBeurtNummer = state.currentPlayer === 1 ? state.player1.beurtNummer : state.player2.beurtNummer;
+				
+				let extraInfo = '';
+				if (state.isNabeurt) {
+				    extraInfo = '<div style="margin-top: 15px; font-size: 1rem; color: #ffcc00;">⚠️ NABEURT</div>';
+				} else if (state.firstToTarget === 1) {
+				    extraInfo = '<div style="margin-top: 15px; font-size: 1rem; color: #ffcc00;">✅ Laatste beurt voor speler 2</div>';
+				}
+				
+				document.getElementById('currentPlayerDisplay').innerHTML = `
+				    <div style="text-align: center;">
+				        <div style="font-size: 4rem; font-weight: bold; color: white; line-height: 1.2;">
+				            Beurt ${currentBeurtNummer}
+				        </div>
+				        <div style="margin-top: 15px;">
+				            <span style="background: ${currentColor === 'Wit' ? 'white' : '#f1c40f'}; 
+				                         color: black; 
+				                         font-size: 2rem; 
+				                         font-weight: bold; 
+				                         padding: 8px 30px; 
+				                         border-radius: 50px;
+				                         display: inline-block;">
+				                ${currentColor}
+				            </span>
+				        </div>
+				        ${extraInfo}
+				    </div>
+				`;
 			    
 			    updateSideScoreDisplays();
-			    updateCurrentInputDisplay();
+			    updateCurrentScoreDisplay();
+			    updateDynamicNeededDisplay();
 				updateHeaderButtons();
 			    
 			    // UNDO knop status updaten (voor de oude knop, die is verborgen maar moet wel werken)
