@@ -2914,17 +2914,18 @@
 		// ==================== PRESENTER CONTROLS ====================
 		// Globale variabele voor de Tab-timer
 		// Globale variabele voor de Tab-timer (buiten de functie)
-		let tabPressTimer = null;
+		let pageDownTimer = null;
+		let lastTabTime = 0;
+		const TAB_DEBOUNCE_MS = 500; // 0,5 seconde
 		
 		function initPresenterControls() {
-		    // Keydown listener
 		    document.addEventListener('keydown', function(event) {
 		        const activePage = document.querySelector('.page.active');
 		        if (!activePage) return;
 		        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 		
 		        const key = event.key;
-		        
+		
 		        // Pagina 4: bal selectie
 		        if (activePage.id === 'page4') {
 		            switch (key) {
@@ -2949,7 +2950,7 @@
 		
 		        // Pagina 5: scoring
 		        if (activePage.id === 'page5') {
-		            if (!state.currentMatch) return;
+		            if (!state.currentMatch || state.matchEnded) return;
 		
 		            switch (key) {
 		                case 'PageUp':
@@ -2958,23 +2959,25 @@
 		                    break;
 		                case 'PageDown':
 		                    event.preventDefault();
-		                    if (typeof window.changeScore === 'function') window.changeScore(-1);
+		                    // Start timer voor lange druk (1500 ms)
+		                    if (pageDownTimer === null) {
+		                        pageDownTimer = setTimeout(() => {
+		                            if (typeof showPage === 'function') showPage(1);
+		                            pageDownTimer = null;
+		                        }, 1500);
+		                    }
 		                    break;
 		                case 'Tab':
-		                    // Volledig blokkeren van de standaardactie
 		                    event.preventDefault();
-		                    event.stopPropagation();
-		                    event.stopImmediatePropagation();
-		                    
-		                    // Alleen een timer starten als er nog geen loopt
-		                    if (tabPressTimer === null) {
-		                        tabPressTimer = setTimeout(() => {
-		                            // Lange druk (≥1,5 sec): ga naar hoofdmenu
-		                            if (typeof showPage === 'function') {
-		                                showPage(1);
-		                            }
-		                            tabPressTimer = null;
-		                        }, 500);
+		                    // Debounce: voorkom dubbele klik binnen TAB_DEBOUNCE_MS
+		                    const now = Date.now();
+		                    if (now - lastTabTime < TAB_DEBOUNCE_MS) {
+		                        // tweede klik te snel: negeren
+		                        return;
+		                    }
+		                    lastTabTime = now;
+		                    if (!state.matchEnded && typeof window.addScore === 'function') {
+		                        window.addScore();
 		                    }
 		                    break;
 		                default: break;
@@ -2983,24 +2986,16 @@
 		        }
 		    });
 		
-		    // Keyup listener (alleen voor Tab op page5)
+		    // Keyup voor PageDown (korte druk = score -1)
 		    document.addEventListener('keyup', function(event) {
-		        if (event.key !== 'Tab') return;
-		        
 		        const activePage = document.querySelector('.page.active');
 		        if (!activePage || activePage.id !== 'page5') return;
-		        
-		        // Ook hier de standaardactie blokkeren
-		        event.preventDefault();
-		        event.stopPropagation();
-		        
-		        // Als er een timer liep, was het een korte druk
-		        if (tabPressTimer !== null) {
-		            clearTimeout(tabPressTimer);
-		            tabPressTimer = null;
-		            // Korte actie: einde beurt (alleen als match niet afgelopen is)
-		            if (!state.matchEnded && typeof window.addScore === 'function') {
-		                window.addScore();
+		        if (event.key !== 'PageDown') return;
+		        if (pageDownTimer !== null) {
+		            clearTimeout(pageDownTimer);
+		            pageDownTimer = null;
+		            if (!state.matchEnded && typeof window.changeScore === 'function') {
+		                window.changeScore(-1);
 		            }
 		        }
 		    });
