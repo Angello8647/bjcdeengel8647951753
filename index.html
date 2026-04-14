@@ -3691,25 +3691,19 @@ window.showPage = function(pageNum) {
 			    // Update titel
 			    document.getElementById('matchTitle').textContent = `${state.currentMatch.p1} ⚔️ ${state.currentMatch.p2}`;
 			    
-			  
-			    
-			    // Update side displays
+			    // Update side displays (totale scores)
 			    updateSideScoreDisplays();
 			    
 			    // Schakel knoppen in
 			    enableScoreButtons();
 			    
-			    // Reset current score displays
-			    document.getElementById('player1CurrentScore').querySelector('.current-score-value').textContent = '0';
-			    document.getElementById('player2CurrentScore').querySelector('.current-score-value').textContent = '0';
-			    document.getElementById('player1CurrentScore').classList.remove('inactive');
-			    document.getElementById('player1CurrentScore').classList.add('active');
-			    document.getElementById('player2CurrentScore').classList.remove('active');
-			    document.getElementById('player2CurrentScore').classList.add('inactive');
+			    // Initialiseer de beurtpunten in de zijblokken (vervangt de oude current-score-display)
+			    updateCurrentInputDisplay();
 			    
+			    // Ga naar scorepagina en update de rest van de UI
 			    showPage(5);
 			    updateScoringPage();
-			}
+			};
 
             // ==================== SCORING FUNCTIES ====================
             window.changeScore = function(delta) {
