@@ -320,16 +320,29 @@
 
         /* NIEUWE STIJLEN VOOR WIT/GEEL SCORE DISPLAYS */
         .side-score-display {
-		    flex: 0 0 180px;  /* vaste breedte van 180px */
+		    flex: 0 0 200px;   /* vaste breedte voor twee regels */
 		    border-radius: 15px;
 		    padding: 15px 10px;
 		    display: flex;
 		    flex-direction: column;
+		    gap: 15px;
 		    align-items: center;
 		    justify-content: center;
-		    font-weight: bold;
 		    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 		}
+
+		.side-score-total, .side-score-current {
+		    text-align: center;
+		    width: 100%;
+		}
+
+		.side-score-label {
+		    display: block;
+		    font-size: 0.9rem;
+		    opacity: 0.8;
+		    margin-bottom: 5px;
+		}
+
 		
 		.side-score-display.white {
 		    background: white;
@@ -344,8 +357,23 @@
 		.side-score-value {
 		    font-size: 4.5rem;
 		    font-weight: bold;
+			line-height: 1;
 		}
-        
+		.side-score-current {
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    gap: 5px;
+		}
+		.side-score-current-value {
+		    font-size: 2rem;
+		    font-weight: bold;
+		    background: rgba(0,0,0,0.1);
+		    padding: 5px 15px;
+		    border-radius: 30px;
+		    display: inline-block;
+		}
+		        
         /* SCORE CONTROLS */
         .score-controls {
             display: flex;
@@ -2647,33 +2675,31 @@
             <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
             
             <!-- HUIDIGE BEURT IN HET MIDDEN MET WIT/GEEL SCORES -->
-            <div class="current-turn-container">
-                <!-- WIT SPELER SCORE (LINKS) -->
-                <div class="side-score-display white" id="whitePlayerDisplay">
-				    <div class="side-score-value" id="whitePlayerScore">0</div>
-				</div>
-                
-                <!-- HUIDIGE BEURT INFO (MIDDEN) -->
-                <div class="current-turn" id="currentPlayerDisplay"></div>
-                
-                <!-- GEEL SPELER SCORE (RECHTS) -->
-                <div class="side-score-display yellow" id="yellowPlayerDisplay">
-				    <div class="side-score-value" id="yellowPlayerScore">0</div>
-				</div>
-            </div>
+            <!-- WIT SPELER SCORE (LINKS) -->
+			<div class="side-score-display white" id="whitePlayerDisplay">
+			    <div class="side-score-total">
+			        <span class="side-score-label">Totaal</span>
+			        <span class="side-score-value" id="whitePlayerScore">0</span>
+			    </div>
+			    <div class="side-score-current">
+			        <span class="side-score-label">Deze beurt</span>
+			        <span class="side-score-current-value" id="whiteCurrentInput">0</span>
+			    </div>
+			</div>
+			
+			<!-- GEEL SPELER SCORE (RECHTS) -->
+			<div class="side-score-display yellow" id="yellowPlayerDisplay">
+			    <div class="side-score-total">
+			        <span class="side-score-label">Totaal</span>
+			        <span class="side-score-value" id="yellowPlayerScore">0</span>
+			    </div>
+			    <div class="side-score-current">
+			        <span class="side-score-label">Deze beurt</span>
+			        <span class="side-score-current-value" id="yellowCurrentInput">0</span>
+			    </div>
+			</div>
             
-            <!-- NIEUWE CURRENT SCORE DISPLAY BOVEN SPELERKAARTEN -->
-            <div class="current-score-container">
-                <div class="current-score-display player1-current inactive" id="player1CurrentScore">
-                    <div class="current-score-name" id="player1ScoreName">Speler 1</div>
-                    <div class="current-score-value">0</div>
-                </div>
-                
-                <div class="current-score-display player2-current inactive" id="player2CurrentScore">
-                    <div class="current-score-name" id="player2ScoreName">Speler 2</div>
-                    <div class="current-score-value">0</div>
-                </div>
-            </div>
+
             
             <!-- SCORE CONTROLS MET PLUS EN MINUS KNOBBEN -->
             <div class="score-controls">
