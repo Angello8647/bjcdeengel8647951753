@@ -3183,6 +3183,27 @@
 			    document.getElementById('yellowPlayerScore').textContent = yellowPlayer.score;
 			}
 
+			function updateCurrentInputDisplay() {
+			    const whiteContainer = document.querySelector('#whitePlayerDisplay .side-score-current');
+			    const yellowContainer = document.querySelector('#yellowPlayerDisplay .side-score-current');
+			    const whiteValue = document.getElementById('whiteCurrentInput');
+			    const yellowValue = document.getElementById('yellowCurrentInput');
+			
+			    if (!whiteContainer || !yellowContainer) return;
+			
+			    if (state.currentPlayer === 1) {
+			        whiteContainer.style.display = 'flex';
+			        whiteValue.textContent = state.currentInput;
+			        yellowContainer.style.display = 'none';
+			        yellowValue.textContent = '0';
+			    } else {
+			        whiteContainer.style.display = 'none';
+			        whiteValue.textContent = '0';
+			        yellowContainer.style.display = 'flex';
+			        yellowValue.textContent = state.currentInput;
+			    }
+			}
+
             // ==================== PAGINA FUNCTIES ====================
 window.showPage = function(pageNum) {
     // 1. Converteer naar getal als het een string is zoals "Page2"
