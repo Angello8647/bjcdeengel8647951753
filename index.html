@@ -295,6 +295,10 @@
         }
         
         .current-turn {
+		    flex: 0 0 auto;  /* geen flex-grow, gebruik eigen breedte */
+		    width: auto;
+		    min-width: 280px;
+		    max-width: 400px;  /* beperk de maximale breedte */
 		    text-align: center;
 		    background: rgba(52, 152, 219, 0.2);
 		    border-radius: 20px;
@@ -305,8 +309,7 @@
 		    justify-content: center;
 		    align-items: center;
 		    padding: 20px;
-		    flex: 1;
-		    margin: 0 10px;
+		    margin: 0;
 		}
         /* Voor nabeurt situaties (meer inhoud) */
         .current-turn.has-extra-info {
@@ -317,13 +320,14 @@
 
         /* NIEUWE STIJLEN VOOR WIT/GEEL SCORE DISPLAYS */
         .side-score-display {
-		    flex: 0 0 150px;  /* breder: van 80px naar 150px */
+		    flex: 0 0 180px;  /* vaste breedte van 180px */
 		    border-radius: 15px;
-		    padding: 20px 10px;
+		    padding: 15px 10px;
 		    display: flex;
 		    flex-direction: column;
 		    align-items: center;
 		    justify-content: center;
+		    font-weight: bold;
 		    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 		}
 		
@@ -338,9 +342,8 @@
 		}
 		
 		.side-score-value {
-		    font-size: 3.5rem;  /* groot getal */
+		    font-size: 3.5rem;
 		    font-weight: bold;
-		    line-height: 1.2;
 		}
         
         /* SCORE CONTROLS */
