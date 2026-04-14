@@ -4544,10 +4544,10 @@ window.showPage = function(pageNum) {
                 updateDynamicNeededDisplay();
                 
                 // UNDO knop status updaten
-                const undoBtn = document.getElementById('undoBtn');
-                if (undoBtn) {
-                    undoBtn.disabled = !lastStateBeforeAdd;
-                }
+                const undoBtn = document.getElementById('headerUndoBtn');
+				if (undoBtn) {
+				    undoBtn.disabled = !lastStateBeforeAdd;
+				}
             }
 
 	    // EENVOUDIGE SPELERS PARSER (met kopteksten)
