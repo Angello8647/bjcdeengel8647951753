@@ -2873,28 +2873,42 @@
 		    const rightBtn = document.getElementById('headerRightBtn');
 		    if (!leftBtn || !rightBtn) return;
 		
+		    // Match afgelopen?
 		    if (state.matchEnded) {
-		        // Match is afgelopen: toon alleen Hoofdmenu
 		        leftBtn.innerHTML = '🏠 Hoofdmenu';
-		        leftBtn.onclick = function() { showPage(1); };
+		        leftBtn.onclick = () => showPage(1);
 		        leftBtn.disabled = false;
-		        leftBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)'; // groen
+		        leftBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
 		        
 		        rightBtn.innerHTML = '↩️ Ongedaan';
 		        rightBtn.disabled = true;
 		        rightBtn.style.opacity = '0.5';
+		        return;
+		    }
+		
+		    // Bepaal of er al beurten zijn ingevoerd
+		    const hasTurns = (state.player1.turns.length > 0 || state.player2.turns.length > 0);
+		    const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
+		
+		    // Linkerknop: altijd "Einde beurt [Naam]" (behalve als match afgelopen)
+		    leftBtn.innerHTML = `Einde beurt ${currentName}`;
+		    leftBtn.onclick = () => addScore();
+		    leftBtn.disabled = false;
+		    leftBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+		
+		    // Rechterknop: Hoofdmenu zolang er nog geen beurt is, anders Undo
+		    if (!hasTurns) {
+		        rightBtn.innerHTML = '🏠 Hoofdmenu';
+		        rightBtn.onclick = () => showPage(1);
+		        rightBtn.disabled = false;
+		        rightBtn.style.background = '#3498db';
+		        rightBtn.style.opacity = '1';
 		    } else {
-		        // Match bezig
-		        const currentName = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
-		        leftBtn.innerHTML = `Einde beurt ${currentName}`;
-		        leftBtn.onclick = function() { addScore(); };
-		        leftBtn.disabled = false;
-		        leftBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)'; // rood
-		        
 		        rightBtn.innerHTML = '↩️ Ongedaan';
+		        rightBtn.onclick = () => undoLastAdd();
 		        rightBtn.disabled = !lastStateBeforeAdd;
 		        rightBtn.style.opacity = rightBtn.disabled ? '0.5' : '1';
-		        rightBtn.onclick = function() { undoLastAdd(); };
+		        rightBtn.style.background = '#3498db';
 		    }
 		}
 		// ==================== PRESENTER CONTROLS ====================
