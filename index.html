@@ -2913,17 +2913,18 @@
 		}
 		// ==================== PRESENTER CONTROLS ====================
 		// Globale variabele voor de Tab-timer
+		// Globale variabele voor de Tab-timer (buiten de functie)
 		let tabPressTimer = null;
 		
 		function initPresenterControls() {
-		    // Keydown listener voor alle toetsen
+		    // Keydown listener
 		    document.addEventListener('keydown', function(event) {
 		        const activePage = document.querySelector('.page.active');
 		        if (!activePage) return;
 		        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 		
 		        const key = event.key;
-		
+		        
 		        // Pagina 4: bal selectie
 		        if (activePage.id === 'page4') {
 		            switch (key) {
@@ -2943,12 +2944,12 @@
 		                    break;
 		                default: break;
 		            }
-		            return; // stop verdere verwerking voor page4
+		            return;
 		        }
 		
 		        // Pagina 5: scoring
 		        if (activePage.id === 'page5') {
-		            if (!state.currentMatch || state.matchEnded) return;
+		            if (!state.currentMatch) return;
 		
 		            switch (key) {
 		                case 'PageUp':
@@ -2960,41 +2961,50 @@
 		                    if (typeof window.changeScore === 'function') window.changeScore(-1);
 		                    break;
 		                case 'Tab':
+		                    // Volledig blokkeren van de standaardactie
 		                    event.preventDefault();
-		                    // Start timer voor lange druk (1500 ms)
+		                    event.stopPropagation();
+		                    event.stopImmediatePropagation();
+		                    
+		                    // Alleen een timer starten als er nog geen loopt
 		                    if (tabPressTimer === null) {
 		                        tabPressTimer = setTimeout(() => {
+		                            // Lange druk (≥1,5 sec): ga naar hoofdmenu
 		                            if (typeof showPage === 'function') {
 		                                showPage(1);
 		                            }
 		                            tabPressTimer = null;
-		                        }, 1500); // 1,5 seconde
+		                        }, 1500);
 		                    }
 		                    break;
 		                default: break;
 		            }
-		            return; // stop verdere verwerking voor page5
+		            return;
 		        }
 		    });
 		
-		    // Keyup listener speciaal voor Tab op page5 om korte druk te detecteren
+		    // Keyup listener (alleen voor Tab op page5)
 		    document.addEventListener('keyup', function(event) {
+		        if (event.key !== 'Tab') return;
+		        
 		        const activePage = document.querySelector('.page.active');
 		        if (!activePage || activePage.id !== 'page5') return;
-		        if (event.key !== 'Tab') return;
-		        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
-		
-		        // Als er een timer loopt, dan was het een korte druk (geen lange druk)
+		        
+		        // Ook hier de standaardactie blokkeren
+		        event.preventDefault();
+		        event.stopPropagation();
+		        
+		        // Als er een timer liep, was het een korte druk
 		        if (tabPressTimer !== null) {
 		            clearTimeout(tabPressTimer);
 		            tabPressTimer = null;
-		            // Korte actie: einde beurt, maar alleen als match niet afgelopen is
+		            // Korte actie: einde beurt (alleen als match niet afgelopen is)
 		            if (!state.matchEnded && typeof window.addScore === 'function') {
 		                window.addScore();
 		            }
 		        }
 		    });
-		
+
 		    console.log('✅ Presenter: Page4 (PageUp=speler1, PageDown=speler2, Tab=start) | Page5 (PageUp=+1, PageDown=-1, Tab=einde beurt)');
 		}
 
