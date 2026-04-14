@@ -2631,12 +2631,10 @@
         <!-- PAGINA 5: Scoring -->
         <div id="page5" class="page">
             <div class="header">
-                <div id="matchHeaderButtons">
-                    <button class="home-btn" onclick="showPage(1)">🏠 Hoofdmenu</button>
-                    <button class="back-btn" onclick="showPage(4)">← Terug</button>
-                </div>
-                <h1 id="matchTitle"></h1>
-            </div>
+			    <button class="action-btn confirm-btn" id="headerEndTurnBtn" onclick="addScore()">Einde beurt</button>
+			    <h1 id="matchTitle"></h1>
+			    <button class="action-btn undo-btn" id="headerUndoBtn" onclick="undoLastAdd()" disabled>↩️ Ongedaan</button>
+			</div>
             
             <!-- MATCH ENDED ALERT -->
             <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
@@ -2683,13 +2681,7 @@
                 <button class="score-btn plus-btn right-plus" onclick="changeScore(1)">+</button>
             </div>
             
-            <div class="action-buttons">
-                <!-- UNDO KNOP (nu links) -->
-                <button class="action-btn undo-btn" onclick="undoLastAdd()" id="undoBtn" disabled>↩️ Einde beurt ongedaan maken</button>
-                <button class="action-btn confirm-btn" onclick="addScore()" id="confirmScoreBtn">
-                    Einde beurt voor <span id="currentPlayerBtnName">Speler</span> en score toevoegen
-                </button>
-            </div>
+            
             
             <div class="players-container">
                 <div class="player-card player-white" id="player1Card"></div>
