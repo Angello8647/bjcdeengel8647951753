@@ -2914,7 +2914,7 @@
 		// ==================== PRESENTER CONTROLS ====================
 		// Globale variabele voor de Tab-timer
 		let tabPressTimer = null;
-
+		
 		function initPresenterControls() {
 		    // Keydown listener voor alle toetsen
 		    document.addEventListener('keydown', function(event) {
@@ -2937,19 +2937,18 @@
 		                    break;
 		                case 'Tab':
 		                    event.preventDefault();
-		                    // Start match direct (zonder onderscheid kort/lang)
 		                    if (typeof window.startMatch === 'function' && state.selectedWhitePlayer) {
 		                        window.startMatch();
 		                    }
 		                    break;
 		                default: break;
 		            }
-		            return;
+		            return; // stop verdere verwerking voor page4
 		        }
 		
 		        // Pagina 5: scoring
 		        if (activePage.id === 'page5') {
-		            if (!state.currentMatch) return;
+		            if (!state.currentMatch || state.matchEnded) return;
 		
 		            switch (key) {
 		                case 'PageUp':
@@ -2962,20 +2961,19 @@
 		                    break;
 		                case 'Tab':
 		                    event.preventDefault();
-		                    // Start timer voor lange druk (altijd, ook als match afgelopen is)
+		                    // Start timer voor lange druk (1500 ms)
 		                    if (tabPressTimer === null) {
 		                        tabPressTimer = setTimeout(() => {
-		                            // Lange druk: ga naar hoofdmenu
 		                            if (typeof showPage === 'function') {
 		                                showPage(1);
 		                            }
 		                            tabPressTimer = null;
-		                        }, 1500); // 0,5 seconde
+		                        }, 1500); // 1,5 seconde
 		                    }
 		                    break;
 		                default: break;
 		            }
-		            return;
+		            return; // stop verdere verwerking voor page5
 		        }
 		    });
 		
@@ -2997,32 +2995,6 @@
 		        }
 		    });
 		}
-		
-		        // ========== PAGINA 5: SCORING ==========
-		        if (activePage.id === 'page5') {
-		            if (!state.currentMatch || state.matchEnded) return;
-		
-		            switch (key) {
-		                case 'PageUp':
-		                    event.preventDefault();
-		                    if (typeof window.changeScore === 'function') window.changeScore(1);
-		                    break;
-		                case 'PageDown':
-		                    event.preventDefault();
-		                    if (typeof window.changeScore === 'function') window.changeScore(-1);
-		                    break;
-		                case 'Tab':
-		                    event.preventDefault();
-		                    if (typeof window.addScore === 'function') window.addScore();
-		                    break;
-		                default:
-		                    break;
-		            }
-		            return;
-		        }
-		
-		        // Eventueel kun je hier andere pagina's toevoegen (bv. page1, page2, ...)
-		    });
 		    console.log('✅ Presenter: Page4 (PageUp=speler1, PageDown=speler2, Tab=start) | Page5 (PageUp=+1, PageDown=-1, Tab=einde beurt)');
 		}
 
