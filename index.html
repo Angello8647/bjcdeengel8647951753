@@ -2680,7 +2680,12 @@
                 
                 <button class="score-btn plus-btn right-plus" onclick="changeScore(1)">+</button>
             </div>
-            
+            <div class="action-buttons" style="display: none;">
+			    <button class="action-btn undo-btn" onclick="undoLastAdd()" id="undoBtn" disabled>↩️ Einde beurt ongedaan maken</button>
+			    <button class="action-btn confirm-btn" onclick="addScore()" id="confirmScoreBtn">
+			        Einde beurt voor <span id="currentPlayerBtnName">Speler</span> en score toevoegen
+			    </button>
+			</div>
             
             
             <div class="players-container">
