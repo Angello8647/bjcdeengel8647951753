@@ -720,27 +720,25 @@ function updateSideScoreDisplays() {
 }
 
 function updateCurrentScoreDisplay() {
-    const p1CurrentEl = document.getElementById('p1CurrentVal');
-    const p2CurrentEl = document.getElementById('p2CurrentVal');
     const p1CurrentCell = document.getElementById('p1CurrentCell');
     const p2CurrentCell = document.getElementById('p2CurrentCell');
 
-    // Update waarden
-    if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
-    if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
+    // Update waarden (beide cellen krijgen de waarde, maar alleen 1 is zichtbaar)
+    document.getElementById('p1CurrentVal').textContent = state.currentInput;
+    document.getElementById('p2CurrentVal').textContent = state.currentInput;
     updateSideScoreDisplays();
 
-    // Reset ALLEEN de beurtpunten-cellen
+    // Reset classes
     p1CurrentCell.className = 'score-cell current-turn-cell';
     p2CurrentCell.className = 'score-cell current-turn-cell';
 
-    // Highlight/Dim ALLEEN de beurtpunten
+    // Alleen de actieve speler tonen, de andere volledig verbergen
     if (state.currentPlayer === 1) {
         p1CurrentCell.classList.add('active-player');
-        p2CurrentCell.classList.add('dimmed');
+        p2CurrentCell.classList.add('turn-hidden');
     } else {
         p2CurrentCell.classList.add('active-player');
-        p1CurrentCell.classList.add('dimmed');
+        p1CurrentCell.classList.add('turn-hidden');
     }
 }
 
@@ -861,7 +859,7 @@ window.startMatch = function() {
     document.getElementById('p2TotalVal').textContent = '0';
     // Reset ALLEEN de beurtpunten-cellen
     ['p1CurrentCell','p2CurrentCell'].forEach(id=>{
-        document.getElementById(id).classList.remove('active-player','dimmed');
+    document.getElementById(id).classList.remove('active-player','turn-hidden');
     });
     
     enableScoreButtons();
@@ -934,7 +932,9 @@ function restoreMatchFromBackup(b) {
     document.getElementById('matchTitle').textContent=`${m.p1} ⚔️ ${m.p2}`;
     document.getElementById('p1CurrentVal').textContent='0'; document.getElementById('p2CurrentVal').textContent='0';
     document.getElementById('p1TotalVal').textContent='0'; document.getElementById('p2TotalVal').textContent='0';
-    ['p1CurrentCell','p2CurrentCell'].forEach(id=>document.getElementById(id).classList.remove('active-player','dimmed'));
+    ['p1CurrentCell','p2CurrentCell'].forEach(id=>{
+    document.getElementById(id).classList.remove('active-player','turn-hidden');
+    });
     if(state.matchEnded) disableScoreButtons(); else enableScoreButtons();
     document.getElementById('matchEndedAlert').style.display=state.matchEnded?'block':'none';
     updateScoringPage(); showPage(5);
