@@ -857,6 +857,17 @@ function updateCurrentScoreDisplay() {
     // 1. Waarden updaten
     if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
     if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
+
+        // 👇 PLAK HIER DE NIEUWE CODE 👇
+    const n1 = Math.max(0, state.player1.target - state.player1.score - 
+        (state.currentPlayer === 1 ? state.currentInput : 0));
+    const n2 = Math.max(0, state.player2.target - state.player2.score - 
+        (state.currentPlayer === 2 ? state.currentInput : 0));
+    const p1NeededEl = document.getElementById('p1NeededVal');
+    const p2NeededEl = document.getElementById('p2NeededVal');
+    if (p1NeededEl) p1NeededEl.textContent = n1;
+    if (p2NeededEl) p2NeededEl.textContent = n2;
+    // 👆 EINDE NIEUWE CODE 👆
     
     const n1 = Math.max(0, state.player1.target - state.player1.score);
     const n2 = Math.max(0, state.player2.target - state.player2.score);
