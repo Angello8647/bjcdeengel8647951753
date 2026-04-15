@@ -897,11 +897,11 @@ function initPresenterControls() {
             if (cards.length > 0) {
                 window.matchListFocusIndex = Math.max(0, Math.min(window.matchListFocusIndex, cards.length - 1));
 
-                if (key === 'ArrowDown') {
+                if (key === 'PageDown') {
                     event.preventDefault();
                     window.matchListFocusIndex = Math.min(window.matchListFocusIndex + 1, cards.length - 1);
                     highlightMatch(cards);
-                } else if (key === 'ArrowUp') {
+                } else if (key === 'PageUp') {
                     event.preventDefault();
                     window.matchListFocusIndex = Math.max(window.matchListFocusIndex - 1, 0);
                     highlightMatch(cards);
