@@ -872,75 +872,96 @@ let pageDownTimer = null;
 let lastTabTime = 0;
 const TAB_DEBOUNCE_MS = 500;
 function initPresenterControls() {
-    window.matchListFocusIndex = 0; // Reset bij starten
+    // Startindex voor match lijst
+    window.matchListFocusIndex = 0;
 
     document.addEventListener('keydown', function(event) {
         const activePage = document.querySelector('.page.active');
         if (!activePage) return;
+        // Negeer toetsen als je in een inputveld typt
         if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
-        
+
         const key = event.key;
 
-        // ✅ PAGINA 2: MATCH SELECTIE
+        // ✅ PAGINA 1: Tab -> naar match lijst
+        if (activePage.id === 'page1') {
+            if (key === 'Tab') {
+                event.preventDefault();
+                if (typeof window.goToPage2 === 'function') window.goToPage2();
+            }
+            return;
+        }
+
+        // ✅ PAGINA 2: Pijltjes navigeren, Tab selecteren
         if (activePage.id === 'page2') {
             const cards = document.querySelectorAll('#matchList .match-card');
-            if (cards.length === 0) return;
+            if (cards.length > 0) {
+                window.matchListFocusIndex = Math.max(0, Math.min(window.matchListFocusIndex, cards.length - 1));
 
-            // Veilige index
-            window.matchListFocusIndex = Math.max(0, Math.min(window.matchListFocusIndex, cards.length - 1));
-
-            switch (key) {
-                case 'ArrowDown':
+                if (key === 'ArrowDown') {
                     event.preventDefault();
                     window.matchListFocusIndex = Math.min(window.matchListFocusIndex + 1, cards.length - 1);
                     highlightMatch(cards);
-                    break;
-                case 'ArrowUp':
+                } else if (key === 'ArrowUp') {
                     event.preventDefault();
                     window.matchListFocusIndex = Math.max(window.matchListFocusIndex - 1, 0);
                     highlightMatch(cards);
-                    break;
-                case 'Tab':
+                } else if (key === 'Tab') {
                     event.preventDefault();
-                    cards[window.matchListFocusIndex].click(); // Simuleer klik
-                    break;
+                    cards[window.matchListFocusIndex].click();
+                }
             }
             return;
         }
 
-        // PAGINA 4: bal selectie (onveranderd)
+        // PAGINA 4: bal selectie
         if (activePage.id === 'page4') {
-            switch (key) {
-                case 'PageUp': event.preventDefault(); if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(1); break;
-                case 'PageDown': event.preventDefault(); if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(2); break;
-                case 'Tab': event.preventDefault(); if (typeof window.startMatch === 'function' && state.selectedWhitePlayer) window.startMatch(); break;
-                default: break;
-            }
-            return;
+            if (key === 'PageUp') { event.preventDefault(); window.selectWhitePlayer(1); return; }
+            if (key === 'PageDown') { event.preventDefault(); window.selectWhitePlayer(2); return; }
+            if (key === 'Tab') { event.preventDefault(); if (state.selectedWhitePlayer) window.startMatch(); return; }
         }
 
-        // PAGINA 5: scoring (onveranderd)
+        // PAGINA 5: scoring
         if (activePage.id === 'page5') {
             if (!state.currentMatch || state.matchEnded) return;
-            switch (key) {
-                case 'PageUp': event.preventDefault(); if (typeof window.changeScore === 'function') window.changeScore(1); break;
-                case 'PageDown': event.preventDefault(); if (pageDownTimer === null) { pageDownTimer = setTimeout(() => { if (typeof showPage === 'function') showPage(1); pageDownTimer = null; }, 1500); } break;
-                case 'Tab': event.preventDefault(); const now = Date.now(); if (now - lastTabTime < TAB_DEBOUNCE_MS) return; lastTabTime = now; if (!state.matchEnded && typeof window.addScore === 'function') window.addScore(); break;
-                default: break;
+            if (key === 'PageUp') { event.preventDefault(); window.changeScore(1); return; }
+            if (key === 'PageDown') {
+                event.preventDefault();
+                if (pageDownTimer === null) {
+                    pageDownTimer = setTimeout(() => { showPage(1); pageDownTimer = null; }, 1500);
+                }
+                return;
             }
-            return;
+            if (key === 'Tab') {
+                event.preventDefault();
+                const now = Date.now();
+                if (now - lastTabTime < TAB_DEBOUNCE_MS) return;
+                lastTabTime = now;
+                window.addScore();
+                return;
+            }
         }
     });
 
-    // Keyup handler (onveranderd)
+    // Keyup handler voor korte PageDown druk
     document.addEventListener('keyup', function(event) {
         const activePage = document.querySelector('.page.active');
-        if (!activePage || activePage.id !== 'page5') return;
-        if (event.key !== 'PageDown') return;
-        if (pageDownTimer !== null) { clearTimeout(pageDownTimer); pageDownTimer = null; if (!state.matchEnded && typeof window.changeScore === 'function') window.changeScore(-1); }
+        if (!activePage || activePage.id !== 'page5' || event.key !== 'PageDown') return;
+        if (pageDownTimer !== null) {
+            clearTimeout(pageDownTimer);
+            pageDownTimer = null;
+            window.changeScore(-1);
+        }
     });
-    
-    console.log('✅ Presenter: Page1(Tab) | Page2(↑↓ navigeren, Tab=selecteer) | Page4(...) | Page5(...)');
+}
+
+// ✅ CRUCIAAL: Deze helper ontbrak waarschijnlijk, waardoor JS crashte en Pagina 1 verdween
+function highlightMatch(cards) {
+    cards.forEach(c => c.classList.remove('focused'));
+    if (cards[window.matchListFocusIndex]) {
+        cards[window.matchListFocusIndex].classList.add('focused');
+        cards[window.matchListFocusIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
 }
 document.getElementById('passwordInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); });
 if (sessionStorage.getItem('biljart_authenticated')) { document.getElementById('bodyElement').classList.add('logged-in'); initializeApp(); }
