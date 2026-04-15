@@ -1122,7 +1122,7 @@ function restoreMatchFromBackup(b) {
     });
     if(state.matchEnded) disableScoreButtons(); else enableScoreButtons();
     document.getElementById('matchEndedAlert').style.display=state.matchEnded?'block':'none';
-    updateScoringPage(); showPage(5);
+    updateScoringPage(); showPage(5); updateHeaderButtons(); // na updateScoringPage()
 }
 function backupMatchSilently(md) {
     const fb={matchData:md,timestamp:new Date().toISOString(),player1:state.currentMatch.p1,player2:state.currentMatch.p2,p1Score:state.player1.score,p2Score:state.player2.score,p1Turns:[...state.player1.turns],p2Turns:[...state.player2.turns],currentPlayer:state.currentPlayer,turnNumber:state.turnNumber,isFirstPlayerInRound:state.isFirstPlayerInRound,firstToTarget:state.firstToTarget,isNabeurt:state.isNabeurt,completed:state.matchEnded,whitePlayer:state.currentMatch.whitePlayer,matchId:state.currentMatch.id,date:state.currentMatch.date,target1:state.player1.target,target2:state.player2.target};
@@ -1164,7 +1164,7 @@ function endMatch() {
     state.currentMatch.p1Highest=state.player1.highestSeries; state.currentMatch.p2Highest=state.player2.highestSeries;
     state.currentMatch.winner=w; saveStateToStorage(); archiveCompletedMatch(state.currentMatch);
     const ae=document.getElementById('matchEndedAlert'); ae.style.display='block'; ae.innerHTML=`🏁 MATCH AFGELOPEN!<br>🏆 WINNAAR: ${w}<br><small>${wi}</small>`;
-    disableScoreButtons(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateScoringPage();updateHeaderButtons(); 
+    disableScoreButtons(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateScoringPage(); updateHeaderButtons(); 
 }
 window.undoLastAdd = function() {
     if(!lastStateBeforeAdd) return alert("Er is geen beurt om ongedaan te maken.");
