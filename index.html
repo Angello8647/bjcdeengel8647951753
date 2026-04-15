@@ -560,65 +560,62 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     transition: all 0.2s ease;
 }
 
-/*
-/* ========== SUPPORTER VIEW: 2X GROTER SCOREBORD ========== */
+/* ========== SCOREBORD: 1.5X GROTER (PC-VRIENDELIJK) ========== */
 .scoring-row-container {
-    gap: 24px !important;
-    padding: 30px 20px !important;
-    margin: 40px 0 !important;
+    gap: 18px !important;
+    padding: 20px 15px !important;
+    margin: 25px 0 !important;
 }
 .score-cell {
-    min-width: 160px !important;
-    max-width: 280px !important;
-    padding: 20px 12px !important;
-    border-radius: 24px !important;
-    border-width: 4px !important;
+    min-width: 120px !important;
+    max-width: 210px !important;
+    padding: 15px 9px !important;
+    border-radius: 18px !important;
+    border-width: 3px !important;
 }
 .cell-label {
-    font-size: 1.6rem !important; /* 2x */
-    margin-bottom: 8px !important;
-    letter-spacing: 1px !important;
+    font-size: 1.2rem !important;  /* 1.5x */
+    margin-bottom: 6px !important;
+    letter-spacing: 0.75px !important;
 }
 .cell-value {
-    font-size: 4.4rem !important; /* 2x */
+    font-size: 3.3rem !important;  /* 1.5x */
     line-height: 1 !important;
 }
 /* Middenblok (Beurt info) */
 .score-cell.center-info {
-    min-width: 380px !important;
-    max-width: 600px !important;
-    padding: 25px 20px !important;
+    min-width: 270px !important;
+    max-width: 450px !important;
+    padding: 18px 15px !important;
 }
-/* Overschrijf de inline JS-stijlen van het middenblok */
 #currentPlayerDisplay > div > div:first-child {
-    font-size: 8rem !important; /* Beurt nummer 2x */
+    font-size: 6rem !important;    /* Beurt nummer 1.5x */
     font-weight: 900 !important;
 }
 #currentPlayerDisplay > div > div:nth-child(2) span {
-    font-size: 4rem !important; /* Wit/Geel badge 2x */
-    padding: 16px 60px !important;
-    border-radius: 60px !important;
+    font-size: 3rem !important;    /* Wit/Geel badge 1.5x */
+    padding: 12px 45px !important;
+    border-radius: 45px !important;
 }
 #currentPlayerDisplay > div > div:nth-child(3) {
-    font-size: 2rem !important; /* Nabeurt/Extra info 2x */
-    margin-top: 30px !important;
+    font-size: 1.5rem !important;  /* Extra info 1.5x */
+    margin-top: 22px !important;
 }
-/* Totaalpunten extra prominent */
+/* Totaalpunten */
 #p1TotalCell .cell-value, #p2TotalCell .cell-value {
-    font-size: 8rem !important; /* 2x */
+    font-size: 6rem !important;    /* Totaal 1.5x */
 }
-/* Bedieningsknoppen (+ / -) ook verdubbelen */
+/* Bedieningsknoppen (+ / -) */
 .score-controls {
-    margin: 50px 0 30px 0 !important;
-    padding: 0 30px !important;
+    margin: 35px 0 20px 0 !important;
+    padding: 0 20px !important;
 }
 .score-btn {
-    width: 160px !important;  /* 2x */
-    height: 160px !important; /* 2x */
-    font-size: 70px !important; /* 2x */
-    border-width: 4px !important;
+    width: 120px !important;
+    height: 120px !important;
+    font-size: 52px !important;
+    border-width: 3px !important;
 }
-*/
 
     
 </style>
