@@ -948,17 +948,7 @@ function initPresenterControls() {
     });
 }
 
-    // Keyup handler voor korte PageDown druk
-    document.addEventListener('keyup', function(event) {
-        const activePage = document.querySelector('.page.active');
-        if (!activePage || activePage.id !== 'page5' || event.key !== 'PageDown') return;
-        if (pageDownTimer !== null) {
-            clearTimeout(pageDownTimer);
-            pageDownTimer = null;
-            window.changeScore(-1);
-        }
-    });
-}
+
 
 
 document.getElementById('passwordInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); });
