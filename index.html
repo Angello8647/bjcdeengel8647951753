@@ -72,14 +72,11 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .cell-value { font-size: 2.2rem; font-weight: bold; color: white; line-height: 1.1; }
 
 /* Actieve/Dimmed effect ALLEEN voor de huidige beurtpunten */
-/* Reset generieke active-player style voor beurtpunten */
 .score-cell.active-player {
     background: transparent !important;
     box-shadow: none !important;
     transform: none !important;
 }
-
-/* Speler 1 aan de beurt → WIT */
 #p1CurrentCell.active-player {
     background: white !important;
     border-color: #3182ce !important;
@@ -88,8 +85,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 }
 #p1CurrentCell.active-player .cell-label,
 #p1CurrentCell.active-player .cell-value { color: #000 !important; }
-
-/* Speler 2 aan de beurt → GEEL */
 #p2CurrentCell.active-player {
     background: #f1c40f !important;
     border-color: #3182ce !important;
@@ -98,7 +93,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 }
 #p2CurrentCell.active-player .cell-label,
 #p2CurrentCell.active-player .cell-value { color: #000 !important; }
-.score-cell.active-player .cell-label { color: #ff6b6b; }
 .score-cell.turn-hidden {
     visibility: hidden !important;
     opacity: 0 !important;
@@ -107,7 +101,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     filter: none !important;
     margin: 0;
 }
-/* Styling voor de "nog nodig" cellen */
 .needed-cell {
     background: rgba(46, 204, 113, 0.15) !important;
     border-color: #27ae60 !important;
@@ -115,37 +108,28 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .needed-cell .cell-value {
     color: #2ecc71 !important;
 }
-/* Dimming voor inactieve speler */
 .needed-cell.dimmed {
     opacity: 0.4 !important;
     transform: scale(0.96) !important;
     filter: grayscale(0.3) !important;
 }
-/* Zorg dat flex-wrap netjes omgaat met 7 cellen op small screens */
 @media (max-width: 750px) {
-    .scoring-row-container {
-        gap: 6px;
-        padding: 0 5px;
-    }
-    .score-cell {
-        min-width: 60px;
-        padding: 8px 4px;
-    }
+    .scoring-row-container { gap: 6px; padding: 0 5px; }
+    .score-cell { min-width: 60px; padding: 8px 4px; }
     .cell-label { font-size: 0.7rem; }
     .cell-value { font-size: 1.6rem; }
 }
+
 /* TOTAALPUNTEN: ALTIJD ZICHTBAAR MET ORIGINELE WIT/GELE OPMAAK */
 #p1TotalCell { background: white !important; color: black !important; border: 3px solid #3182ce !important; }
 #p2TotalCell { background: #f1c40f !important; color: black !important; border: 3px solid #3182ce !important; }
 #p1TotalCell .cell-label, #p2TotalCell .cell-label { color: #2d3748 !important; }
 #p1TotalCell .cell-value, #p2TotalCell .cell-value { color: #000 !important; font-size: 4rem !important; font-weight: 900; }
-/* Voorkom dat totaalpunten meedoen met active/dimmed classes */
 #p1TotalCell.active-player, #p1TotalCell.dimmed,
 #p2TotalCell.active-player, #p2TotalCell.dimmed {
     opacity: 1 !important; transform: none !important; filter: none !important;
     box-shadow: none !important; background: inherit !important;
 }
-
 @media (max-width: 650px) {
     .scoring-row-container { gap: 6px; }
     .score-cell { min-width: 70px; padding: 8px 4px; }
@@ -153,7 +137,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     #p1TotalCell .cell-value, #p2TotalCell .cell-value { font-size: 2.8rem !important; }
     .score-cell.center-info { min-width: 140px; }
 }
-/* ========== EINDE NIEUWE LAYOUT STYLES ========== */
 
 /* SCORE CONTROLS */
 .score-controls { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; padding: 0 15px; }
@@ -163,8 +146,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .score-middle { display: flex; align-items: center; justify-content: center; flex-grow: 1; }
 .left-plus { margin-left: 5px; }
 .right-plus { margin-right: 5px; }
-
-/* Oude styles behouden voor backwards compatibiliteit */
 .current-turn-container, .current-score-container, .current-score-display, .current-turn, .side-score-display { display: none !important; }
 
 /* ===== KNOBBEN & UI ===== */
@@ -298,45 +279,34 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .no-data-message, .error-message { text-align: center; padding: 40px 20px; background: #34495e; border-radius: 10px; margin: 20px 0; }
 .no-data-message h3, .error-message h3 { color: #f1c40f; }
 @media (max-width: 768px) { .players-stats-grid { grid-template-columns: 1fr; } .match-history-item { grid-template-columns: 1fr; gap: 5px; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-/* ========== NIEUWE HEADER VOOR PAGE5 ========== */
-/* Verberg oude titel */
-#page5 .header h1 { display: none !important; }
 
+/* ========== NIEUWE HEADER VOOR PAGE5 ========== */
+#page5 .header h1 { display: none !important; }
 .header-match-info {
     flex: 1; display: flex; align-items: center; justify-content: center;
     gap: 20px; padding: 0 10px; width: 100%;
 }
-.header-player-side {
-    display: flex; align-items: center; gap: 14px;
-}
-
-/* Targets: groot, wit & geel */
+.header-player-side { display: flex; align-items: center; gap: 14px; }
 .header-target {
     font-size: 4.5rem; font-weight: 800; line-height: 1;
     text-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
-#headerTarget1 { color: #ffffff !important; } /* Speler 1 = WIT */
-#headerTarget2 { color: #f1c40f !important; } /* Speler 2 = GEEL */
-
-/* Namen: groter & volledig zichtbaar */
+#headerTarget1 { color: #ffffff !important; }
+#headerTarget2 { color: #f1c40f !important; }
 .header-name {
     font-size: 4rem; color: #ecf0f1; font-weight: 700;
     max-width: none; white-space: normal; overflow: visible; text-overflow: unset;
     line-height: 1.2;
 }
-/* ✅ Speler 2 naam specifiek geel maken */
 #headerName2 { color: #f1c40f !important; }
-
 .header-vs { font-size: 4rem; color: #bdc3c7; margin: 0 5px; }
-
-.header-vs { font-size: 4rem; color: #bdc3c7; margin: 0 5px; }
-
-/* Mobiel: netjes schalen */
 @media (max-width: 650px) {
     .header-target { font-size: 2.4rem; }
     .header-name { font-size: 1.5rem; }
     .header-vs { font-size: 1.4rem; }
 }
+
+/* Excel styles (behouden) */
 .excel-stats-card { border-left: 5px solid #3498db; position: relative; }
 .card-header-excel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .match-count-badge { background: #3498db; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
@@ -554,59 +524,49 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 <div id="page5" class="page">
 <div class="header">
     <button id="headerLeftBtn" class="action-btn confirm-btn">Einde beurt</button>
-    
     <div class="header-match-info">
         <div class="header-player-side left">
             <span class="header-target" id="headerTarget1">0</span>
             <span class="header-name" id="headerName1">Speler 1</span>
         </div>
-        <span class="header-vs">⚔️</span>
+        <span class="header-vs">🎱</span>
         <div class="header-player-side right">
             <span class="header-name" id="headerName2">Speler 2</span>
             <span class="header-target" id="headerTarget2">0</span>
         </div>
     </div>
-
     <button id="headerRightBtn" class="action-btn undo-btn" disabled>↩️ Ongedaan</button>
 </div>
 <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
 
 <!-- NIEUWE HORIZONTALE SCORE LAYOUT -->
 <div class="scoring-row-container">
-    <!-- HELEMAAL LINKS: Nog nodig P1 -->
     <div class="score-cell needed-cell" id="p1NeededCell">
         <div class="cell-label">Nog nodig</div>
         <div class="cell-value" id="p1NeededVal">0</div>
     </div>
-    <!-- Beurt P1 -->
     <div class="score-cell current-turn-cell" id="p1CurrentCell">
         <div class="cell-label">Beurt P1</div>
         <div class="cell-value" id="p1CurrentVal">0</div>
     </div>
-    <!-- Totaal P1 -->
     <div class="score-cell total-cell" id="p1TotalCell">
         <div class="cell-label">Totaal P1</div>
         <div class="cell-value" id="p1TotalVal">0</div>
     </div>
-    <!-- Midden: Beurt Info -->
     <div class="score-cell center-info" id="currentPlayerDisplay"></div>
-    <!-- Totaal P2 -->
     <div class="score-cell total-cell" id="p2TotalCell">
         <div class="cell-label">Totaal P2</div>
         <div class="cell-value" id="p2TotalVal">0</div>
     </div>
-    <!-- Beurt P2 -->
     <div class="score-cell current-turn-cell" id="p2CurrentCell">
         <div class="cell-label">Beurt P2</div>
         <div class="cell-value" id="p2CurrentVal">0</div>
     </div>
-    <!-- HELEMAAL RECHTS: Nog nodig P2 -->
     <div class="score-cell needed-cell" id="p2NeededCell">
         <div class="cell-label">Nog nodig</div>
         <div class="cell-value" id="p2NeededVal">0</div>
     </div>
 </div>
-
 
 <div class="score-controls">
 <button class="score-btn plus-btn left-plus" onclick="changeScore(1)">+</button>
@@ -725,7 +685,6 @@ function updateHeaderTargets() {
     const t2 = document.getElementById('headerTarget2');
     const n1 = document.getElementById('headerName1');
     const n2 = document.getElementById('headerName2');
-    
     if (state.currentMatch) {
         if (t1) t1.textContent = state.player1.target;
         if (t2) t2.textContent = state.player2.target;
@@ -835,49 +794,29 @@ function formatDateFull(dateStr) { if(!dateStr) return ''; const d=new Date(date
 function enableScoreButtons() { document.querySelectorAll('.score-btn').forEach(btn=>{btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}); const c=document.getElementById('confirmScoreBtn'); if(c){c.disabled=false;c.style.opacity='1';c.style.cursor='pointer';} }
 function disableScoreButtons() { document.querySelectorAll('.score-btn').forEach(btn=>{btn.disabled=true;btn.style.opacity='0.5';btn.style.cursor='not-allowed';}); const c=document.getElementById('confirmScoreBtn'); if(c){c.disabled=true;c.style.opacity='0.5';c.style.cursor='not-allowed';} }
 function updateCurrentTurnSize() { const ct=document.getElementById('currentPlayerDisplay'); if(!ct) return; ct.classList.toggle('has-extra-info', state.isNabeurt || state.firstToTarget); }
-
-// ========== UPDATE FUNCTIES ==========
 function updateSideScoreDisplays() {
     document.getElementById('p1TotalVal').textContent = state.player1.score;
     document.getElementById('p2TotalVal').textContent = state.player2.score;
 }
-
 function updateCurrentScoreDisplay() {
-    // 1. Elementen ophalen (allemaal 1x)
     const p1CurrentEl = document.getElementById('p1CurrentVal');
     const p2CurrentEl = document.getElementById('p2CurrentVal');
     const p1NeededEl  = document.getElementById('p1NeededVal');
     const p2NeededEl  = document.getElementById('p2NeededVal');
-    
     const p1CurrentCell = document.getElementById('p1CurrentCell');
     const p2CurrentCell = document.getElementById('p2CurrentCell');
     const p1NeededCell  = document.getElementById('p1NeededCell');
     const p2NeededCell  = document.getElementById('p2NeededCell');
-
-    // 2. Waarden updaten - HUIDIGE BEURT PUNTEN
     if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
     if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
-
-    // 3. "Nog nodig" updaten - LIVE MET AFTREK VAN HUIDIGE INVOER
-    const n1 = Math.max(0, state.player1.target - state.player1.score - 
-        (state.currentPlayer === 1 ? state.currentInput : 0));
-    const n2 = Math.max(0, state.player2.target - state.player2.score - 
-        (state.currentPlayer === 2 ? state.currentInput : 0));
-    
+    const n1 = Math.max(0, state.player1.target - state.player1.score - (state.currentPlayer === 1 ? state.currentInput : 0));
+    const n2 = Math.max(0, state.player2.target - state.player2.score - (state.currentPlayer === 2 ? state.currentInput : 0));
     if (p1NeededEl) p1NeededEl.textContent = n1;
     if (p2NeededEl) p2NeededEl.textContent = n2;
-    
-    // 4. Totaalscores updaten
     updateSideScoreDisplays();
-    
-    // 5. "Nog nodig" in spelerskaarten updaten (voor consistentie)
     updateStaticNeededValues();
-
-    // 6. Classes resetten voor beurtpunten-cellen
     p1CurrentCell.className = 'score-cell current-turn-cell';
     p2CurrentCell.className = 'score-cell current-turn-cell';
-    
-    // 7. Actieve/Dimmed toepassen op beurtpunten
     if (state.currentPlayer === 1) {
         p1CurrentCell.classList.add('active-player');
         p2CurrentCell.classList.add('turn-hidden');
@@ -885,16 +824,9 @@ function updateCurrentScoreDisplay() {
         p2CurrentCell.classList.add('active-player');
         p1CurrentCell.classList.add('turn-hidden');
     }
-    
-    // 8. Dimmed toepassen op "nog nodig" cellen (alleen dempen, niet verbergen)
-    if (p1NeededCell) {
-        p1NeededCell.classList.toggle('dimmed', state.currentPlayer !== 1);
-    }
-    if (p2NeededCell) {
-        p2NeededCell.classList.toggle('dimmed', state.currentPlayer !== 2);
-    }
+    if (p1NeededCell) p1NeededCell.classList.toggle('dimmed', state.currentPlayer !== 1);
+    if (p2NeededCell) p2NeededCell.classList.toggle('dimmed', state.currentPlayer !== 2);
 }
-
 window.showPage = function(pageNum) {
     let actualPageNum = typeof pageNum === 'string' ? (pageNum.startsWith('Page') ? parseInt(pageNum.replace('Page','')) : parseInt(pageNum)) : pageNum;
     if (isNaN(actualPageNum) || actualPageNum < 1) actualPageNum = 1;
@@ -1007,18 +939,14 @@ window.startMatch = function() {
     document.getElementById('headerTarget2').textContent = state.player2.target;
     document.getElementById('headerName1').textContent = state.currentMatch.p1;
     document.getElementById('headerName2').textContent = state.currentMatch.p2;
-    
-    // Reset nieuwe score displays
     document.getElementById('p1CurrentVal').textContent = '0';
     document.getElementById('p2CurrentVal').textContent = '0';
     document.getElementById('p1TotalVal').textContent = '0';
     document.getElementById('p2TotalVal').textContent = '0';
-    // Reset ALLEEN de beurtpunten-cellen
     ['p1CurrentCell','p2CurrentCell','p1NeededCell','p2NeededCell'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove('active-player','turn-hidden','dimmed');
+        const el = document.getElementById(id);
+        if(el) el.classList.remove('active-player','turn-hidden','dimmed');
     });
-    
     enableScoreButtons();
     showPage(5);
     updateScoringPage();
@@ -1030,7 +958,7 @@ window.changeScore = function(delta) {
     const pot=state.currentInput+delta;
     if(p.score+pot>t) { state.currentInput=Math.max(0,t-p.score); updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); return; }
     state.currentInput=Math.max(0,pot);
-    updateCurrentScoreDisplay(); updateDynamicNeededDisplay();updateStaticNeededValues(); // ✅ Live update "nog nodig" in player cards
+    updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); updateStaticNeededValues();
 }
 function updateDynamicNeededDisplay() {
     document.querySelectorAll('.dynamic-needed').forEach(el=>el.remove());
@@ -1046,36 +974,19 @@ function updateDynamicNeededDisplay() {
     updateStaticNeededValues();
 }
 function updateStaticNeededValues() {
-    // Bereken "nog nodig" MET aftrek van huidige invoer tijdens de beurt
-    const n1 = Math.max(0, state.player1.target - state.player1.score - 
-        (state.currentPlayer === 1 ? state.currentInput : 0));
-    const n2 = Math.max(0, state.player2.target - state.player2.score - 
-        (state.currentPlayer === 2 ? state.currentInput : 0));
-    
-    // Update de elementen in de player cards
+    const n1 = Math.max(0, state.player1.target - state.player1.score - (state.currentPlayer === 1 ? state.currentInput : 0));
+    const n2 = Math.max(0, state.player2.target - state.player2.score - (state.currentPlayer === 2 ? state.currentInput : 0));
     const el1 = document.getElementById('needed1');
     const el2 = document.getElementById('needed2');
-    
     if (el1) {
         el1.textContent = n1;
-        // Kleurcodering bij weinig punten over
-        if (n1 <= 5 && n1 > 0) {
-            el1.style.color = '#e74c3c';
-            el1.style.fontWeight = 'bold';
-        } else {
-            el1.style.color = '';
-            el1.style.fontWeight = '';
-        }
+        if (n1 <= 5 && n1 > 0) { el1.style.color = '#e74c3c'; el1.style.fontWeight = 'bold'; }
+        else { el1.style.color = ''; el1.style.fontWeight = ''; }
     }
     if (el2) {
         el2.textContent = n2;
-        if (n2 <= 5 && n2 > 0) {
-            el2.style.color = '#e74c3c';
-            el2.style.fontWeight = 'bold';
-        } else {
-            el2.style.color = '';
-            el2.style.fontWeight = '';
-        }
+        if (n2 <= 5 && n2 > 0) { el2.style.color = '#e74c3c'; el2.style.fontWeight = 'bold'; }
+        else { el2.style.color = ''; el2.style.fontWeight = ''; }
     }
 }
 window.showBackupRecovery = function() { document.getElementById('backupRecoveryModal').style.display='flex'; loadAvailableBackups(); }
@@ -1117,12 +1028,12 @@ function restoreMatchFromBackup(b) {
     document.getElementById('p1CurrentVal').textContent='0'; document.getElementById('p2CurrentVal').textContent='0';
     document.getElementById('p1TotalVal').textContent='0'; document.getElementById('p2TotalVal').textContent='0';
     ['p1CurrentCell','p2CurrentCell','p1NeededCell','p2NeededCell'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove('active-player','turn-hidden','dimmed');
+        const el = document.getElementById(id);
+        if(el) el.classList.remove('active-player','turn-hidden','dimmed');
     });
     if(state.matchEnded) disableScoreButtons(); else enableScoreButtons();
     document.getElementById('matchEndedAlert').style.display=state.matchEnded?'block':'none';
-    updateScoringPage(); showPage(5); updateHeaderButtons(); // na updateScoringPage()
+    updateScoringPage(); showPage(5); updateHeaderButtons();
 }
 function backupMatchSilently(md) {
     const fb={matchData:md,timestamp:new Date().toISOString(),player1:state.currentMatch.p1,player2:state.currentMatch.p2,p1Score:state.player1.score,p2Score:state.player2.score,p1Turns:[...state.player1.turns],p2Turns:[...state.player2.turns],currentPlayer:state.currentPlayer,turnNumber:state.turnNumber,isFirstPlayerInRound:state.isFirstPlayerInRound,firstToTarget:state.firstToTarget,isNabeurt:state.isNabeurt,completed:state.matchEnded,whitePlayer:state.currentMatch.whitePlayer,matchId:state.currentMatch.id,date:state.currentMatch.date,target1:state.player1.target,target2:state.player2.target};
@@ -1164,7 +1075,7 @@ function endMatch() {
     state.currentMatch.p1Highest=state.player1.highestSeries; state.currentMatch.p2Highest=state.player2.highestSeries;
     state.currentMatch.winner=w; saveStateToStorage(); archiveCompletedMatch(state.currentMatch);
     const ae=document.getElementById('matchEndedAlert'); ae.style.display='block'; ae.innerHTML=`🏁 MATCH AFGELOPEN!<br>🏆 WINNAAR: ${w}<br><small>${wi}</small>`;
-    disableScoreButtons(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateScoringPage(); updateHeaderButtons(); 
+    disableScoreButtons(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateScoringPage(); updateHeaderButtons();
 }
 window.undoLastAdd = function() {
     if(!lastStateBeforeAdd) return alert("Er is geen beurt om ongedaan te maken.");
@@ -1185,12 +1096,19 @@ function updateScoringPage() {
     updateCurrentTurnSize();
     const a1=state.player1.turns.length?(state.player1.score/state.player1.turns.length).toFixed(2):'0.00', a2=state.player2.turns.length?(state.player2.score/state.player2.turns.length).toFixed(2):'0.00';
     const n1=Math.max(0,state.player1.target-state.player1.score), n2=Math.max(0,state.player2.target-state.player2.score);
+    
+    // ✅ CORRECTIE: cc variabele toegevoegd
+    const cc=(state.currentPlayer===1&&state.player1.isWhite)||(state.currentPlayer===2&&state.player2.isWhite)?'Wit':'Geel';
+    
     p1c.innerHTML=`<div><h3>${state.currentMatch.p1} ${state.player1.isWhite?'⚪':'🟡'}</h3><div class="stats-grid"><div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player1.turns.length}</div></div><div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${a1}</div></div><div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed1">${n1}</div></div><div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${state.player1.fixedTSG}</div></div><div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player1.highestSeries}</div></div></div></div><div class="turns-scroll-container"><div class="turns-list">${[...state.player1.turns].reverse().map((t,i)=>`<div class="turn-row"><span>Beurt ${state.player1.turns.length-i}:</span><span>${t} punt${t!==1?'en':''}</span></div>`).join('')}${state.player1.turns.length?'':'<div style="text-align:center;color:#666;padding:10px;font-size:0.9em;">Geen beurten</div>'}</div></div>`;
     
     p2c.innerHTML=`<div><h3>${state.currentMatch.p2} ${state.player2.isWhite?'⚪':'🟡'}</h3><div class="stats-grid"><div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player2.turns.length}</div></div><div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${a2}</div></div><div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed2">${n2}</div></div><div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${state.player2.fixedTSG}</div></div><div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player2.highestSeries}</div></div></div></div><div class="turns-scroll-container"><div class="turns-list">${[...state.player2.turns].reverse().map((t,i)=>`<div class="turn-row"><span>Beurt ${state.player2.turns.length-i}:</span><span>${t} punt${t!==1?'en':''}</span></div>`).join('')}${state.player2.turns.length?'':'<div style="text-align:center;color:#666;padding:10px;font-size:0.9em;">Geen beurten</div>'}</div></div>`;
+    
     const cb=state.currentPlayer===1?state.player1.beurtNummer:state.player2.beurtNummer;
     let ei=''; if(state.isNabeurt) ei='<div style="margin-top:15px;font-size:1rem;color:#ffcc00;">⚠️ NABEURT</div>'; else if(state.firstToTarget===1) ei='<div style="margin-top:15px;font-size:1rem;color:#ffcc00;">✅ Laatste beurt voor speler 2</div>';
+    
     document.getElementById('currentPlayerDisplay').innerHTML=`<div style="text-align:center;"><div style="font-size:4rem;font-weight:bold;color:white;line-height:1.2;">Beurt ${cb}</div><div style="margin-top:15px;"><span style="background:${cc==='Wit'?'white':'#f1c40f'};color:black;font-size:2rem;font-weight:bold;padding:8px 30px;border-radius:50px;display:inline-block;">${cc}</span></div>${ei}</div>`;
+    
     updateSideScoreDisplays(); updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); updateHeaderButtons();
     const ub=document.getElementById('undoBtn'); if(ub) ub.disabled=!lastStateBeforeAdd;
 }
@@ -1211,7 +1129,6 @@ function loadPlayersManagementTab(){
     const tp = state.players.length;
     const at = tp ? ((state.players.reduce((s,p)=>s+(parseFloat(p.tsg.replace(',','.'))||0),0)/tp).toFixed(3)) : '0.000';
     const av = tp ? Math.round(state.players.reduce((s,p)=>s+(p.target||0),0)/tp) : 0;
-    
     const isEditing = editingPlayerIndex >= 0;
     const editTitle = isEditing ? '📝 Speler Bewerken' : '➕ Nieuwe Speler Toevoegen';
     const editBtnText = isEditing ? '💾 Opslaan' : '➕ Toevoegen';
@@ -1222,7 +1139,6 @@ function loadPlayersManagementTab(){
     const editTarget = editingPlayerData ? editingPlayerData.target : '';
     const speeldagenHtml = (state.speeldagen && state.speeldagen.length > 0) ? `<div style="background:#2c3e50;padding:15px;border-radius:8px;margin-top:30px;"><h4>📅 Geïmporteerde Speeldagen (${state.speeldagen.length})</h4></div>` : '';
     const emptyMsg = tp > 0 ? '' : '<div class="empty-players-message">Geen spelers gevonden.</div>';
-
     container.innerHTML = `
     <div class="players-management-container">
         <div style="background:#2c3e50;border-left:4px solid #9b59b6;padding:15px;margin-bottom:20px;border-radius:8px;">
@@ -1276,11 +1192,11 @@ window.cancelEditPlayer=function(){editingPlayerIndex=-1;editingPlayerData=null;
 window.deletePlayer=function(i){if(i<0||i>=state.players.length)return;const p=state.players[i];if(!confirm(`"${p.name}" verwijderen?`))return;if(state.matches.some(m=>!m.completed&&(m.p1===p.name||m.p2===p.name)))return alert('⚠️ Speler speelt in actieve match!');state.players.splice(i,1);savePlayersToStorage();if(state.currentMatchesTab==='players'){renderPlayersList();updatePlayersBadge();}alert(`✅ "${p.name}" verwijderd!`);}
 function updatePlayersBadge(){const b=document.getElementById('badgePlayers');if(b)b.textContent=state.players.length;}
 window.importPlayersFromCSV=function(){const f=document.createElement('input');f.type='file';f.accept='.csv';f.onchange=function(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=function(ev){try{const csv=ev.target.result,l=csv.split(/\r\n|\n/),ns=[];for(let i=1;i<l.length;i++){const line=l[i].trim();if(!line)continue;const p=line.split(';');if(p.length>=4&&p[1]){const nm=fixEncoding(p[1]);if(!nm)continue;ns.push({name:nm,naam:nm,tsg:p[3]||'0,000',target:parseInt(p[2])||50});}}if(!ns.length)return alert("Geen spelers gevonden!");let v="Te importeren:\n";ns.slice(0,3).forEach((s,i)=>v+=`${i+1}. ${s.name} (T:${s.target})\n`);if(ns.length>3)v+=`... en ${ns.length-3} meer\n`;if(!confirm(`${ns.length} spelers gevonden.\n${v}\nDoorgaan?`))return;const cur=state.players||[];let bij=0,toe=0;ns.forEach(n=>{const idx=cur.findIndex(p=>p.name.toLowerCase()===n.name.toLowerCase());if(idx>=0){cur[idx].tsg=n.tsg;cur[idx].target=n.target;bij++;}else{cur.push(n);toe++;}});state.players=cur;localStorage.setItem('biljartPlayers',JSON.stringify(cur));if(state.currentMatchesTab==='players')loadPlayersManagementTab();alert(`✅ Import klaar! Bijgewerkt: ${bij}, Toegevoegd: ${toe}`);}catch(err){alert('❌ Importfout: '+err.message);}};r.readAsText(file,'UTF-8');};f.click();}
-window.importSpeeldagenCSV=function(){/*zelfde als origineel, verkort voor ruimte*/}
+window.importSpeeldagenCSV=function(){}
 function parseSpeeldagenCSVMetKopteksten(csvText){const l=csvText.split(/\r\n|\n/),s=[];for(let i=1;i<l.length;i++){const line=l[i].trim();if(!line)continue;const p=line.split(';');if(p.length>=2&&!isNaN(parseInt(p[0]))&&!isNaN(parseInt(p[1]))){const d=new Date((parseInt(p[1])>=60?-2:-1)*24*60*60*1000+new Date(1900,0,1).getTime());s.push({volgnummer:parseInt(p[0]),excelDatum:parseInt(p[1]),jsDatum:d,displayDatum:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,fullDate:`${['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'][d.getDay()]} ${d.getDate()} ${['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'][d.getMonth()]} ${d.getFullYear()}`});}}s.sort((a,b)=>a.volgnummer-b.volgnummer);return s;}
 function savePlayersToStorage(){localStorage.setItem('biljartPlayers',JSON.stringify(state.players));}
 window.clearAllPlayers=function(){if(confirm("ALLE spelers verwijderen?")){state.players=[];savePlayersToStorage();loadPlayersManagementTab();}}
-window.loadSpeeldagenManagementTab=function(){/*zelfde logica, aangepast voor nieuwe UI*/ const c=document.getElementById('tabContentSpeeldagen');updateSpeeldagenBadge();if(!state.speeldagen?.length){const s=localStorage.getItem('biljartSpeeldagen');if(s)try{state.speeldagen=JSON.parse(s);}catch(e){state.speeldagen=[];}}const tp=state.speeldagen.length;c.innerHTML=`<div class="speeldagen-management-container"><div style="background:#2c3e50;border-left:4px solid #e67e22;padding:15px;margin-bottom:20px;border-radius:8px;"><h4>📅 Google Sheets Speeldagen</h4><button onclick="refreshSpeeldagenFromGoogleSheet()" style="background:#e67e22;color:white;border:none;padding:10px 15px;border-radius:5px;cursor:pointer;margin-top:10px;">🔄 Herlaad</button></div><div class="stats-summary"><div class="stats-item"><div>Totaal</div><div class="stats-value">${tp}</div></div></div><div class="speeldagen-list-container"><h3 style="margin-bottom:20px;">📋 Speeldagen (${tp})</h3><div class="speeldagen-list-header"><div>Volgnr</div><div>Datum</div><div>Excel Datum</div><div>Acties</div></div><div id="speeldagenListContent">${tp?'':'<div class="empty-speeldagen-message">Geen speeldagen</div>'}</div></div></div>`;if(tp>0)renderSpeeldagenList();}
+window.loadSpeeldagenManagementTab=function(){ const c=document.getElementById('tabContentSpeeldagen');updateSpeeldagenBadge();if(!state.speeldagen?.length){const s=localStorage.getItem('biljartSpeeldagen');if(s)try{state.speeldagen=JSON.parse(s);}catch(e){state.speeldagen=[];}}const tp=state.speeldagen.length;c.innerHTML=`<div class="speeldagen-management-container"><div style="background:#2c3e50;border-left:4px solid #e67e22;padding:15px;margin-bottom:20px;border-radius:8px;"><h4>📅 Google Sheets Speeldagen</h4><button onclick="refreshSpeeldagenFromGoogleSheet()" style="background:#e67e22;color:white;border:none;padding:10px 15px;border-radius:5px;cursor:pointer;margin-top:10px;">🔄 Herlaad</button></div><div class="stats-summary"><div class="stats-item"><div>Totaal</div><div class="stats-value">${tp}</div></div></div><div class="speeldagen-list-container"><h3 style="margin-bottom:20px;">📋 Speeldagen (${tp})</h3><div class="speeldagen-list-header"><div>Volgnr</div><div>Datum</div><div>Excel Datum</div><div>Acties</div></div><div id="speeldagenListContent">${tp?'':'<div class="empty-speeldagen-message">Geen speeldagen</div>'}</div></div></div>`;if(tp>0)renderSpeeldagenList();}
 function renderSpeeldagenList(){const c=document.getElementById('speeldagenListContent');if(!c)return;c.innerHTML=state.speeldagen.map((s,i)=>`<div class="speeldag-row"><div><span class="speeldag-volgnummer">${s.volgnummer}</span></div><div><div class="date-full-format">${s.fullDate}</div></div><div>${s.excelDatum||'-'}</div><div class="speeldag-actions"><button class="delete-btn" onclick="deleteSpeeldag(${i})">🗑️ Verwijder</button></div></div>`).join('');}
 window.addNewSpeeldag=function(){alert("Functie gereserveerd voor UI integratie.");}
 window.deleteSpeeldag=function(i){if(i<0||i>=state.speeldagen.length)return;if(!confirm(`Speeldag ${state.speeldagen[i].volgnummer} verwijderen?`))return;state.speeldagen.splice(i,1);localStorage.setItem('biljartSpeeldagen',JSON.stringify(state.speeldagen));renderSpeeldagenList();updateSpeeldagenBadge();}
@@ -1313,7 +1229,7 @@ updateTabBadges();
 initPresenterControls();
 showPage(1);
 }
-async function loadSpeeldagenFromGoogleSheet(){/*zelfde als origineel*/alert("Functie beschikbaar in volledige versie.");return false;}
+async function loadSpeeldagenFromGoogleSheet(){alert("Functie beschikbaar in volledige versie.");return false;}
 window.refreshSpeeldagenFromGoogleSheet=async function(){if(confirm('Speeldagen herladen?')){if(await loadSpeeldagenFromGoogleSheet()&&state.currentMatchesTab==='speeldagen')loadSpeeldagenManagementTab();}}
 </script>
 <script src="stats.js"></script>
