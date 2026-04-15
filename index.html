@@ -419,15 +419,13 @@
 		    align-items: center;
 		    justify-content: center;
 		}
-/*
-        /* Container voor de zwevende beurtpunten boven de spelerskaarten */
-        .current-score-container {
-            position: relative;
-            width: 100%;
-            height: 80px;
-            margin-bottom: 10px;
-        }
-*/
+		/* Container voor de zwevende beurtpunten boven de spelerskaarten */
+		.current-score-container {
+		    position: relative;
+		    width: 100%;
+		    height: 80px;      /* genoeg ruimte voor de zwevende balk */
+		    margin-bottom: 10px;
+		}
         /* Naam bovenaan in het current-score-display */
         .current-score-name {
             font-size: 1.2rem;
@@ -2651,27 +2649,18 @@
             <!-- HUIDIGE BEURT IN HET MIDDEN MET WIT/GEEL SCORES -->
             <div class="current-turn-container">
                 <!-- WIT SPELER SCORE (LINKS) -->
-                <!-- WIT SPELER (links) -->
-				<div class="side-score-display white" id="whitePlayerDisplay">
+                <div class="side-score-display white" id="whitePlayerDisplay">
 				    <div class="side-score-value" id="whitePlayerScore">0</div>
-				    <div class="current-score-display player1-current inactive" id="player1CurrentScore">
-				        <div class="current-score-name" id="player1ScoreName">Speler 1</div>
-				        <div class="current-score-value">0</div>
-				    </div>
 				</div>
                 
                 <!-- HUIDIGE BEURT INFO (MIDDEN) -->
                 <div class="current-turn" id="currentPlayerDisplay"></div>
                 
                 <!-- GEEL SPELER SCORE (RECHTS) -->
-                <!-- GEEL SPELER (rechts) -->
-				<div class="side-score-display yellow" id="yellowPlayerDisplay">
+                <div class="side-score-display yellow" id="yellowPlayerDisplay">
 				    <div class="side-score-value" id="yellowPlayerScore">0</div>
-				    <div class="current-score-display player2-current inactive" id="player2CurrentScore">
-				        <div class="current-score-name" id="player2ScoreName">Speler 2</div>
-				        <div class="current-score-value">0</div>
-				    </div>
 				</div>
+            </div>
             
             <!-- NIEUWE CURRENT SCORE DISPLAY BOVEN SPELERKAARTEN -->
             <div class="current-score-container">
