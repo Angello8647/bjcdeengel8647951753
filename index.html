@@ -72,10 +72,32 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .cell-value { font-size: 2.2rem; font-weight: bold; color: white; line-height: 1.1; }
 
 /* Actieve/Dimmed effect ALLEEN voor de huidige beurtpunten */
+/* Reset generieke active-player style voor beurtpunten */
 .score-cell.active-player {
-    border-color: #e74c3c; background: rgba(231, 76, 60, 0.25);
-    box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); transform: scale(1.04);
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
+
+/* Speler 1 aan de beurt → WIT */
+#p1CurrentCell.active-player {
+    background: white !important;
+    border-color: #3182ce !important;
+    box-shadow: 0 0 12px rgba(49, 130, 206, 0.4) !important;
+    transform: scale(1.03) !important;
+}
+#p1CurrentCell.active-player .cell-label,
+#p1CurrentCell.active-player .cell-value { color: #000 !important; }
+
+/* Speler 2 aan de beurt → GEEL */
+#p2CurrentCell.active-player {
+    background: #f1c40f !important;
+    border-color: #3182ce !important;
+    box-shadow: 0 0 12px rgba(241, 196, 15, 0.5) !important;
+    transform: scale(1.03) !important;
+}
+#p2CurrentCell.active-player .cell-label,
+#p2CurrentCell.active-player .cell-value { color: #000 !important; }
 .score-cell.active-player .cell-label { color: #ff6b6b; }
 .score-cell.turn-hidden {
     visibility: hidden !important;
@@ -480,7 +502,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 <!-- NIEUWE HORIZONTALE SCORE LAYOUT -->
 <div class="scoring-row-container">
     <div class="score-cell current-turn-cell" id="p1CurrentCell">
-        <div class="cell-label">Beurt P1</div>
+        <div class="cell-label">Punten deze beurt</div>
         <div class="cell-value" id="p1CurrentVal">0</div>
     </div>
     <div class="score-cell total-cell" id="p1TotalCell">
@@ -493,7 +515,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
         <div class="cell-value" id="p2TotalVal">0</div>
     </div>
     <div class="score-cell current-turn-cell" id="p2CurrentCell">
-        <div class="cell-label">Beurt P2</div>
+        <div class="cell-label">Punten deze beurt</div>
         <div class="cell-value" id="p2CurrentVal">0</div>
     </div>
 </div>
