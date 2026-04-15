@@ -12,1063 +12,238 @@
 <title>Biljart Score App</title>
 <style>
 /* ========== LOGIN STYLES ========== */
-#loginPage {
-background: linear-gradient(135deg, #2c3e50, #4a6491);
-font-family: Arial, sans-serif;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-margin: 0;
-padding: 20px;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-z-index: 1000;
-}
-.login-container {
-background: white;
-padding: 40px;
-border-radius: 15px;
-box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-text-align: center;
-max-width: 400px;
-width: 100%;
-}
-.login-container h1 {
-color: #2c3e50;
-margin-bottom: 30px;
-}
-.password-input {
-width: 100%;
-padding: 15px;
-font-size: 18px;
-border: 2px solid #3498db;
-border-radius: 8px;
-margin-bottom: 20px;
-text-align: center;
-}
-.login-btn {
-background: #2ecc71;
-color: white;
-border: none;
-padding: 15px 30px;
-font-size: 18px;
-border-radius: 8px;
-cursor: pointer;
-width: 100%;
-transition: background 0.3s;
-}
-.login-btn:hover {
-background: #27ae60;
-}
-.error-message {
-color: #e74c3c;
-margin-top: 15px;
-display: none;
-}
-.app-info {
-margin-top: 25px;
-color: #7f8c8d;
-font-size: 14px;
-}
-@keyframes shake {
-0%, 100% { transform: translateX(0); }
-25% { transform: translateX(-10px); }
-75% { transform: translateX(10px); }
-}
+#loginPage { background: linear-gradient(135deg, #2c3e50, #4a6491); font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; }
+.login-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; max-width: 400px; width: 100%; }
+.login-container h1 { color: #2c3e50; margin-bottom: 30px; }
+.password-input { width: 100%; padding: 15px; font-size: 18px; border: 2px solid #3498db; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+.login-btn { background: #2ecc71; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; width: 100%; transition: background 0.3s; }
+.login-btn:hover { background: #27ae60; }
+.error-message { color: #e74c3c; margin-top: 15px; display: none; }
+.app-info { margin-top: 25px; color: #7f8c8d; font-size: 14px; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
 /* ========== APP STYLES ========== */
-#appContainer {
-display: none;
-}
-body.logged-in #loginPage {
-display: none;
-}
-body.logged-in #appContainer {
-display: block;
-}
-/* ALLE STIJLEN VAN DE BILJART APP */
+#appContainer { display: none; }
+body.logged-in #loginPage { display: none; }
+body.logged-in #appContainer { display: block; }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-body {
-background: #2c3e50;
-color: black;
-position: fixed;
-width: 100%;
-height: 100%;
-overflow: hidden !important;
-}
-.page {
-display: none;
-padding: 10px;
-overflow-y: auto !important;
-height: calc(100vh - 20px) !important;
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-}
+body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 100%; overflow: hidden !important; }
+.page { display: none; padding: 10px; overflow-y: auto !important; height: calc(100vh - 20px) !important; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
 .active { display: block; }
-.header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 15px;
-padding-bottom: 10px;
-border-bottom: 2px solid #34495e;
-}
-.header h1 {
-font-size: 1.5em;
-color: white;
-margin: 0;
-}
-.back-btn {
-background: #7f8c8d;
-color: white;
-border: none;
-padding: 8px 15px;
-border-radius: 5px;
-cursor: pointer;
-font-size: 0.9em;
-}
-/* NIEUWE HEADER VOOR PAGE5 (SCORING) */
-#page5 .header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 20px;
-margin-bottom: 20px;
-}
-#page5 .header h1 {
-font-size: 2.2rem;
-margin: 0;
-flex: 1;
-text-align: center;
-color: white;
-}
-#page5 .header .action-btn {
-font-size: 1.3rem;
-padding: 12px 24px;
-min-width: 180px;
-border: none;
-border-radius: 10px;
-cursor: pointer;
-font-weight: bold;
-}
-#page5 .header .undo-btn {
-background: #3498db;
-color: white;
-}
-#page5 .header .confirm-btn {
-background: linear-gradient(135deg, #e74c3c, #c0392b);
-color: white;
-}
-/* Verberg de oude action-buttons div, maar behoud hem in de DOM */
-#page5 .action-buttons {
-display: none;
-}
-/* Nieuwe style voor header knoppen tijdens match */
-.header-buttons-hidden {
-display: none !important;
-}
-.home-btn {
-background: #3498db;
-color: white;
-border: none;
-padding: 8px 15px;
-border-radius: 5px;
-cursor: pointer;
-font-size: 0.9em;
-margin-right: 10px;
-}
-.match-card {
-background: #34495e;
-border-radius: 10px;
-padding: 15px;
-margin: 10px 0;
-cursor: pointer;
-position: relative;
-}
-.match-card.completed {
-opacity: 0.7;
-background: #2c3e50;
-border-left: 5px solid #27ae60;
-}
-.match-card.downloaded {
-opacity: 0.6;
-background: #2c3e50;
-border-left: 5px solid #3498db;
-}
-.delete-match-btn {
-position: absolute;
-top: 10px;
-right: 10px;
-background: #e74c3c;
-color: white;
-border: none;
-width: 30px;
-height: 30px;
-border-radius: 50%;
-cursor: pointer;
-font-size: 14px;
-display: flex;
-align-items: center;
-justify-content: center;
-}
-.players-container {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 10px;
-margin: 10px 0;
-}
-.player-card {
-border-radius: 15px;
-padding: 15px;
-font-size: 1.1em;
-transition: all 0.3s;
-min-height: 280px;
-display: flex;
-flex-direction: column;
-position: relative;
-}
-.player-active {
-border: 4px solid #e74c3c;
-box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
-}
-.player-inactive {
-opacity: 0.7;
-border: 4px solid transparent;
-}
-.player-white {
-background: white;
-color: black;
-}
-.player-yellow {
-background: #f1c40f;
-color: black;
-}
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #34495e; }
+.header h1 { font-size: 1.5em; color: white; margin: 0; }
+.back-btn { background: #7f8c8d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9em; }
+#page5 .header { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 20px; }
+#page5 .header h1 { font-size: 2.2rem; margin: 0; flex: 1; text-align: center; color: white; }
+#page5 .header .action-btn { font-size: 1.3rem; padding: 12px 24px; min-width: 180px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+#page5 .header .undo-btn { background: #3498db; color: white; }
+#page5 .header .confirm-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+#page5 .action-buttons { display: none; }
+.home-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9em; margin-right: 10px; }
+.match-card { background: #34495e; border-radius: 10px; padding: 15px; margin: 10px 0; cursor: pointer; position: relative; }
+.match-card.completed { opacity: 0.7; background: #2c3e50; border-left: 5px solid #27ae60; }
+.match-card.downloaded { opacity: 0.6; background: #2c3e50; border-left: 5px solid #3498db; }
+.delete-match-btn { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.players-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.player-card { border-radius: 15px; padding: 15px; font-size: 1.1em; transition: all 0.3s; min-height: 280px; display: flex; flex-direction: column; position: relative; }
+.player-active { border: 4px solid #e74c3c; box-shadow: 0 0 10px rgba(231, 76, 60, 0.5); }
+.player-inactive { opacity: 0.7; border: 4px solid transparent; }
+.player-white { background: white; color: black; }
+.player-yellow { background: #f1c40f; color: black; }
 
 /* ========== NIEUWE HORIZONTALE SCORE LAYOUT STYLES ========== */
 .scoring-row-container {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    gap: 10px;
-    margin: 15px 0;
-    padding: 0 10px;
-    flex-wrap: wrap;
+    display: flex; justify-content: center; align-items: stretch; gap: 12px;
+    margin: 15px 0; padding: 0 10px; flex-wrap: wrap;
 }
 .score-cell {
-    flex: 1;
-    min-width: 90px;
-    max-width: 150px;
-    border-radius: 14px;
-    padding: 12px 6px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: rgba(44, 62, 80, 0.8);
-    border: 2px solid #34495e;
+    flex: 1; min-width: 80px; max-width: 140px; border-radius: 14px;
+    padding: 10px 6px; text-align: center; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    background: rgba(44, 62, 80, 0.8); border: 2px solid #34495e;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 .score-cell.center-info {
-    flex: 1.8;
-    min-width: 200px;
-    max-width: 320px;
-    background: rgba(52, 152, 219, 0.15);
-    border-color: #3498db;
+    flex: 1.8; min-width: 180px; max-width: 300px;
+    background: rgba(52, 152, 219, 0.15); border-color: #3498db;
 }
-.cell-label {
-    font-size: 0.85rem;
-    color: #bdc3c7;
-    margin-bottom: 4px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.cell-value {
-    font-size: 2.4rem;
-    font-weight: bold;
-    color: white;
-    line-height: 1.1;
-}
+.cell-label { font-size: 0.8rem; color: #bdc3c7; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+.cell-value { font-size: 2.2rem; font-weight: bold; color: white; line-height: 1.1; }
 
-/* Actieve speler highlight */
+/* Actieve/Dimmed effect ALLEEN voor de huidige beurtpunten */
 .score-cell.active-player {
-    border-color: #e74c3c;
-    background: rgba(231, 76, 60, 0.15);
-    box-shadow: 0 0 15px rgba(231, 76, 60, 0.3);
-    transform: scale(1.03);
+    border-color: #e74c3c; background: rgba(231, 76, 60, 0.25);
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); transform: scale(1.04);
 }
-.score-cell.active-player .cell-label {
-    color: #ff6b6b;
-}
-/* Inactieve speler dempen */
-.score-cell.dimmed {
-    opacity: 0.45;
-    transform: scale(0.95);
-    filter: grayscale(0.3);
+.score-cell.active-player .cell-label { color: #ff6b6b; }
+.score-cell.dimmed { opacity: 0.35; transform: scale(0.96); filter: grayscale(0.4); }
+
+/* TOTAALPUNTEN: ALTIJD ZICHTBAAR MET ORIGINELE WIT/GELE OPMAAK */
+#p1TotalCell { background: white !important; color: black !important; border: 3px solid #3182ce !important; }
+#p2TotalCell { background: #f1c40f !important; color: black !important; border: 3px solid #3182ce !important; }
+#p1TotalCell .cell-label, #p2TotalCell .cell-label { color: #2d3748 !important; }
+#p1TotalCell .cell-value, #p2TotalCell .cell-value { color: #000 !important; font-size: 4rem !important; font-weight: 900; }
+/* Voorkom dat totaalpunten meedoen met active/dimmed classes */
+#p1TotalCell.active-player, #p1TotalCell.dimmed,
+#p2TotalCell.active-player, #p2TotalCell.dimmed {
+    opacity: 1 !important; transform: none !important; filter: none !important;
+    box-shadow: none !important; background: inherit !important;
 }
 
 @media (max-width: 650px) {
     .scoring-row-container { gap: 6px; }
     .score-cell { min-width: 70px; padding: 8px 4px; }
-    .cell-value { font-size: 1.7rem; }
+    .cell-value { font-size: 1.8rem; }
+    #p1TotalCell .cell-value, #p2TotalCell .cell-value { font-size: 2.8rem !important; }
     .score-cell.center-info { min-width: 140px; }
 }
 /* ========== EINDE NIEUWE LAYOUT STYLES ========== */
 
 /* SCORE CONTROLS */
-.score-controls {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin: 20px 0;
-padding: 0 15px;
-}
-.score-btn {
-width: 80px;
-height: 80px;
-border-radius: 50%;
-border: none;
-font-size: 35px;
-cursor: pointer;
-display: flex;
-align-items: center;
-justify-content: center;
-font-weight: bold;
-transition: all 0.3s;
-flex-shrink: 0;
-}
-.score-btn.plus-btn {
-background: #2ecc71;
-color: white;
-}
-.score-btn.minus-btn {
-background: #e74c3c;
-color: white;
-}
-.score-middle {
-display: flex;
-align-items: center;
-justify-content: center;
-flex-grow: 1;
-}
+.score-controls { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; padding: 0 15px; }
+.score-btn { width: 80px; height: 80px; border-radius: 50%; border: none; font-size: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: all 0.3s; flex-shrink: 0; }
+.score-btn.plus-btn { background: #2ecc71; color: white; }
+.score-btn.minus-btn { background: #e74c3c; color: white; }
+.score-middle { display: flex; align-items: center; justify-content: center; flex-grow: 1; }
 .left-plus { margin-left: 5px; }
 .right-plus { margin-right: 5px; }
 
-/* Oude styles behouden voor backwards compatibiliteit (niet meer gebruikt in HTML) */
-.current-turn-container, .current-score-container, .current-score-display, .current-turn, .side-score-display {
-    display: none !important;
-}
+/* Oude styles behouden voor backwards compatibiliteit */
+.current-turn-container, .current-score-container, .current-score-display, .current-turn, .side-score-display { display: none !important; }
 
-/* ===== KLEINERE "EINDE BEURT" KNOP (AANGEPAST) ===== */
-.action-btn {
-padding: 12px 20px;
-font-size: 1.1em;
-border: none;
-border-radius: 10px;
-cursor: pointer;
-font-weight: bold;
-letter-spacing: 0.5px;
-}
-.confirm-btn {
-background: linear-gradient(135deg, #e74c3c, #c0392b);
-color: white;
-border: none;
-border-radius: 10px;
-padding: 12px 20px;
-font-size: 1.1em;
-font-weight: bold;
-letter-spacing: 0.5px;
-cursor: pointer;
-transition: all 0.3s ease;
-box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
-width: 280px;
-max-width: 90%;
-min-width: 200px;
-}
-.confirm-btn:hover {
-background: linear-gradient(135deg, #c0392b, #a93226);
-transform: translateY(-2px);
-box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
-}
-.confirm-btn:active {
-transform: translateY(1px);
-box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
-}
-.undo-btn {
-background: #3498db;
-color: white;
-border: none;
-border-radius: 10px;
-padding: 12px 20px;
-font-size: 1.1em;
-font-weight: bold;
-letter-spacing: 0.5px;
-cursor: pointer;
-transition: all 0.3s ease;
-box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-width: 180px;
-max-width: 90%;
-min-width: 120px;
-}
-.undo-btn:hover {
-background: #2980b9;
-transform: translateY(-2px);
-box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
-}
-.undo-btn:active {
-transform: translateY(1px);
-box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
-}
-.undo-btn:disabled {
-background: #7f8c8d;
-cursor: not-allowed;
-transform: none;
-box-shadow: none;
-}
-.action-buttons {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 10px;
-margin: 5px 0 25px 0;
-padding: 0 20px;
-}
-.match-ended {
-background: #27ae60;
-color: white;
-padding: 12px;
-border-radius: 8px;
-text-align: center;
-margin: 10px;
-font-weight: bold;
-}
-.stats-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 8px;
-margin-top: 8px;
-margin-bottom: 10px;
-}
-.stat-item {
-background: rgba(255,255,255,0.05);
-padding: 8px;
-border-radius: 5px;
-font-size: 0.85em;
-display: flex;
-flex-direction: column;
-align-items: center;
-text-align: center;
-}
+/* ===== KNOBBEN & UI ===== */
+.action-btn { padding: 12px 20px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; letter-spacing: 0.5px; }
+.confirm-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 10px; padding: 12px 20px; font-size: 1.1em; font-weight: bold; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3); width: 280px; max-width: 90%; min-width: 200px; }
+.confirm-btn:hover { background: linear-gradient(135deg, #c0392b, #a93226); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4); }
+.undo-btn { background: #3498db; color: white; border: none; border-radius: 10px; padding: 12px 20px; font-size: 1.1em; font-weight: bold; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3); width: 180px; max-width: 90%; min-width: 120px; }
+.undo-btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4); }
+.undo-btn:disabled { background: #7f8c8d; cursor: not-allowed; transform: none; box-shadow: none; }
+.action-buttons { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 5px 0 25px 0; padding: 0 20px; }
+.match-ended { background: #27ae60; color: white; padding: 12px; border-radius: 8px; text-align: center; margin: 10px; font-weight: bold; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; margin-bottom: 10px; }
+.stat-item { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 5px; font-size: 0.85em; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .stat-icon { font-size: 1.2em; margin-bottom: 3px; }
 .stat-value { font-weight: bold; font-size: 1.1em; }
-.turns-scroll-container {
-flex-grow: 1;
-margin-top: 10px;
-overflow-y: auto;
-background: rgba(0,0,0,0.05);
-border-radius: 8px;
-padding: 8px;
-max-height: 200px;
-}
+.turns-scroll-container { flex-grow: 1; margin-top: 10px; overflow-y: auto; background: rgba(0,0,0,0.05); border-radius: 8px; padding: 8px; max-height: 200px; }
 .turns-list { display: flex; flex-direction: column; gap: 3px; }
-.turn-row {
-display: flex;
-justify-content: space-between;
-padding: 5px 8px;
-background: rgba(255,255,255,0.1);
-border-radius: 4px;
-font-size: 0.85em;
-}
-.turn-row:first-child {
-background: rgba(52, 152, 219, 0.2);
-font-weight: bold;
-}
+.turn-row { display: flex; justify-content: space-between; padding: 5px 8px; background: rgba(255,255,255,0.1); border-radius: 4px; font-size: 0.85em; }
+.turn-row:first-child { background: rgba(52, 152, 219, 0.2); font-weight: bold; }
 .no-matches { text-align: center; padding: 40px; color: #95a5a6; }
 .match-info { font-size: 0.85em; color: #bdc3c7; margin-top: 5px; }
-.file-upload-container {
-background: #34495e;
-border-radius: 10px;
-padding: 20px;
-margin: 15px 0;
-text-align: center;
-}
-.download-btn {
-background: #2ecc71;
-color: white;
-border: none;
-padding: 12px 25px;
-border-radius: 8px;
-cursor: pointer;
-font-size: 16px;
-margin: 5px;
-}
-.info-box {
-background: #3498db;
-color: white;
-padding: 10px;
-border-radius: 5px;
-margin: 10px 0;
-font-size: 0.9em;
-}
-.ball-selection-container {
-background: #34495e;
-border-radius: 10px;
-padding: 30px;
-margin: 20px auto;
-max-width: 500px;
-text-align: center;
-}
-.ball-selection-title {
-font-size: 1.3em;
-margin-bottom: 25px;
-color: #ecf0f1;
-}
-.ball-option {
-display: block;
-margin: 15px 0;
-cursor: pointer;
-text-align: center;
-}
-.ball-circle {
-width: 130px;
-height: 130px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 1.5em;
-font-weight: bold;
-margin: 0 auto 10px;
-border: 4px solid transparent;
-transition: all 0.3s;
-}
+.ball-selection-container { background: #34495e; border-radius: 10px; padding: 30px; margin: 20px auto; max-width: 500px; text-align: center; }
+.ball-selection-title { font-size: 1.3em; margin-bottom: 25px; color: #ecf0f1; }
+.ball-option { display: block; margin: 15px 0; cursor: pointer; text-align: center; }
+.ball-circle { width: 130px; height: 130px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; margin: 0 auto 10px; border: 4px solid transparent; transition: all 0.3s; }
 .ball-circle.white { background: white; color: black; }
 .ball-circle.yellow { background: #f1c40f; color: black; }
-.ball-circle.selected {
-border: none !important;
-outline: none;
-box-shadow: 0 0 25px rgba(255,255,255,0.9), inset 0 -3px 10px rgba(0,0,0,0.1), inset 0 3px 15px rgba(255,255,255,0.7);
-transform: scale(1.05);
-position: relative;
-overflow: hidden;
-}
-.ball-circle.selected::after {
-content: '';
-position: absolute;
-top: -50%;
-left: -50%;
-width: 200%;
-height: 200%;
-background: radial-gradient(circle at 30% 30%,
-rgba(255, 255, 255, 0.7) 0%,
-rgba(255, 255, 255, 0.2) 40%,
-transparent 80%);
-opacity: 0.4;
-pointer-events: none;
-border-radius: 50%;
-}
-.ball-option-label { font-size: 1em; margin-top: 5px; }
-.start-match-btn {
-background: #2ecc71;
-color: white;
-border: none;
-padding: 15px 30px;
-border-radius: 8px;
-font-size: 18px;
-cursor: pointer;
-margin-top: 30px;
-}
+.ball-circle.selected { border: none !important; outline: none; box-shadow: 0 0 25px rgba(255,255,255,0.9), inset 0 -3px 10px rgba(0,0,0,0.1), inset 0 3px 15px rgba(255,255,255,0.7); transform: scale(1.05); position: relative; overflow: hidden; }
+.ball-circle.selected::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 80%); opacity: 0.4; pointer-events: none; border-radius: 50%; }
+.start-match-btn { background: #2ecc71; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 30px; }
 .disabled-btn { background: #7f8c8d; cursor: not-allowed; }
-.selection-container {
-background: #34495e;
-border-radius: 10px;
-padding: 30px;
-margin: 20px auto;
-max-width: 600px;
-text-align: center;
-}
+.selection-container { background: #34495e; border-radius: 10px; padding: 30px; margin: 20px auto; max-width: 600px; text-align: center; }
 .selection-title { font-size: 1.4em; margin-bottom: 30px; color: #ecf0f1; }
-.date-input {
-width: 100%;
-padding: 15px;
-font-size: 1.1em;
-border-radius: 8px;
-border: 2px solid #3498db;
-background: #2c3e50;
-color: white;
-margin-bottom: 20px;
-text-align: center;
-}
-.next-btn {
-background: #2ecc71;
-color: white;
-border: none;
-padding: 15px 40px;
-border-radius: 8px;
-font-size: 18px;
-cursor: pointer;
-margin-top: 20px;
-}
+.date-input { width: 100%; padding: 15px; font-size: 1.1em; border-radius: 8px; border: 2px solid #3498db; background: #2c3e50; color: white; margin-bottom: 20px; text-align: center; }
+.next-btn { background: #2ecc71; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 20px; }
 .header-buttons { display: flex; gap: 10px; align-items: center; }
 .matches-list-container { margin-top: 20px; }
-.matches-list-title {
-font-size: 1.2em;
-margin-bottom: 15px;
-color: #ecf0f1;
-border-bottom: 2px solid #3498db;
-padding-bottom: 8px;
-}
-.status-badge {
-display: inline-block;
-padding: 3px 8px;
-border-radius: 12px;
-font-size: 0.75em;
-font-weight: bold;
-margin-left: 10px;
-}
+.matches-list-title { font-size: 1.2em; margin-bottom: 15px; color: #ecf0f1; border-bottom: 2px solid #3498db; padding-bottom: 8px; }
+.status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 10px; }
 .status-pending { background: #f39c12; color: white; }
 .status-completed { background: #27ae60; color: white; }
 .status-downloaded { background: #3498db; color: white; }
-.clear-all-btn {
-background: #e74c3c;
-color: white;
-border: none;
-padding: 10px 20px;
-border-radius: 8px;
-cursor: pointer;
-margin: 10px 0;
-font-size: 14px;
-}
+.clear-all-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 10px 0; font-size: 14px; }
 .match-stats { font-size: 0.8em; color: #95a5a6; margin-top: 5px; }
-.download-section {
-background: #2c3e50;
-border-radius: 10px;
-padding: 20px;
-margin-top: 20px;
-border-left: 4px solid #2ecc71;
-}
+.download-section { background: #2c3e50; border-radius: 10px; padding: 20px; margin-top: 20px; border-left: 4px solid #2ecc71; }
 .download-section h3 { color: #2ecc71; margin-bottom: 15px; }
-.player-selection-container {
-background: #34495e;
-border-radius: 10px;
-padding: 20px;
-margin: 15px 0;
-}
-.player-selection-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 15px;
-margin: 20px 0;
-}
-.player-select-box {
-background: #2c3e50;
-border-radius: 8px;
-padding: 15px;
-text-align: center;
-cursor: pointer;
-transition: all 0.3s;
-border: 2px solid transparent;
-}
+.player-selection-container { background: #34495e; border-radius: 10px; padding: 20px; margin: 15px 0; }
+.player-selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+.player-select-box { background: #2c3e50; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
 .player-select-box:hover { background: #3c4e60; transform: translateY(-2px); }
-.player-select-box.selected {
-background: linear-gradient(135deg, #1f4e79, #2e6da4);
-border: 2px solid #163a5c;
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-color: #ffffff;
-transition: all 0.2s ease-in-out;
-}
-.player-select-box.selected:hover {
-background: linear-gradient(135deg, #255d91, #357ab8);
-transform: translateY(-1px);
-}
-.player-select-box h3 {
-background-color: rgba(255, 255, 255, 0.18);
-display: inline-block;
-padding: 6px 16px;
-border-radius: 999px;
-margin-top: 0;
-margin-bottom: 0;
-color: #ffffff;
-font-weight: 600;
-letter-spacing: 0.3px;
-backdrop-filter: blur(4px);
-}
+.player-select-box.selected { background: linear-gradient(135deg, #1f4e79, #2e6da4); border: 2px solid #163a5c; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); color: #ffffff; transition: all 0.2s ease-in-out; }
+.player-select-box h3 { background-color: rgba(255, 255, 255, 0.18); display: inline-block; padding: 6px 16px; border-radius: 999px; margin-top: 0; margin-bottom: 0; color: #ffffff; font-weight: 600; letter-spacing: 0.3px; backdrop-filter: blur(4px); }
 .player-select-box p { margin: 5px 0; font-size: 0.9em; color: #bdc3c7; }
-.target-input {
-width: 100%;
-padding: 10px;
-margin: 10px 0;
-border-radius: 5px;
-border: 2px solid #3498db;
-background: #2c3e50;
-color: white;
-font-size: 1.1em;
-text-align: center;
-}
-.create-match-btn {
-background: #2ecc71;
-color: white;
-border: none;
-padding: 15px 30px;
-border-radius: 8px;
-font-size: 18px;
-cursor: pointer;
-margin-top: 20px;
-width: 100%;
-}
+.target-input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 2px solid #3498db; background: #2c3e50; color: white; font-size: 1.1em; text-align: center; }
+.create-match-btn { background: #2ecc71; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 20px; width: 100%; }
 .create-match-btn:disabled { background: #7f8c8d; cursor: not-allowed; }
-.action-btn-small {
-padding: 6px 12px;
-border: none;
-border-radius: 5px;
-color: white;
-cursor: pointer;
-font-size: 0.9em;
-transition: all 0.3s;
-}
+.action-btn-small { padding: 6px 12px; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 0.9em; transition: all 0.3s; }
 .action-btn-small:hover { opacity: 0.8; transform: scale(1.05); }
-.matches-tabs {
-display: flex;
-border-bottom: 2px solid #34495e;
-margin-bottom: 20px;
-flex-wrap: wrap;
-}
-.tab-btn {
-padding: 12px 24px;
-background: #2c3e50;
-border: none;
-color: #ecf0f1;
-cursor: pointer;
-font-size: 1em;
-transition: all 0.3s;
-border-radius: 8px 8px 0 0;
-margin-right: 5px;
-margin-bottom: 5px;
-display: flex;
-align-items: center;
-gap: 8px;
-}
+.matches-tabs { display: flex; border-bottom: 2px solid #34495e; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn { padding: 12px 24px; background: #2c3e50; border: none; color: #ecf0f1; cursor: pointer; font-size: 1em; transition: all 0.3s; border-radius: 8px 8px 0 0; margin-right: 5px; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
 .tab-btn:hover { background: #34495e; }
 .tab-btn.active { background: #3498db; color: white; font-weight: bold; }
-.tab-btn .badge {
-background: rgba(255,255,255,0.2);
-padding: 2px 8px;
-border-radius: 10px;
-font-size: 0.8em;
-}
+.tab-btn .badge { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.8em; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
-.match-actions {
-display: flex;
-gap: 10px;
-margin-top: 15px;
-flex-wrap: wrap;
-}
-.new-match-btn {
-background: #3498db;
-color: white;
-border: none;
-padding: 12px 25px;
-border-radius: 8px;
-cursor: pointer;
-font-size: 16px;
-margin: 20px auto;
-display: block;
-}
-.dynamic-needed {
-position: absolute;
-top: -25px;
-left: 0;
-right: 0;
-background: linear-gradient(135deg, #e74c3c, #c0392b);
-color: white;
-padding: 8px 15px;
-border-radius: 8px;
-text-align: center;
-font-weight: bold;
-font-size: 1.1em;
-box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-z-index: 10;
-animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-0% { transform: scale(1); }
-50% { transform: scale(1.05); }
-100% { transform: scale(1); }
-}
+.match-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+.new-match-btn { background: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 20px auto; display: block; }
+.dynamic-needed { position: absolute; top: -25px; left: 0; right: 0; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1em; box-shadow: 0 4px 6px rgba(0,0,0,0.2); z-index: 10; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 /* ========== SPELERS BEHEER STIJLEN ========== */
 .players-management-container { padding: 20px; }
-.player-form-container {
-background: #34495e;
-border-radius: 10px;
-padding: 20px;
-margin-bottom: 30px;
-border-left: 4px solid #3498db;
-}
+.player-form-container { background: #34495e; border-radius: 10px; padding: 20px; margin-bottom: 30px; border-left: 4px solid #3498db; }
 .player-form-container h3 { color: #3498db; margin-bottom: 20px; }
-.form-row {
-display: grid;
-grid-template-columns: 1fr 1fr 1fr auto;
-gap: 15px;
-margin-bottom: 15px;
-align-items: end;
-}
+.form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 15px; align-items: end; }
 .form-group { display: flex; flex-direction: column; }
 .form-group label { margin-bottom: 8px; color: #bdc3c7; font-size: 0.9em; }
-.form-input {
-padding: 12px;
-border-radius: 6px;
-border: 2px solid #3498db;
-background: #2c3e50;
-color: white;
-font-size: 16px;
-}
+.form-input { padding: 12px; border-radius: 6px; border: 2px solid #3498db; background: #2c3e50; color: white; font-size: 16px; }
 .form-input:focus { outline: none; border-color: #2ecc71; }
-.add-player-btn {
-background: #2ecc71;
-color: white;
-border: none;
-padding: 12px 25px;
-border-radius: 6px;
-cursor: pointer;
-font-size: 16px;
-font-weight: bold;
-height: 44px;
-transition: all 0.3s;
-}
+.add-player-btn { background: #2ecc71; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; height: 44px; transition: all 0.3s; }
 .add-player-btn:hover { background: #27ae60; transform: translateY(-2px); }
-.players-list-container {
-background: #34495e;
-border-radius: 10px;
-padding: 20px;
-}
-.players-list-header {
-display: grid;
-grid-template-columns: 2fr 1fr 1fr auto;
-gap: 15px;
-padding: 15px;
-background: #2c3e50;
-border-radius: 8px;
-margin-bottom: 10px;
-font-weight: bold;
-color: #3498db;
-}
-.player-row {
-display: grid;
-grid-template-columns: 2fr 1fr 1fr auto;
-gap: 15px;
-padding: 15px;
-background: rgba(255,255,255,0.05);
-border-radius: 8px;
-margin-bottom: 10px;
-align-items: center;
-transition: all 0.3s;
-}
+.players-list-container { background: #34495e; border-radius: 10px; padding: 20px; }
+.players-list-header { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 15px; padding: 15px; background: #2c3e50; border-radius: 8px; margin-bottom: 10px; font-weight: bold; color: #3498db; }
+.player-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 10px; align-items: center; transition: all 0.3s; }
 .player-row:hover { background: rgba(255,255,255,0.1); }
-.player-row.editing {
-background: rgba(52, 152, 219, 0.1);
-border: 2px solid #3498db;
-}
+.player-row.editing { background: rgba(52, 152, 219, 0.1); border: 2px solid #3498db; }
 .player-actions { display: flex; gap: 10px; }
-.edit-btn, .save-btn {
-background: #3498db;
-color: white;
-border: none;
-padding: 8px 15px;
-border-radius: 5px;
-cursor: pointer;
-font-size: 14px;
-}
-.delete-btn {
-background: #e74c3c;
-color: white;
-border: none;
-padding: 8px 15px;
-border-radius: 5px;
-cursor: pointer;
-font-size: 14px;
-}
-.cancel-btn {
-background: #7f8c8d;
-color: white;
-border: none;
-padding: 8px 15px;
-border-radius: 5px;
-cursor: pointer;
-font-size: 14px;
-}
-.import-export-container {
-display: flex;
-gap: 15px;
-margin-top: 20px;
-flex-wrap: wrap;
-}
-.import-export-btn {
-background: #9b59b6;
-color: white;
-border: none;
-padding: 12px 20px;
-border-radius: 6px;
-cursor: pointer;
-font-size: 15px;
-}
+.edit-btn, .save-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+.delete-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+.cancel-btn { background: #7f8c8d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+.import-export-container { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
 .bulk-actions { display: flex; gap: 10px; margin-bottom: 20px; }
-.bulk-action-btn {
-background: #34495e;
-color: white;
-border: 2px solid #3498db;
-padding: 10px 20px;
-border-radius: 6px;
-cursor: pointer;
-font-size: 14px;
-}
+.bulk-action-btn { background: #34495e; color: white; border: 2px solid #3498db; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; }
 .bulk-action-btn:hover { background: #3498db; }
 .player-search { margin-bottom: 20px; }
-.search-input {
-width: 100%;
-padding: 12px;
-border-radius: 6px;
-border: 2px solid #2ecc71;
-background: #2c3e50;
-color: white;
-font-size: 16px;
-}
-.stats-summary {
-background: #2c3e50;
-border-radius: 8px;
-padding: 15px;
-margin-bottom: 20px;
-display: flex;
-justify-content: space-between;
-color: #bdc3c7;
-}
+.search-input { width: 100%; padding: 12px; border-radius: 6px; border: 2px solid #2ecc71; background: #2c3e50; color: white; font-size: 16px; }
+.stats-summary { background: #2c3e50; border-radius: 8px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; color: #bdc3c7; }
 .stats-item { text-align: center; }
 .stats-value { font-size: 1.5em; color: #2ecc71; font-weight: bold; }
-.empty-players-message {
-text-align: center;
-padding: 40px;
-color: #7f8c8d;
-font-size: 1.1em;
-}
-.editable-input {
-background: transparent;
-border: 2px solid #3498db;
-color: white;
-padding: 8px;
-border-radius: 4px;
-width: 100%;
-}
+.empty-players-message { text-align: center; padding: 40px; color: #7f8c8d; font-size: 1.1em; }
+.editable-input { background: transparent; border: 2px solid #3498db; color: white; padding: 8px; border-radius: 4px; width: 100%; }
 .editable-input:focus { outline: none; border-color: #2ecc71; }
 .stats-header h2 { color: #ffffff; margin: 0; }
-.players-stats-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-gap: 20px;
-padding: 20px 0;
-}
-.player-stats-card {
-background: #34495e;
-border-radius: 12px;
-padding: 20px;
-border-left: 5px solid #3498db;
-transition: transform 0.3s;
-}
-.player-stats-card:hover {
-transform: translateY(-5px);
-box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
+.players-stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px 0; }
+.player-stats-card { background: #34495e; border-radius: 12px; padding: 20px; border-left: 5px solid #3498db; transition: transform 0.3s; }
+.player-stats-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 .player-stats-card h3 { margin: 0 0 15px 0; color: #ecf0f1; font-size: 1.3em; }
-.detail-btn {
-background: #3498db;
-color: white;
-border: none;
-padding: 10px 15px;
-border-radius: 6px;
-cursor: pointer;
-width: 100%;
-margin-bottom: 15px;
-font-size: 0.9em;
-}
+.detail-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; margin-bottom: 15px; font-size: 0.9em; }
 .detail-btn:hover { background: #2980b9; }
 .stats-summary p { margin: 5px 0; color: #bdc3c7; }
 .ranking-container { overflow-x: auto; margin-top: 20px; }
-.ranking-table {
-width: 100%;
-border-collapse: collapse;
-background: #34495e;
-border-radius: 10px;
-overflow: hidden;
-}
-.ranking-table th {
-background: #2c3e50;
-color: #3498db;
-padding: 15px;
-text-align: left;
-font-weight: bold;
-}
+.ranking-table { width: 100%; border-collapse: collapse; background: #34495e; border-radius: 10px; overflow: hidden; }
+.ranking-table th { background: #2c3e50; color: #3498db; padding: 15px; text-align: left; font-weight: bold; }
 .ranking-table td { padding: 12px 15px; border-bottom: 1px solid #2c3e50; }
 .ranking-table tr:last-child td { border-bottom: none; }
 .ranking-table tr:hover { background: #3b5998; }
 .ranking-table .top-player { background: rgba(52, 152, 219, 0.1); }
 .ranking-table .top-player td:first-child { font-weight: bold; color: #f1c40f; }
 .player-detail { padding: 20px; }
-.stats-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-gap: 15px;
-margin: 20px 0;
-}
-.stat-box {
-background: #34495e;
-border-radius: 10px;
-padding: 20px;
-text-align: center;
-border-top: 4px solid #3498db;
-}
+.back-btn { background: #7f8c8d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-bottom: 20px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+.stat-box { background: #34495e; border-radius: 10px; padding: 20px; text-align: center; border-top: 4px solid #3498db; }
 .stat-box h3 { font-size: 2em; margin: 0; color: #ecf0f1; }
 .stat-box p { margin: 10px 0 0 0; color: #bdc3c7; font-size: 0.9em; }
 .match-history { margin-top: 30px; }
-.match-history-item {
-display: grid;
-grid-template-columns: 2fr 2fr 1fr 1fr;
-gap: 15px;
-padding: 15px;
-background: #34495e;
-margin-bottom: 10px;
-border-radius: 8px;
-align-items: center;
-}
+.match-history-item { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 15px; padding: 15px; background: #34495e; margin-bottom: 10px; border-radius: 8px; align-items: center; }
 .match-history-item.win { border-left: 4px solid #2ecc71; }
 .match-history-item.loss { border-left: 4px solid #e74c3c; }
 .match-history-item .result { font-weight: bold; padding: 5px 10px; border-radius: 4px; text-align: center; }
 .match-history-item.win .result { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
 .match-history-item.loss .result { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-.no-data-message, .error-message {
-text-align: center;
-padding: 40px 20px;
-background: #34495e;
-border-radius: 10px;
-margin: 20px 0;
-}
+.no-data-message, .error-message { text-align: center; padding: 40px 20px; background: #34495e; border-radius: 10px; margin: 20px 0; }
 .no-data-message h3, .error-message h3 { color: #f1c40f; }
-@media (max-width: 768px) {
-.players-stats-grid { grid-template-columns: 1fr; }
-.match-history-item { grid-template-columns: 1fr; gap: 5px; }
-.stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-#page5 .header {
-display: flex;
-align-items: center;
-min-height: 60px;
-}
+@media (max-width: 768px) { .players-stats-grid { grid-template-columns: 1fr; } .match-history-item { grid-template-columns: 1fr; gap: 5px; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+#page5 .header { display: flex; align-items: center; min-height: 60px; }
 #page5 .header h1 { flex: 1; text-align: center; margin: 0; }
 #page5 .header #matchHeaderButtons { width: 120px; }
 #page5 .header #matchHeaderButtons[style*="display: none"] { display: none; }
@@ -1139,19 +314,14 @@ min-height: 60px;
 .summary-dash { color: #000000 !important; font-weight: bold; font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; }
 .excel-summary-2 { background: #fff9c4 !important; font-weight: bold; font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; }
 .excel-summary-2 td { font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; font-weight: bold; border: 1px solid #44546a; }
+.target-label { text-align: center !important; vertical-align: middle !important; padding: 10px 4px !important; font-weight: bold; color: #ff0000 !important; font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; background: #fff9c4 !important; border: 1px solid #44546a !important; }
 .target-calc { background: #d3d3d3 !important; color: #e74c3c !important; font-weight: bold; text-align: center !important; vertical-align: middle !important; padding: 10px 4px !important; font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; border: 1px solid #44546a !important; }
 .target-final { background: #d3d3d3 !important; color: #27ae60 !important; font-weight: bold; font-size: 13px; text-align: center !important; vertical-align: middle !important; padding: 10px 4px !important; font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; border: 1px solid #44546a !important; }
 .warning-text { text-align: center !important; color: #e74c3c !important; font-weight: bold; padding: 10px !important; font-family: 'Cavolini', 'Segoe UI', Arial, sans-serif !important; border: 1px solid #44546a !important; }
 .percentage-positive { color: #27ae60 !important; font-weight: bold; }
 .percentage-negative { color: #e74c3c !important; font-weight: bold; }
 .percentage-neutral { color: #7f8c8d !important; }
-@media (max-width: 768px) {
-.excel-table { font-size: 11px; min-width: 1000px; }
-.excel-subheader th { font-size: 10px; padding: 6px 2px; }
-.excel-cell { padding: 4px 2px; }
-.excel-summary-1 td, .excel-summary-2 td { padding: 8px 2px !important; font-size: 11px; }
-.target-label, .target-calc, .target-final { padding: 8px 2px !important; }
-}
+@media (max-width: 768px) { .excel-table { font-size: 11px; min-width: 1000px; } .excel-subheader th { font-size: 10px; padding: 6px 2px; } .excel-cell { padding: 4px 2px; } .excel-summary-1 td, .excel-summary-2 td { padding: 8px 2px !important; font-size: 11px; } .target-label, .target-calc, .target-final { padding: 8px 2px !important; } }
 .excel-klassement-container { margin: 20px 0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white; }
 .klassement-title { background: #4472c4; padding: 20px; text-align: center; border-bottom: 2px solid #44546a; }
 .klassement-title h1 { margin: 0; font-family: 'Comic Sans MS', cursive, sans-serif !important; font-size: 24px !important; color: #0078d4 !important; font-weight: normal; }
@@ -1177,20 +347,8 @@ min-height: 60px;
 .klassement-table th.sortable.asc::after { content: " ▲"; font-size: 10px; color: white; }
 .klassement-table th.sortable.desc::after { content: " ▼"; font-size: 10px; color: white; }
 .klassement-table th, .klassement-table td { border: 1px solid #44546a !important; }
-@media (max-width: 768px) {
-.klassement-table { font-size: 11px; min-width: 800px; }
-.klassement-title h1 { font-size: 18px !important; padding: 10px; }
-.klassement-table td.speler-naam { min-width: 120px; font-size: 12px; }
-.klassement-table td.match-punt, .klassement-table td.tussentotaal, .klassement-table td.eindtotaal { min-width: 20px; padding: 4px 1px; font-size: 11px; }
-}
-@media print {
-.klassement-container { box-shadow: none; margin: 0; }
-.klassement-table { min-width: auto; width: 100%; }
-.klassement-title { background: white !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
-.klassement-title h1 { color: black !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
-.klassement-table th, .klassement-table td { background: white !important; -webkit-print-color-adjust: exact; color-adjust: exact; border-color: black !important; }
-.klassement-table tr:nth-child(n+4) td:nth-child(3n+3), .klassement-table tr:nth-child(n+4) td:nth-child(3n+4), .klassement-table tr:nth-child(n+4) td:nth-child(3n+5), .klassement-table td.eindtotaal { background: #fff2cc !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
-}
+@media (max-width: 768px) { .klassement-table { font-size: 11px; min-width: 800px; } .klassement-title h1 { font-size: 18px !important; padding: 10px; } .klassement-table td.speler-naam { min-width: 120px; font-size: 12px; } .klassement-table td.match-punt, .klassement-table td.tussentotaal, .klassement-table td.eindtotaal { min-width: 20px; padding: 4px 1px; font-size: 11px; } }
+@media print { .klassement-container { box-shadow: none; margin: 0; } .klassement-table { min-width: auto; width: 100%; } .klassement-title { background: white !important; -webkit-print-color-adjust: exact; color-adjust: exact; } .klassement-title h1 { color: black !important; -webkit-print-color-adjust: exact; color-adjust: exact; } .klassement-table th, .klassement-table td { background: white !important; -webkit-print-color-adjust: exact; color-adjust: exact; border-color: black !important; } .klassement-table tr:nth-child(n+4) td:nth-child(3n+3), .klassement-table tr:nth-child(n+4) td:nth-child(3n+4), .klassement-table tr:nth-child(n+4) td:nth-child(3n+5), .klassement-table td.eindtotaal { background: #fff2cc !important; -webkit-print-color-adjust: exact; color-adjust: exact; } }
 .speeldagen-management-container { padding: 20px; }
 .speeldagen-form-container { background: #34495e; border-radius: 10px; padding: 20px; margin-bottom: 30px; border-left: 4px solid #e67e22; }
 .speeldagen-form-container h3 { color: #e67e22; margin-bottom: 20px; }
@@ -1205,9 +363,7 @@ min-height: 60px;
 .tab-btn.speeldagen { background: #2c3e50; }
 .tab-btn.speeldagen.active { background: #e67e22; }
 .tab-btn.speeldagen:hover { background: #d35400; }
-.new-match-btn, .download-btn {
-height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1;
-}
+.new-match-btn, .download-btn { height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; }
 .new-match-btn { background: #3498db; border-radius: 8px; }
 .download-btn { background: #9b59b6; border-radius: 8px; }
 </style>
@@ -1313,6 +469,7 @@ height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justif
 <button id="headerRightBtn" class="action-btn undo-btn" disabled>↩️ Ongedaan</button>
 </div>
 <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
+
 <!-- NIEUWE HORIZONTALE SCORE LAYOUT -->
 <div class="scoring-row-container">
     <div class="score-cell current-turn-cell" id="p1CurrentCell">
@@ -1333,6 +490,7 @@ height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justif
         <div class="cell-value" id="p2CurrentVal">0</div>
     </div>
 </div>
+
 <div class="score-controls">
 <button class="score-btn plus-btn left-plus" onclick="changeScore(1)">+</button>
 <div class="score-middle">
@@ -1408,7 +566,7 @@ height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justif
 </div>
 <div id="backupRecoveryModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
 <div style="background: #34495e; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
-<h2 style="color: #9b59b6; margin-bottom: 20px;">💾➜♻️ Herstel Onderbroken Match</h2>
+<h2 style="color: #9b59b6; margin-bottom: 20px;"> 💾➜♻️ Herstel Onderbroken Match</h2>
 <div style="margin-bottom: 20px;">
 <label style="color: #ecf0f1; display: block; margin-bottom: 10px;">Backup bron:</label>
 <select id="backupSourceSelect" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: 2px solid #9b59b6; border-radius: 8px; margin-bottom: 15px;">
@@ -1428,7 +586,7 @@ height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justif
 </div>
 <script>
 const CLUB_PASSWORD = "Biljart8647";
-const APP_VERSION = "1.0.8"; // versie verhoogd voor nieuwe score layout
+const APP_VERSION = "1.0.8";
 const DEFAULT_ADMIN_PASSWORD = "admin123";
 function checkPassword() {
 const input = document.getElementById('passwordInput').value;
@@ -1548,7 +706,7 @@ function enableScoreButtons() { document.querySelectorAll('.score-btn').forEach(
 function disableScoreButtons() { document.querySelectorAll('.score-btn').forEach(btn=>{btn.disabled=true;btn.style.opacity='0.5';btn.style.cursor='not-allowed';}); const c=document.getElementById('confirmScoreBtn'); if(c){c.disabled=true;c.style.opacity='0.5';c.style.cursor='not-allowed';} }
 function updateCurrentTurnSize() { const ct=document.getElementById('currentPlayerDisplay'); if(!ct) return; ct.classList.toggle('has-extra-info', state.isNabeurt || state.firstToTarget); }
 
-// ========== NIEUWE UPDATE FUNCTIES ==========
+// ========== UPDATE FUNCTIES ==========
 function updateSideScoreDisplays() {
     document.getElementById('p1TotalVal').textContent = state.player1.score;
     document.getElementById('p2TotalVal').textContent = state.player2.score;
@@ -1559,30 +717,25 @@ function updateCurrentScoreDisplay() {
     const p2CurrentEl = document.getElementById('p2CurrentVal');
     const p1CurrentCell = document.getElementById('p1CurrentCell');
     const p2CurrentCell = document.getElementById('p2CurrentCell');
-    const p1TotalCell = document.getElementById('p1TotalCell');
-    const p2TotalCell = document.getElementById('p2TotalCell');
 
+    // Update waarden
     if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
     if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
     updateSideScoreDisplays();
 
-    [p1CurrentCell, p2CurrentCell, p1TotalCell, p2TotalCell].forEach(el => {
-        if(el) el.className = el.id.includes('Current') ? 'score-cell current-turn-cell' : 'score-cell total-cell';
-    });
+    // Reset ALLEEN de beurtpunten-cellen
+    p1CurrentCell.className = 'score-cell current-turn-cell';
+    p2CurrentCell.className = 'score-cell current-turn-cell';
 
+    // Highlight/Dim ALLEEN de beurtpunten
     if (state.currentPlayer === 1) {
         p1CurrentCell.classList.add('active-player');
-        p1TotalCell.classList.add('active-player');
         p2CurrentCell.classList.add('dimmed');
-        p2TotalCell.classList.add('dimmed');
     } else {
         p2CurrentCell.classList.add('active-player');
-        p2TotalCell.classList.add('active-player');
         p1CurrentCell.classList.add('dimmed');
-        p1TotalCell.classList.add('dimmed');
     }
 }
-// ========== EINDE NIEUWE FUNCTIES ==========
 
 window.showPage = function(pageNum) {
     let actualPageNum = typeof pageNum === 'string' ? (pageNum.startsWith('Page') ? parseInt(pageNum.replace('Page','')) : parseInt(pageNum)) : pageNum;
@@ -1699,7 +852,8 @@ window.startMatch = function() {
     document.getElementById('p2CurrentVal').textContent = '0';
     document.getElementById('p1TotalVal').textContent = '0';
     document.getElementById('p2TotalVal').textContent = '0';
-    ['p1CurrentCell','p2CurrentCell','p1TotalCell','p2TotalCell'].forEach(id=>{
+    // Reset ALLEEN de beurtpunten-cellen
+    ['p1CurrentCell','p2CurrentCell'].forEach(id=>{
         document.getElementById(id).classList.remove('active-player','dimmed');
     });
     
@@ -1773,7 +927,7 @@ function restoreMatchFromBackup(b) {
     document.getElementById('matchTitle').textContent=`${m.p1} ⚔️ ${m.p2}`;
     document.getElementById('p1CurrentVal').textContent='0'; document.getElementById('p2CurrentVal').textContent='0';
     document.getElementById('p1TotalVal').textContent='0'; document.getElementById('p2TotalVal').textContent='0';
-    ['p1CurrentCell','p2CurrentCell','p1TotalCell','p2TotalCell'].forEach(id=>document.getElementById(id).classList.remove('active-player','dimmed'));
+    ['p1CurrentCell','p2CurrentCell'].forEach(id=>document.getElementById(id).classList.remove('active-player','dimmed'));
     if(state.matchEnded) disableScoreButtons(); else enableScoreButtons();
     document.getElementById('matchEndedAlert').style.display=state.matchEnded?'block':'none';
     updateScoringPage(); showPage(5);
@@ -1855,82 +1009,69 @@ async function loadPlayersFromGoogleSheet() { try { const res=await fetch(`https
 window.refreshPlayersFromGitHub=async function(){if(confirm('Spelers herladen van GitHub? Lokale wijzigingen gaan verloren.')){if(await loadPlayersFromGitHub()) alert(`✅ ${state.players.length} spelers geladen!`); else alert('❌ Kon niet laden.');}}
 window.refreshPlayersFromGoogleSheet=async function(){if(confirm('Spelers herladen van Google Sheet? Lokale wijzigingen gaan verloren.')){if(await loadPlayersFromGoogleSheet()){alert(`✅ ${state.players.length} spelers geladen!`);if(state.currentMatchesTab==='players')loadPlayersManagementTab();if(typeof loadStatsPage==='function')loadStatsPage();if(typeof loadRankingPage==='function')loadRankingPage();}else alert('❌ Kon niet laden.');}}
 window.showMatchesTab=function(tab){state.currentMatchesTab=tab;document.querySelectorAll('#matchesTabs .tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('#matchesTabContent .tab-content').forEach(c=>c.classList.remove('active'));document.getElementById(`tab${tab.charAt(0).toUpperCase()+tab.slice(1)}`).classList.add('active');document.getElementById(`tabContent${tab.charAt(0).toUpperCase()+tab.slice(1)}`).classList.add('active');if(tab==='players')loadPlayersManagementTab();else if(tab==='speeldagen')loadSpeeldagenManagementTab();else if(tab==='archive')loadArchiveTab();else loadMatchesTabContent();}
-function loadPlayersManagementTab() {
-    const c = document.getElementById('tabContentPlayers');
+function loadPlayersManagementTab(){
+    const container = document.getElementById('tabContentPlayers');
     updatePlayersBadge();
-    
-    // Fallback naar localStorage als state leeg is
     if (!state.players?.length) {
         const s = localStorage.getItem('biljartPlayers');
-        if (s) {
-            try { state.players = JSON.parse(s); }
-            catch(e) { state.players = []; }
-        }
+        if (s) try { state.players = JSON.parse(s); } catch(e) { state.players = []; }
     }
-
     const tp = state.players.length;
-    const at = tp ? ((state.players.reduce((s,p) => s + (parseFloat(p.tsg.replace(',','.')) || 0), 0) / tp).toFixed(3)) : '0.000';
-    const av = tp ? Math.round(state.players.reduce((s,p) => s + (p.target || 0), 0) / tp) : 0;
-
-    // Variabelen voorbereiden om complexe ${} expressies in template te voorkomen
+    const at = tp ? ((state.players.reduce((s,p)=>s+(parseFloat(p.tsg.replace(',','.'))||0),0)/tp).toFixed(3)) : '0.000';
+    const av = tp ? Math.round(state.players.reduce((s,p)=>s+(p.target||0),0)/tp) : 0;
+    
     const isEditing = editingPlayerIndex >= 0;
     const editTitle = isEditing ? '📝 Speler Bewerken' : '➕ Nieuwe Speler Toevoegen';
     const editBtnText = isEditing ? '💾 Opslaan' : '➕ Toevoegen';
     const editBtnAction = isEditing ? 'saveEditedPlayer()' : 'addNewPlayer()';
     const cancelBtn = isEditing ? '<button class="cancel-btn" onclick="cancelEditPlayer()" style="margin-top:10px;">❌ Annuleren</button>' : '';
-    
     const editName = editingPlayerData ? editingPlayerData.name : '';
     const editTsg = editingPlayerData ? editingPlayerData.tsg : '';
     const editTarget = editingPlayerData ? editingPlayerData.target : '';
-    
-    const speeldagenHtml = (state.speeldagen && state.speeldagen.length > 0)
-        ? `<div style="background:#2c3e50;padding:15px;border-radius:8px;margin-top:30px;"><h4>📅 Geïmporteerde Speeldagen (${state.speeldagen.length})</h4></div>`
-        : '';
-        
+    const speeldagenHtml = (state.speeldagen && state.speeldagen.length > 0) ? `<div style="background:#2c3e50;padding:15px;border-radius:8px;margin-top:30px;"><h4>📅 Geïmporteerde Speeldagen (${state.speeldagen.length})</h4></div>` : '';
     const emptyMsg = tp > 0 ? '' : '<div class="empty-players-message">Geen spelers gevonden.</div>';
 
-    c.innerHTML = `
-        <div class="players-management-container">
-            <div style="background:#2c3e50;border-left:4px solid #9b59b6;padding:15px;margin-bottom:20px;border-radius:8px;">
-                <h4>🌐 Google Sheets Spelers</h4>
-                <p style="color:#bdc3c7;font-size:0.9em;margin:5px 0;">Spelers worden geladen van Google Sheets.</p>
-                <div style="display:flex;gap:10px;margin-top:10px;">
-                    <button onclick="refreshPlayersFromGoogleSheet()" style="background:#9b59b6;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;">🔄 Herlaad van Google Sheet</button>
-                </div>
+    container.innerHTML = `
+    <div class="players-management-container">
+        <div style="background:#2c3e50;border-left:4px solid #9b59b6;padding:15px;margin-bottom:20px;border-radius:8px;">
+            <h4>🌐 Google Sheets Spelers</h4>
+            <p style="color:#bdc3c7;font-size:0.9em;margin:5px 0;">Spelers worden geladen van Google Sheets.</p>
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button onclick="refreshPlayersFromGoogleSheet()" style="background:#9b59b6;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;">🔄 Herlaad van Google Sheet</button>
             </div>
-            <div class="player-form-container">
-                <h3>${editTitle}</h3>
-                <div class="form-row">
-                    <div class="form-group"><label>Naam *</label><input type="text" id="playerNameInput" class="form-input" placeholder="Voor- en achternaam" value="${editName}"></div>
-                    <div class="form-group"><label>Gemiddelde (TSG)</label><input type="text" id="playerTsgInput" class="form-input" placeholder="bijv. 4,864" value="${editTsg}"></div>
-                    <div class="form-group"><label>Target</label><input type="number" id="playerTargetInput" class="form-input" placeholder="bijv. 87" min="1" max="200" value="${editTarget}"></div>
-                    <button class="add-player-btn" onclick="${editBtnAction}">${editBtnText}</button>
-                </div>
-                ${cancelBtn}
+        </div>
+        <div class="player-form-container">
+            <h3>${editTitle}</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Naam *</label><input type="text" id="playerNameInput" class="form-input" placeholder="Voor- en achternaam" value="${editName}"></div>
+                <div class="form-group"><label>Gemiddelde (TSG)</label><input type="text" id="playerTsgInput" class="form-input" placeholder="bijv. 4,864" value="${editTsg}"></div>
+                <div class="form-group"><label>Target</label><input type="number" id="playerTargetInput" class="form-input" placeholder="bijv. 87" min="1" max="200" value="${editTarget}"></div>
+                <button class="add-player-btn" onclick="${editBtnAction}">${editBtnText}</button>
             </div>
-            <div style="background:#34495e;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #2ecc71;">
-                <h4 style="margin-bottom:15px;color:#2ecc71;">📁 Import/Export</h4>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;">
-                    <button onclick="importPlayersFromCSV()" style="background:#2ecc71;color:white;padding:12px;border-radius:6px;border:none;cursor:pointer;font-size:14px;">👥 Importeer Spelers CSV</button>
-                </div>
+            ${cancelBtn}
+        </div>
+        <div style="background:#34495e;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #2ecc71;">
+            <h4 style="margin-bottom:15px;color:#2ecc71;">📁 Import/Export</h4>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;">
+                <button onclick="importPlayersFromCSV()" style="background:#2ecc71;color:white;padding:12px;border-radius:6px;border:none;cursor:pointer;font-size:14px;">👥 Importeer Spelers CSV</button>
             </div>
-            <div class="stats-summary">
-                <div class="stats-item"><div>Totaal spelers</div><div class="stats-value">${tp}</div></div>
-                <div class="stats-item"><div>Gemiddeld TSG</div><div class="stats-value">${at.replace('.',',')}</div></div>
-                <div class="stats-item"><div>Gemiddeld target</div><div class="stats-value">${av}</div></div>
+        </div>
+        <div class="stats-summary">
+            <div class="stats-item"><div>Totaal spelers</div><div class="stats-value">${tp}</div></div>
+            <div class="stats-item"><div>Gemiddeld TSG</div><div class="stats-value">${at.replace('.',',')}</div></div>
+            <div class="stats-item"><div>Gemiddeld target</div><div class="stats-value">${av}</div></div>
+        </div>
+        <div class="players-list-container">
+            <h3 style="margin-bottom:20px;">📋 Alle Spelers (${tp})</h3>
+            <div style="margin-bottom:20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+                <div style="flex-grow:1;"><input type="text" id="playerSearchInput" class="search-input" placeholder="Zoek speler..." onkeyup="filterPlayersList()"></div>
+                <button class="bulk-action-btn" onclick="clearAllPlayers()" style="background:#e74c3c;">🗑️ Alle Verwijderen</button>
             </div>
-            <div class="players-list-container">
-                <h3 style="margin-bottom:20px;">📋 Alle Spelers (${tp})</h3>
-                <div style="margin-bottom:20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-                    <div style="flex-grow:1;"><input type="text" id="playerSearchInput" class="search-input" placeholder="Zoek speler..." onkeyup="filterPlayersList()"></div>
-                    <button class="bulk-action-btn" onclick="clearAllPlayers()" style="background:#e74c3c;">🗑️ Alle Verwijderen</button>
-                </div>
-                <div class="players-list-header"><div>Naam</div><div>TSG</div><div>Target</div><div>Acties</div></div>
-                <div id="playersListContent">${emptyMsg}</div>
-            </div>
-            ${speeldagenHtml}
-        </div>`;
-        
+            <div class="players-list-header"><div>Naam</div><div>TSG</div><div>Target</div><div>Acties</div></div>
+            <div id="playersListContent">${emptyMsg}</div>
+        </div>
+        ${speeldagenHtml}
+    </div>`;
     if (tp > 0) renderPlayersList();
 }
 function renderPlayersList(){const c=document.getElementById('playersListContent');if(!c)return;const st=document.getElementById('playerSearchInput')?.value.toLowerCase()||'';const fp=state.players.filter(p=>(p.name||'').toLowerCase().includes(st)||(p.tsg||'').toLowerCase().includes(st)||(p.target||'').toString().includes(st));if(!fp.length){c.innerHTML=`<div class="empty-players-message">${st?`Geen resultaten voor "${st}"`:'Geen spelers gevonden'}</div>`;return;}c.innerHTML=fp.map((p,i)=>{const ed=editingPlayerIndex===i;return `<div class="player-row ${ed?'editing':''}"><div>${ed?`<input type="text" class="editable-input" id="editName_${i}" value="${p.name}">`:`<strong>${p.name}</strong>`}</div><div>${ed?`<input type="text" class="editable-input" id="editTsg_${i}" value="${p.tsg}">`:(p.tsg||'0,000')}</div><div>${ed?`<input type="number" class="editable-input" id="editTarget_${i}" value="${p.target}" min="1" max="200">`:(p.target||'0')}</div><div class="player-actions">${ed?`<button class="save-btn" onclick="savePlayerEdit(${i})">💾 Opslaan</button><button class="cancel-btn" onclick="cancelEditPlayer()">❌ Annuleren</button>`:`<button class="edit-btn" onclick="editPlayer(${i})">✏️ Bewerk</button><button class="delete-btn" onclick="deletePlayer(${i})">🗑️ Verwijder</button>`}</div></div>`;}).join('');}
