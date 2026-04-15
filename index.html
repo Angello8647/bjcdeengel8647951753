@@ -107,7 +107,33 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     filter: none !important;
     margin: 0;
 }
-
+/* Styling voor de "nog nodig" cellen */
+.needed-cell {
+    background: rgba(46, 204, 113, 0.15) !important;
+    border-color: #27ae60 !important;
+}
+.needed-cell .cell-value {
+    color: #2ecc71 !important;
+}
+/* Dimming voor inactieve speler */
+.needed-cell.dimmed {
+    opacity: 0.4 !important;
+    transform: scale(0.96) !important;
+    filter: grayscale(0.3) !important;
+}
+/* Zorg dat flex-wrap netjes omgaat met 7 cellen op small screens */
+@media (max-width: 750px) {
+    .scoring-row-container {
+        gap: 6px;
+        padding: 0 5px;
+    }
+    .score-cell {
+        min-width: 60px;
+        padding: 8px 4px;
+    }
+    .cell-label { font-size: 0.7rem; }
+    .cell-value { font-size: 1.6rem; }
+}
 /* TOTAALPUNTEN: ALTIJD ZICHTBAAR MET ORIGINELE WIT/GELE OPMAAK */
 #p1TotalCell { background: white !important; color: black !important; border: 3px solid #3182ce !important; }
 #p2TotalCell { background: #f1c40f !important; color: black !important; border: 3px solid #3182ce !important; }
@@ -547,24 +573,40 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 
 <!-- NIEUWE HORIZONTALE SCORE LAYOUT -->
 <div class="scoring-row-container">
+    <!-- HELEMAAL LINKS: Nog nodig P1 -->
+    <div class="score-cell needed-cell" id="p1NeededCell">
+        <div class="cell-label">Nog nodig</div>
+        <div class="cell-value" id="p1NeededVal">0</div>
+    </div>
+    <!-- Beurt P1 -->
     <div class="score-cell current-turn-cell" id="p1CurrentCell">
-        
+        <div class="cell-label">Beurt P1</div>
         <div class="cell-value" id="p1CurrentVal">0</div>
     </div>
+    <!-- Totaal P1 -->
     <div class="score-cell total-cell" id="p1TotalCell">
-        
+        <div class="cell-label">Totaal P1</div>
         <div class="cell-value" id="p1TotalVal">0</div>
     </div>
+    <!-- Midden: Beurt Info -->
     <div class="score-cell center-info" id="currentPlayerDisplay"></div>
+    <!-- Totaal P2 -->
     <div class="score-cell total-cell" id="p2TotalCell">
-       
+        <div class="cell-label">Totaal P2</div>
         <div class="cell-value" id="p2TotalVal">0</div>
     </div>
+    <!-- Beurt P2 -->
     <div class="score-cell current-turn-cell" id="p2CurrentCell">
-        
+        <div class="cell-label">Beurt P2</div>
         <div class="cell-value" id="p2CurrentVal">0</div>
     </div>
+    <!-- HELEMAAL RECHTS: Nog nodig P2 -->
+    <div class="score-cell needed-cell" id="p2NeededCell">
+        <div class="cell-label">Nog nodig</div>
+        <div class="cell-value" id="p2NeededVal">0</div>
+    </div>
 </div>
+
 
 <div class="score-controls">
 <button class="score-btn plus-btn left-plus" onclick="changeScore(1)">+</button>
@@ -801,25 +843,46 @@ function updateSideScoreDisplays() {
 }
 
 function updateCurrentScoreDisplay() {
+    // Elementen ophalen
+    const p1CurrentEl = document.getElementById('p1CurrentVal');
+    const p2CurrentEl = document.getElementById('p2CurrentVal');
+    const p1NeededEl  = document.getElementById('p1NeededVal');
+    const p2NeededEl  = document.getElementById('p2NeededVal');
+    
     const p1CurrentCell = document.getElementById('p1CurrentCell');
     const p2CurrentCell = document.getElementById('p2CurrentCell');
+    const p1NeededCell  = document.getElementById('p1NeededCell');
+    const p2NeededCell  = document.getElementById('p2NeededCell');
 
-    // Update waarden (beide cellen krijgen de waarde, maar alleen 1 is zichtbaar)
-    document.getElementById('p1CurrentVal').textContent = state.currentInput;
-    document.getElementById('p2CurrentVal').textContent = state.currentInput;
-    updateSideScoreDisplays();
+    // 1. Waarden updaten
+    if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
+    if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
+    
+    const n1 = Math.max(0, state.player1.target - state.player1.score);
+    const n2 = Math.max(0, state.player2.target - state.player2.score);
+    if (p1NeededEl) p1NeededEl.textContent = n1;
+    if (p2NeededEl) p2NeededEl.textContent = n2;
+    
+    updateSideScoreDisplays(); // Totaalscores updaten
 
-    // Reset classes
-    p1CurrentCell.className = 'score-cell current-turn-cell';
-    p2CurrentCell.className = 'score-cell current-turn-cell';
+    // 2. Classes resetten
+    [p1CurrentCell, p2CurrentCell, p1NeededCell, p2NeededCell].forEach(cell => {
+        if(cell) cell.className = cell.classList.contains('needed-cell') ? 'score-cell needed-cell' : 'score-cell current-turn-cell';
+    });
 
-    // Alleen de actieve speler tonen, de andere volledig verbergen
+    // 3. Actieve/Dimmed toepassen
     if (state.currentPlayer === 1) {
         p1CurrentCell.classList.add('active-player');
+        p1NeededCell.classList.remove('dimmed');
+        
         p2CurrentCell.classList.add('turn-hidden');
+        p2NeededCell.classList.add('dimmed');
     } else {
         p2CurrentCell.classList.add('active-player');
+        p2NeededCell.classList.remove('dimmed');
+        
         p1CurrentCell.classList.add('turn-hidden');
+        p1NeededCell.classList.add('dimmed');
     }
 }
 
