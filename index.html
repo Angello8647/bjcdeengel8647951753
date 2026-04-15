@@ -51,6 +51,103 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .player-white { background: white; color: black; }
 .player-yellow { background: #f1c40f; color: black; }
 
+/* ========== MATCH OVERZICHT GROTER & GRID LAYOUT ========== */
+#matchList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 kolommen */
+    gap: 20px; /* Ruimte tussen de matchen */
+    padding: 10px;
+}
+
+.match-card {
+    background: #34495e;
+    border-radius: 15px; /* Iets meer rounding */
+    padding: 25px; /* Was 15px - nu groter */
+    margin: 0; /* Verwijder margin, gebruik grid gap */
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    min-height: 220px; /* Vaste minimale hoogte */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.match-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    background: #3c5068;
+}
+
+.match-card h3 {
+    font-size: 1.8rem; /* Was ~1.5em - nu groter */
+    margin-bottom: 15px;
+    color: #ecf0f1;
+    font-weight: bold;
+}
+
+.match-card .match-info {
+    font-size: 1.2rem; /* Was 0.85em - nu veel groter */
+    color: #bdc3c7;
+    line-height: 1.8; /* Meer regelafstand voor leesbaarheid */
+}
+
+.match-card .match-info br {
+    margin-bottom: 8px;
+}
+
+/* Status badges groter */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px; /* Was 3px 8px */
+    border-radius: 12px;
+    font-size: 1rem; /* Was 0.75em */
+    font-weight: bold;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+/* Verwijder knop groter */
+.delete-match-btn {
+    width: 35px; /* Was 30px */
+    height: 35px;
+    font-size: 16px; /* Was 14px */
+}
+
+/* Pagina titel groter */
+#matchListTitle {
+    font-size: 2.2rem; /* Grotere titel */
+    font-weight: bold;
+}
+
+/* Knoppen in header groter */
+#page2 .new-match-btn,
+#page2 .download-btn {
+    font-size: 1.2rem; /* Was ~16px */
+    padding: 14px 28px; /* Meer padding */
+    height: auto;
+}
+
+/* Responsive: op kleine schermen 1 kolom */
+@media (max-width: 900px) {
+    #matchList {
+        grid-template-columns: 1fr; /* 1 kolom op tablets/phones */
+    }
+}
+
+@media (max-width: 650px) {
+    .match-card {
+        padding: 18px;
+        min-height: 180px;
+    }
+    .match-card h3 {
+        font-size: 1.5rem;
+    }
+    .match-card .match-info {
+        font-size: 1rem;
+    }
+}
+
 /* ========== NIEUWE HORIZONTALE SCORE LAYOUT STYLES ========== */
 .scoring-row-container {
     display: flex; justify-content: center; align-items: stretch; gap: 12px;
