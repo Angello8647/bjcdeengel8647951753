@@ -1164,7 +1164,7 @@ function endMatch() {
     state.currentMatch.p1Highest=state.player1.highestSeries; state.currentMatch.p2Highest=state.player2.highestSeries;
     state.currentMatch.winner=w; saveStateToStorage(); archiveCompletedMatch(state.currentMatch);
     const ae=document.getElementById('matchEndedAlert'); ae.style.display='block'; ae.innerHTML=`🏁 MATCH AFGELOPEN!<br>🏆 WINNAAR: ${w}<br><small>${wi}</small>`;
-    disableScoreButtons(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateScoringPage();
+    disableScoreButtons(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateScoringPage();updateHeaderButtons(); 
 }
 window.undoLastAdd = function() {
     if(!lastStateBeforeAdd) return alert("Er is geen beurt om ongedaan te maken.");
