@@ -552,6 +552,14 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     margin-left: 6px !important;
     font-weight: 700 !important;
 }
+/* Focus state voor match selectie */
+.match-card.focused {
+    border: 3px solid #3498db !important;
+    background: rgba(52, 152, 219, 0.15) !important;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
 </style>
 </head>
 <body id="bodyElement">
@@ -853,10 +861,19 @@ rightBtn.style.opacity = rightBtn.disabled ? '0.5' : '1';
 rightBtn.style.background = '#3498db';
 }
 }
+function highlightMatch(cards) {
+    cards.forEach(c => c.classList.remove('focused'));
+    if (cards[window.matchListFocusIndex]) {
+        cards[window.matchListFocusIndex].classList.add('focused');
+        cards[window.matchListFocusIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+}
 let pageDownTimer = null;
 let lastTabTime = 0;
 const TAB_DEBOUNCE_MS = 500;
 function initPresenterControls() {
+    window.matchListFocusIndex = 0; // Reset bij starten
+
     document.addEventListener('keydown', function(event) {
         const activePage = document.querySelector('.page.active');
         if (!activePage) return;
@@ -864,80 +881,66 @@ function initPresenterControls() {
         
         const key = event.key;
 
-        // ✅ NIEUW: Pagina 1 (Datum selectie)
-        if (activePage.id === 'page1') {
-            if (key === 'Tab') {
-                event.preventDefault(); // Voorkom dat de focus verspringt
-                if (typeof window.goToPage2 === 'function') window.goToPage2();
+        // ✅ PAGINA 2: MATCH SELECTIE
+        if (activePage.id === 'page2') {
+            const cards = document.querySelectorAll('#matchList .match-card');
+            if (cards.length === 0) return;
+
+            // Veilige index
+            window.matchListFocusIndex = Math.max(0, Math.min(window.matchListFocusIndex, cards.length - 1));
+
+            switch (key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    window.matchListFocusIndex = Math.min(window.matchListFocusIndex + 1, cards.length - 1);
+                    highlightMatch(cards);
+                    break;
+                case 'ArrowUp':
+                    event.preventDefault();
+                    window.matchListFocusIndex = Math.max(window.matchListFocusIndex - 1, 0);
+                    highlightMatch(cards);
+                    break;
+                case 'Tab':
+                    event.preventDefault();
+                    cards[window.matchListFocusIndex].click(); // Simuleer klik
+                    break;
             }
             return;
         }
 
-        // Pagina 4: bal selectie
+        // PAGINA 4: bal selectie (onveranderd)
         if (activePage.id === 'page4') {
             switch (key) {
-                case 'PageUp':
-                    event.preventDefault();
-                    if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(1);
-                    break;
-                case 'PageDown':
-                    event.preventDefault();
-                    if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(2);
-                    break;
-                case 'Tab':
-                    event.preventDefault();
-                    if (typeof window.startMatch === 'function' && state.selectedWhitePlayer) window.startMatch();
-                    break;
+                case 'PageUp': event.preventDefault(); if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(1); break;
+                case 'PageDown': event.preventDefault(); if (typeof window.selectWhitePlayer === 'function') window.selectWhitePlayer(2); break;
+                case 'Tab': event.preventDefault(); if (typeof window.startMatch === 'function' && state.selectedWhitePlayer) window.startMatch(); break;
                 default: break;
             }
             return;
         }
 
-        // Pagina 5: scoring
+        // PAGINA 5: scoring (onveranderd)
         if (activePage.id === 'page5') {
             if (!state.currentMatch || state.matchEnded) return;
             switch (key) {
-                case 'PageUp':
-                    event.preventDefault();
-                    if (typeof window.changeScore === 'function') window.changeScore(1);
-                    break;
-                case 'PageDown':
-                    event.preventDefault();
-                    if (pageDownTimer === null) {
-                        pageDownTimer = setTimeout(() => {
-                            if (typeof showPage === 'function') showPage(1);
-                            pageDownTimer = null;
-                        }, 1500);
-                    }
-                    break;
-                case 'Tab':
-                    event.preventDefault();
-                    const now = Date.now();
-                    if (now - lastTabTime < TAB_DEBOUNCE_MS) return;
-                    lastTabTime = now;
-                    if (!state.matchEnded && typeof window.addScore === 'function') window.addScore();
-                    break;
+                case 'PageUp': event.preventDefault(); if (typeof window.changeScore === 'function') window.changeScore(1); break;
+                case 'PageDown': event.preventDefault(); if (pageDownTimer === null) { pageDownTimer = setTimeout(() => { if (typeof showPage === 'function') showPage(1); pageDownTimer = null; }, 1500); } break;
+                case 'Tab': event.preventDefault(); const now = Date.now(); if (now - lastTabTime < TAB_DEBOUNCE_MS) return; lastTabTime = now; if (!state.matchEnded && typeof window.addScore === 'function') window.addScore(); break;
                 default: break;
             }
             return;
         }
     });
 
-    // Keyup voor PageDown (korte druk = score -1)
+    // Keyup handler (onveranderd)
     document.addEventListener('keyup', function(event) {
         const activePage = document.querySelector('.page.active');
         if (!activePage || activePage.id !== 'page5') return;
         if (event.key !== 'PageDown') return;
-        if (pageDownTimer !== null) {
-            clearTimeout(pageDownTimer);
-            pageDownTimer = null;
-            if (!state.matchEnded && typeof window.changeScore === 'function') {
-                window.changeScore(-1);
-            }
-        }
+        if (pageDownTimer !== null) { clearTimeout(pageDownTimer); pageDownTimer = null; if (!state.matchEnded && typeof window.changeScore === 'function') window.changeScore(-1); }
     });
     
-    console.log('✅ Presenter: Page1 (Tab=volgende) | Page4 (PageUp=speler1, PageDown=speler2, Tab=start) | Page5 (PageUp=+1, PageDown=-1, Tab=einde beurt)');
+    console.log('✅ Presenter: Page1(Tab) | Page2(↑↓ navigeren, Tab=selecteer) | Page4(...) | Page5(...)');
 }
 document.getElementById('passwordInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); });
 if (sessionStorage.getItem('biljart_authenticated')) { document.getElementById('bodyElement').classList.add('logged-in'); initializeApp(); }
@@ -1031,6 +1034,8 @@ function loadFilteredMatches() {
     const fm=state.matches.filter(m=>m.date===state.selectedDate && !m.completed);
     if(!fm.length) { ml.innerHTML=`<div style="text-align:center;padding:40px;color:#95a5a6;"><p>Maak een nieuwe match</p><button class="new-match-btn" onclick="createNewMatch()">➕ Nieuwe Match</button></div>`; return; }
     ml.innerHTML=fm.map(m=>`<div class="match-card" onclick="selectMatch(${m.id})"><h3>${m.p1} ⚔️ ${m.p2}</h3><p class="match-info">⚪🟡🔴 Punten: ${m.target1} - ${m.target2}<br>📅 Datum: ${formatDateDisplay(m.date)}</p></div>`).join('');
+    window.matchListFocusIndex = 0;
+    highlightMatch(document.querySelectorAll('#matchList .match-card'));
 }
 window.selectMatch = function(id) { const m=state.matches.find(x=>x.id===id); if(m&&m.completed){alert("Deze match is al afgerond."); return;} state.currentMatch=m; state.selectedWhitePlayer=null; document.getElementById('matchTitleSelect').textContent=`${m.p1} ⚔️ ${m.p2}`; showPage(4); }
 window.createNewMatch = function() { showPage(3); }
