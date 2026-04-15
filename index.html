@@ -522,32 +522,35 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .new-match-btn, .download-btn { height: 44px; padding: 0 25px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; }
 .new-match-btn { background: #3498db; border-radius: 8px; }
 .download-btn { background: #9b59b6; border-radius: 8px; }
-/* Fix voor statistieken-kaarten - COMPACT */
+/* Fix voor statistieken-kaarten - SCHOON & COMPACT */
 .player-stats-card {
     overflow: hidden !important;
     word-break: break-word;
-    max-height: 190px; /* verlaagd ivm kleinere inhoud */
+    max-height: 190px;
 }
 .stats-summary {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 6px !important;
+    gap: 6px 12px !important;
     margin-top: 8px !important;
 }
 .stats-summary p {
     margin: 0 !important;
-    padding: 6px 4px !important;
-    background: rgba(255,255,255,0.06) !important;
-    border-radius: 6px !important;
-    text-align: center !important;
-    font-size: 0.72rem !important; /* labels flink kleiner */
-    line-height: 1.15 !important;
+    padding: 3px 0 !important;
+    background: transparent !important;  /* ✅ GEEN BLOKJES MEER */
+    border-radius: 0 !important;
+    text-align: left !important;
+    font-size: 0.72rem !important;      /* Tekstgrootte behouden */
+    line-height: 1.2 !important;
+    color: #bdc3c7 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important; /* Subtiele lijn ipv vakje */
 }
 .stats-summary p strong {
-    display: block;
-    font-size: 0.9rem !important; /* cijfers compact maar leesbaar */
-    color: #ffffff;
-    margin-top: 2px;
+    display: inline !important;         /* Cijfer naast de tekst ipv eronder */
+    font-size: 0.9rem !important;       /* Tekstgrootte behouden */
+    color: #ffffff !important;
+    margin-left: 6px !important;
+    font-weight: 700 !important;
 }
 </style>
 </head>
