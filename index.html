@@ -916,7 +916,10 @@ window.startMatch = function() {
     }
     state.currentPlayer=1; state.turnNumber=1; state.isFirstPlayerInRound=true; state.pendingEnd=false; lastStateBeforeAdd=null;
     document.getElementById('matchEndedAlert').style.display='none';
-    document.getElementById('matchTitle').textContent=`${state.currentMatch.p1} ⚔️ ${state.currentMatch.p2}`;
+    document.getElementById('headerTarget1').textContent = state.player1.target;
+    document.getElementById('headerTarget2').textContent = state.player2.target;
+    document.getElementById('headerName1').textContent = state.currentMatch.p1;
+    document.getElementById('headerName2').textContent = state.currentMatch.p2;
     
     // Reset nieuwe score displays
     document.getElementById('p1CurrentVal').textContent = '0';
