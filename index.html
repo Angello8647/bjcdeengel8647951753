@@ -320,11 +320,15 @@
 
         /* NIEUWE STIJLEN VOOR WIT/GEEL SCORE DISPLAYS */
         .side-score-display {
+		    flex: 0 0 180px;  /* vaste breedte van 180px */
+		    border-radius: 15px;
+		    padding: 15px 10px;
 		    display: flex;
-		    flex-direction: row;  /* ipv column */
+		    flex-direction: column;
 		    align-items: center;
-		    justify-content: space-between;
-		    gap: 20px;
+		    justify-content: center;
+		    font-weight: bold;
+		    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 		}
 		
 		.side-score-display.white {
@@ -423,7 +427,19 @@
 		    margin-bottom: 10px;
 		}
         /* Naam bovenaan in het current-score-display */
-        
+        .current-score-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2d3748;
+            background: rgba(0,0,0,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
         /* Actieve speler (zichtbaar) */
 		.current-score-display.active {
@@ -2635,9 +2651,6 @@
                 <!-- WIT SPELER SCORE (LINKS) -->
                 <div class="side-score-display white" id="whitePlayerDisplay">
 				    <div class="side-score-value" id="whitePlayerScore">0</div>
-				    <div class="current-score-display" id="player1CurrentScore">
-				        <div class="current-score-value">0</div>
-				    </div>
 				</div>
                 
                 <!-- HUIDIGE BEURT INFO (MIDDEN) -->
@@ -2646,9 +2659,6 @@
                 <!-- GEEL SPELER SCORE (RECHTS) -->
                 <div class="side-score-display yellow" id="yellowPlayerDisplay">
 				    <div class="side-score-value" id="yellowPlayerScore">0</div>
-				    <div class="current-score-display" id="player2CurrentScore">
-				        <div class="current-score-value">0</div>
-				    </div>
 				</div>
             </div>
             
