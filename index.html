@@ -273,28 +273,40 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .no-data-message h3, .error-message h3 { color: #f1c40f; }
 @media (max-width: 768px) { .players-stats-grid { grid-template-columns: 1fr; } .match-history-item { grid-template-columns: 1fr; gap: 5px; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 /* ========== NIEUWE HEADER VOOR PAGE5 ========== */
+/* Verberg oude titel */
 #page5 .header h1 { display: none !important; }
 
 .header-match-info {
     flex: 1; display: flex; align-items: center; justify-content: center;
-    gap: 15px; padding: 0 10px;
+    gap: 20px; padding: 0 10px; width: 100%;
 }
-.header-player-side { display: flex; align-items: baseline; gap: 10px; }
-.header-player-side.left { flex-direction: row; }
-.header-player-side.right { flex-direction: row-reverse; }
+.header-player-side {
+    display: flex; align-items: center; gap: 14px;
+}
 
+/* Targets: groot, wit & geel */
 .header-target {
-    font-size: 2.6rem; font-weight: 800; color: #3498db; line-height: 1;
+    font-size: 3.2rem; font-weight: 800; line-height: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
-.header-name {
-    font-size: 1.5rem; color: #ecf0f1; font-weight: 600;
-    max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.header-vs { font-size: 1.6rem; color: #f1c40f; margin: 0 5px; }
+#headerTarget1 { color: #ffffff !important; } /* Speler 1 = WIT */
+#headerTarget2 { color: #f1c40f !important; } /* Speler 2 = GEEL */
 
+/* Namen: groter & volledig zichtbaar */
+.header-name {
+    font-size: 2rem; color: #ecf0f1; font-weight: 700;
+    /* ✅ Verwijder alle truncatie zodat namen nooit worden afgekapt */
+    max-width: none; white-space: normal; overflow: visible; text-overflow: unset;
+    line-height: 1.2;
+}
+
+.header-vs { font-size: 1.8rem; color: #bdc3c7; margin: 0 5px; }
+
+/* Mobiel: netjes schalen */
 @media (max-width: 650px) {
-    .header-target { font-size: 2rem; }
-    .header-name { font-size: 1.1rem; max-width: 100px; }
+    .header-target { font-size: 2.4rem; }
+    .header-name { font-size: 1.5rem; }
+    .header-vs { font-size: 1.4rem; }
 }
 .excel-stats-card { border-left: 5px solid #3498db; position: relative; }
 .card-header-excel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
