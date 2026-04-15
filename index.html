@@ -1005,8 +1005,9 @@ window.startMatch = function() {
     document.getElementById('p1TotalVal').textContent = '0';
     document.getElementById('p2TotalVal').textContent = '0';
     // Reset ALLEEN de beurtpunten-cellen
-    ['p1CurrentCell','p2CurrentCell'].forEach(id=>{
-    document.getElementById(id).classList.remove('active-player','turn-hidden');
+    ['p1CurrentCell','p2CurrentCell','p1NeededCell','p2NeededCell'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('active-player','turn-hidden','dimmed');
     });
     
     enableScoreButtons();
@@ -1079,8 +1080,9 @@ function restoreMatchFromBackup(b) {
     document.getElementById('matchTitle').textContent=`${m.p1} ⚔️ ${m.p2}`;
     document.getElementById('p1CurrentVal').textContent='0'; document.getElementById('p2CurrentVal').textContent='0';
     document.getElementById('p1TotalVal').textContent='0'; document.getElementById('p2TotalVal').textContent='0';
-    ['p1CurrentCell','p2CurrentCell'].forEach(id=>{
-    document.getElementById(id).classList.remove('active-player','turn-hidden');
+    ['p1CurrentCell','p2CurrentCell','p1NeededCell','p2NeededCell'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('active-player','turn-hidden','dimmed');
     });
     if(state.matchEnded) disableScoreButtons(); else enableScoreButtons();
     document.getElementById('matchEndedAlert').style.display=state.matchEnded?'block':'none';
