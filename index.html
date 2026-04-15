@@ -272,11 +272,30 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .no-data-message, .error-message { text-align: center; padding: 40px 20px; background: #34495e; border-radius: 10px; margin: 20px 0; }
 .no-data-message h3, .error-message h3 { color: #f1c40f; }
 @media (max-width: 768px) { .players-stats-grid { grid-template-columns: 1fr; } .match-history-item { grid-template-columns: 1fr; gap: 5px; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-#page5 .header { display: flex; align-items: center; min-height: 60px; }
-#page5 .header h1 { flex: 1; text-align: center; margin: 0; }
-#page5 .header #matchHeaderButtons { width: 120px; }
-#page5 .header #matchHeaderButtons[style*="display: none"] { display: none; }
-#page5 .header #matchHeaderButtons[style*="display: none"] + h1 { flex: 1; text-align: center; }
+/* ========== NIEUWE HEADER VOOR PAGE5 ========== */
+#page5 .header h1 { display: none !important; }
+
+.header-match-info {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    gap: 15px; padding: 0 10px;
+}
+.header-player-side { display: flex; align-items: baseline; gap: 10px; }
+.header-player-side.left { flex-direction: row; }
+.header-player-side.right { flex-direction: row-reverse; }
+
+.header-target {
+    font-size: 2.6rem; font-weight: 800; color: #3498db; line-height: 1;
+}
+.header-name {
+    font-size: 1.5rem; color: #ecf0f1; font-weight: 600;
+    max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header-vs { font-size: 1.6rem; color: #f1c40f; margin: 0 5px; }
+
+@media (max-width: 650px) {
+    .header-target { font-size: 2rem; }
+    .header-name { font-size: 1.1rem; max-width: 100px; }
+}
 .excel-stats-card { border-left: 5px solid #3498db; position: relative; }
 .card-header-excel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .match-count-badge { background: #3498db; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
@@ -493,9 +512,21 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 </div>
 <div id="page5" class="page">
 <div class="header">
-<button id="headerLeftBtn" class="action-btn confirm-btn">Einde beurt</button>
-<h1 id="matchTitle"></h1>
-<button id="headerRightBtn" class="action-btn undo-btn" disabled>↩️ Ongedaan</button>
+    <button id="headerLeftBtn" class="action-btn confirm-btn">Einde beurt</button>
+    
+    <div class="header-match-info">
+        <div class="header-player-side left">
+            <span class="header-target" id="headerTarget1">0</span>
+            <span class="header-name" id="headerName1">Speler 1</span>
+        </div>
+        <span class="header-vs">⚔️</span>
+        <div class="header-player-side right">
+            <span class="header-name" id="headerName2">Speler 2</span>
+            <span class="header-target" id="headerTarget2">0</span>
+        </div>
+    </div>
+
+    <button id="headerRightBtn" class="action-btn undo-btn" disabled>↩️ Ongedaan</button>
 </div>
 <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
 
@@ -631,6 +662,19 @@ document.getElementById('passwordInput').focus();
 errorDiv.style.animation = 'shake 0.5s';
 setTimeout(() => errorDiv.style.animation = '', 500);
 }
+}
+function updateHeaderTargets() {
+    const t1 = document.getElementById('headerTarget1');
+    const t2 = document.getElementById('headerTarget2');
+    const n1 = document.getElementById('headerName1');
+    const n2 = document.getElementById('headerName2');
+    
+    if (state.currentMatch) {
+        if (t1) t1.textContent = state.player1.target;
+        if (t2) t2.textContent = state.player2.target;
+        if (n1) n1.textContent = state.currentMatch.p1;
+        if (n2) n2.textContent = state.currentMatch.p2;
+    }
 }
 function updateHeaderButtons() {
 const leftBtn = document.getElementById('headerLeftBtn');
