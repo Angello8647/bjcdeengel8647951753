@@ -320,15 +320,11 @@
 
         /* NIEUWE STIJLEN VOOR WIT/GEEL SCORE DISPLAYS */
         .side-score-display {
-		    flex: 0 0 180px;  /* vaste breedte van 180px */
-		    border-radius: 15px;
-		    padding: 15px 10px;
 		    display: flex;
-		    flex-direction: column;
+		    flex-direction: row;       /* totaalscore en beurtpunten naast elkaar */
 		    align-items: center;
-		    justify-content: center;
-		    font-weight: bold;
-		    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+		    justify-content: space-between;
+		    gap: 20px;
 		}
 		
 		.side-score-display.white {
