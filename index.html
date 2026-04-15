@@ -861,13 +861,7 @@ rightBtn.style.opacity = rightBtn.disabled ? '0.5' : '1';
 rightBtn.style.background = '#3498db';
 }
 }
-function highlightMatch(cards) {
-    cards.forEach(c => c.classList.remove('focused'));
-    if (cards[window.matchListFocusIndex]) {
-        cards[window.matchListFocusIndex].classList.add('focused');
-        cards[window.matchListFocusIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-}
+
 let pageDownTimer = null;
 let lastTabTime = 0;
 const TAB_DEBOUNCE_MS = 500;
