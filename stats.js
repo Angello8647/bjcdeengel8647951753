@@ -504,11 +504,11 @@ function loadStatsPage() {
                     </button>
                     
                     <div class="stats-summary">
-                        <p><strong>Gespeeld:</strong> ${spelerMatches.length}</p>
-                        <p><strong>Gewonnen:</strong> ${gewonnenMatches.length}</p>
+                        <p><strong>Gesp.:</strong> ${spelerMatches.length}</p>
+                        <p><strong>Gew.:</strong> ${gewonnenMatches.length}</p>
                         <p><strong>Win %:</strong> ${winPercentage}%</p>
-                        <p><strong>Gemiddelde:</strong> ${gemiddelde}</p>
-                        <p><strong>Hoogste reeks:</strong> ${hoogsteReeks}</p>
+                        <p><strong>Gem.:</strong> ${gemiddelde}</p>
+                        <p><strong>HR:</strong> ${hoogsteReeks}</p>
                         <p><strong>TSG:</strong> ${player.tsg || 'N/A'}</p>
                     </div>
                 </div>
