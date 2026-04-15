@@ -843,7 +843,7 @@ function updateSideScoreDisplays() {
 }
 
 function updateCurrentScoreDisplay() {
-    // Elementen ophalen
+    // 1. Elementen ophalen (allemaal 1x)
     const p1CurrentEl = document.getElementById('p1CurrentVal');
     const p2CurrentEl = document.getElementById('p2CurrentVal');
     const p1NeededEl  = document.getElementById('p1NeededVal');
@@ -854,47 +854,44 @@ function updateCurrentScoreDisplay() {
     const p1NeededCell  = document.getElementById('p1NeededCell');
     const p2NeededCell  = document.getElementById('p2NeededCell');
 
-    // 1. Waarden updaten
+    // 2. Waarden updaten - HUIDIGE BEURT PUNTEN
     if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
     if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
 
-        // 👇 PLAK HIER DE NIEUWE CODE 👇
+    // 3. "Nog nodig" updaten - LIVE MET AFTREK VAN HUIDIGE INVOER
     const n1 = Math.max(0, state.player1.target - state.player1.score - 
         (state.currentPlayer === 1 ? state.currentInput : 0));
     const n2 = Math.max(0, state.player2.target - state.player2.score - 
         (state.currentPlayer === 2 ? state.currentInput : 0));
-    const p1NeededEl = document.getElementById('p1NeededVal');
-    const p2NeededEl = document.getElementById('p2NeededVal');
-    if (p1NeededEl) p1NeededEl.textContent = n1;
-    if (p2NeededEl) p2NeededEl.textContent = n2;
-    // 👆 EINDE NIEUWE CODE 👆
     
-    const n1 = Math.max(0, state.player1.target - state.player1.score);
-    const n2 = Math.max(0, state.player2.target - state.player2.score);
     if (p1NeededEl) p1NeededEl.textContent = n1;
     if (p2NeededEl) p2NeededEl.textContent = n2;
     
-    updateSideScoreDisplays(); // Totaalscores updaten
-    updateStaticNeededValues(); // ✅ Zorg dat het klopt bij wisseling
+    // 4. Totaalscores updaten
+    updateSideScoreDisplays();
+    
+    // 5. "Nog nodig" in spelerskaarten updaten (voor consistentie)
+    updateStaticNeededValues();
 
-    // 2. Classes resetten
-    [p1CurrentCell, p2CurrentCell, p1NeededCell, p2NeededCell].forEach(cell => {
-        if(cell) cell.className = cell.classList.contains('needed-cell') ? 'score-cell needed-cell' : 'score-cell current-turn-cell';
-    });
-
-    // 3. Actieve/Dimmed toepassen
+    // 6. Classes resetten voor beurtpunten-cellen
+    p1CurrentCell.className = 'score-cell current-turn-cell';
+    p2CurrentCell.className = 'score-cell current-turn-cell';
+    
+    // 7. Actieve/Dimmed toepassen op beurtpunten
     if (state.currentPlayer === 1) {
         p1CurrentCell.classList.add('active-player');
-        p1NeededCell.classList.remove('dimmed');
-        
         p2CurrentCell.classList.add('turn-hidden');
-        p2NeededCell.classList.add('dimmed');
     } else {
         p2CurrentCell.classList.add('active-player');
-        p2NeededCell.classList.remove('dimmed');
-        
         p1CurrentCell.classList.add('turn-hidden');
-        p1NeededCell.classList.add('dimmed');
+    }
+    
+    // 8. Dimmed toepassen op "nog nodig" cellen (alleen dempen, niet verbergen)
+    if (p1NeededCell) {
+        p1NeededCell.classList.toggle('dimmed', state.currentPlayer !== 1);
+    }
+    if (p2NeededCell) {
+        p2NeededCell.classList.toggle('dimmed', state.currentPlayer !== 2);
     }
 }
 
