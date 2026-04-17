@@ -1242,6 +1242,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+// ✅ Herstel de refreshKlassement functie (was per ongeluk verwijderd)
+function refreshKlassement() {
+    if (confirm('Klassement herberekenen met macro-logica?\n\nAlle berekeningen worden opnieuw uitgevoerd zoals in de Excel VBA macro.')) {
+        loadRankingPage();
+    }
+}
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
