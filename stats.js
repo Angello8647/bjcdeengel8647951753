@@ -1404,7 +1404,7 @@ function loadMatchPageFromStorage() {
     // 🎯 HUIDIGE SPELER
     const currentPlayer = state.currentPlayer || 1;
     const currentPlayerName = currentPlayer === 1 ? state.player1 : state.player2;
-    safeSetText('currentPlayerDisplay', currentPlayerName ? `🎱 ${currentPlayerName}` : 'Klaar');
+    safeSetText('currentPlayerDisplay', currentPlayerName ? `${currentPlayerName} - Beurt ${state.turnNumber || 1}` : 'Klaar');
     safeSetText('currentPlayerBtnName', currentPlayerName || 'Speler');
     
     // 🎯 VISUELE FEEDBACK: Player cards
