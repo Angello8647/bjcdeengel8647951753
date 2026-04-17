@@ -1256,7 +1256,7 @@ async function restoreMatch(matchId) {
       
       // 3️⃣ Navigeer naar page5 (jouw match-pagina)
       if (typeof showPage === 'function') {
-        showPage(5); // ✅ Ga direct naar page5
+        showPage(5);
         console.log('🔀 Navigatie via showPage(5)');
       } else {
         // Fallback: handmatig wisselen van pagina
@@ -1268,28 +1268,103 @@ async function restoreMatch(matchId) {
         }
       }
       
-      // 4️⃣ 🚀 BELANGRIJK: Laad de UI expliciet na korte delay
-      // (Geeft de browser tijd om page5 actief te maken voordat we de UI vullen)
+      // 4️⃣ 🚀 BELANGRIJK: Herstel UI + INTERNE STATE (exacte structuur voor jouw changeScore)
       setTimeout(() => {
-        console.log('⏱️ Timeout verstreken, UI laden...');
+        console.log('⏱️ Timeout verstreken, state + UI laden...');
         
-        // Probeer de officiële laadfunctie
+        // 🎯 A. Laad eerst de UI
         if (typeof loadMatchPageFromStorage === 'function') {
-          console.log('🔄 loadMatchPageFromStorage() aanroepen...');
           loadMatchPageFromStorage();
-        } 
-        // Fallback 1: alternatieve functie
-        else if (typeof initMatchPage === 'function') {
-          console.log('🔄 initMatchPage() aanroepen...');
-          initMatchPage();
         }
-        // Fallback 2: direct laden uit matchData
-        else if (typeof loadMatchFromBackup === 'function') {
-          console.log('🔄 loadMatchFromBackup() aanroepen...');
-          loadMatchFromBackup(matchData);
+        
+        // 🎯 B. HERSTEL DE GLOBALE STATE (exacte structuur voor jouw app)
+        // Jouw changeScore() verwacht: state.player1.score, state.player1.target, etc.
+        if (typeof window.state !== 'undefined') {
+          console.log('🔄 Globale state herstellen...');
+          
+          // Parse scores/targets naar getallen (veilig)
+          const p1Score = parseInt(matchData.p1Score) || 0;
+          const p2Score = parseInt(matchData.p2Score) || 0;
+          const t1 = parseInt(matchData.target1) || 20;
+          const t2 = parseInt(matchData.target2) || 20;
+          
+          // 🎯 BELANGRIJK: Bouw de state exact zoals jouw app verwacht
+          window.state = {
+            ...window.state, // behoud eventuele andere velden
+            
+            // Match meta
+            matchId: matchData.matchId,
+            date: matchData.date,
+            completed: matchData.completed || false,
+            matchEnded: matchData.completed || false,
+            
+            // Spelers als OBJECTEN met .score en .target (cruciaal voor changeScore!)
+            player1: {
+              name: matchData.player1 || 'Speler 1',
+              score: p1Score,
+              target: t1,
+              tsg: matchData.tsg1 || matchData.player1Tsg || '0,000',
+              turns: matchData.p1Turns || []
+            },
+            player2: {
+              name: matchData.player2 || 'Speler 2',
+              score: p2Score,
+              target: t2,
+              tsg: matchData.tsg2 || matchData.player2Tsg || '0,000',
+              turns: matchData.p2Turns || []
+            },
+            
+            // Game flow
+            currentPlayer: matchData.currentPlayer || 1,
+            currentInput: 0,
+            whitePlayer: matchData.whitePlayer || 1,
+            isNabeurt: matchData.isNabeurt || false,
+            
+            // Turn history
+            p1Turns: matchData.p1Turns || [],
+            p2Turns: matchData.p2Turns || [],
+            turnNumber: matchData.turnNumber || 1,
+            
+            // UI helpers
+            firstToTarget: matchData.firstToTarget || null
+          };
+          
+          console.log('✅ State object hersteld:', {
+            p1: window.state.player1,
+            p2: window.state.player2,
+            current: window.state.currentPlayer
+          });
         }
-        // Fallback 3: ultra-simpele directe vulling (laatste redmiddel)
-        else {
+        
+        // 🎯 C. Update de UI componenten
+        if (typeof updatePlayerCards === 'function') {
+          updatePlayerCards();
+        }
+        
+        // 🎯 D. Forceer her-berekening van de score-display
+        if (typeof updateCurrentScoreDisplay === 'function') {
+          updateCurrentScoreDisplay();
+        }
+        if (typeof updateDynamicNeededDisplay === 'function') {
+          updateDynamicNeededDisplay();
+        }
+        if (typeof updateStaticNeededValues === 'function') {
+          updateStaticNeededValues();
+        }
+        
+        // 🎯 E. Update knop-states (disable als target bereikt)
+        if (typeof updateScoreButtons === 'function') {
+          updateScoreButtons();
+        }
+        
+        console.log('✅ Restore compleet: state + UI bijgewerkt');
+        
+      }, 300); // 300ms voor veilige DOM-rendering
+      
+      // 5️⃣ Toon bevestiging aan gebruiker
+      alert('✅ Match hersteld! Je ziet nu de gespeelde punten op de match-pagina.');
+      
+    } else {
           console.log('⚠️ Geen laadfunctie gevonden, probeer directe vulling...');
           const state = matchData.player1 ? matchData : (matchData.matchData || {});
           
@@ -1489,7 +1564,60 @@ function safeSetText(elementId, text) {
   // Optioneel: uncomment voor debug
   // else { console.warn(`⚠️ Element #${elementId} niet gevonden`); }
 }
+// ✅ Update player cards met state-data
+function updatePlayerCards() {
+  const s = window.state || {};
+  
+  const card1 = document.getElementById('player1Card');
+  if (card1 && s.player1?.name) {
+    card1.innerHTML = `
+      <div class="player-name">${s.player1.name}</div>
+      <div class="player-score">Score: ${s.player1.score || 0}</div>
+      <div class="player-target">Target: ${s.player1.target || 20}</div>
+      ${s.player1.turns?.length ? `<div class="player-turns">${s.player1.turns.length} beurten</div>` : ''}
+    `;
+  }
+  
+  const card2 = document.getElementById('player2Card');
+  if (card2 && s.player2?.name) {
+    card2.innerHTML = `
+      <div class="player-name">${s.player2.name}</div>
+      <div class="player-score">Score: ${s.player2.score || 0}</div>
+      <div class="player-target">Target: ${s.player2.target || 20}</div>
+      ${s.player2.turns?.length ? `<div class="player-turns">${s.player2.turns.length} beurten</div>` : ''}
+    `;
+  }
+}
 
+// ✅ Update knop-states (disable + knoppen als target bereikt)
+function updateScoreButtons() {
+  const s = window.state || {};
+  if (!s.player1 || !s.player2) return;
+  
+  const p1Reached = (s.player1.score || 0) >= (s.player1.target || 20);
+  const p2Reached = (s.player2.score || 0) >= (s.player2.target || 20);
+  
+  // Update + knoppen
+  document.querySelectorAll('.plus-btn').forEach(btn => {
+    const isLeft = btn.classList.contains('left-plus');
+    const reached = isLeft ? p1Reached : p2Reached;
+    btn.disabled = reached;
+    btn.style.opacity = reached ? '0.5' : '1';
+    btn.title = reached ? 'Target behaald' : 'Punt toevoegen';
+  });
+  
+  // Update beurt-bevestiging knop
+  const confirmBtn = document.getElementById('confirmScoreBtn');
+  if (confirmBtn) {
+    const nameEl = confirmBtn.querySelector('#currentPlayerBtnName');
+    if (nameEl && s.currentPlayer) {
+      const currentName = s.currentPlayer === 1 ? s.player1.name : s.player2.name;
+      nameEl.textContent = currentName;
+    }
+  }
+  
+  console.log(`🎯 Knoppen: P1 ${p1Reached ? '🔒' : '🔓'}, P2 ${p2Reached ? '🔒' : '🔓'}`);
+}
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
