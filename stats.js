@@ -1142,49 +1142,116 @@ function renderBackupMatches(backups) {
   html += '</div>';
   listContainer.innerHTML = html;
 }
+// ============================================================
+// ✅ BACKUP HERSTEL - SCHONE VERSIE (geen duplicates)
+// ============================================================
 
-// ♻️ Herstel-functie (laad match terug in state)
-async function restoreMatch(matchId) {
-  // 🔍 DEBUG: Log wat er binnenkomt
-  console.log('🔍 restoreMatch aangeroepen met matchId:', matchId, typeof matchId);
+// 🎨 Render functie voor backup-lijst
+function renderBackupMatches(backups) {
+  const listContainer = document.getElementById('backupList');
+  if (!listContainer) return;
   
-  const source = document.getElementById('backupSourceSelect')?.value;
-  console.log('📦 Bron:', source);
-  const source = document.getElementById('backupSourceSelect')?.value;
-  let matchData = null;
-  
-  if (source === 'local') {
-    const backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
-    const found = backups.find(b => {
-      const data = typeof b === 'string' ? JSON.parse(b) : b;
-      return (data.matchId || data.id) === matchId;
-    });
-    matchData = typeof found === 'string' ? JSON.parse(found) : found;
-  } else {
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups';
-    try {
-      const res = await fetch(SCRIPT_URL);
-      const data = await res.json();
-      const found = (data.backups || []).find(b => (b.matchId || b.id) === matchId);
-      matchData = found?.fullData || found;
-    } catch (err) {
-      console.error('Sheets fetch fout:', err);
-      alert('⚠️ Geen verbinding met Google Sheets. Probeer later of gebruik lokale backup.');
-      return;
-    }
+  if (!backups || backups.length === 0) {
+    listContainer.innerHTML = '<p style="color:#ecf0f1; text-align:center; padding:20px;">Geen onderbroken matches gevonden</p>';
+    return;
   }
   
-  if (matchData) {
-    if (typeof loadMatchFromBackup === 'function') {
-      loadMatchFromBackup(matchData);
+  let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+  
+  backups.forEach(backup => {
+    const data = typeof backup === 'string' ? JSON.parse(backup) : backup;
+    const matchDate = data.date || data.datum || 'Onbekend';
+    const player1 = data.player1 || data.p1 || 'Speler 1';
+    const player2 = data.player2 || data.p2 || 'Speler 2';
+    const p1Score = data.p1Score || data.score1 || 0;
+    const p2Score = data.p2Score || data.score2 || 0;
+    const matchId = data.matchId || data.id || Date.now();
+    
+    // Forceer matchId naar string en escape apostrof voor veilige onclick
+    const safeId = String(matchId).replace(/'/g, "\\'");
+    
+    html += `
+      <div style="background:#2c3e50; padding:15px; border-radius:8px; border-left:4px solid #9b59b6;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <strong style="color:#ecf0f1;">${player1} vs ${player2}</strong>
+          <span style="color:#95a5a6; font-size:0.9em;">${matchDate}</span>
+        </div>
+        <div style="color:#ecf0f1; margin-bottom:10px;">
+          Score: <strong>${p1Score}</strong> - <strong>${p2Score}</strong>
+        </div>
+        <button onclick="restoreMatch('${safeId}')" 
+                style="background:#9b59b6; color:white; border:none; padding:8px 16px; border-radius:5px; cursor:pointer;">
+          ♻️ Herstel deze match
+        </button>
+      </div>
+    `;
+  });
+  
+  html += '</div>';
+  listContainer.innerHTML = html;
+}
+
+// ♻️ Herstel-functie (robust, geen duplicate declarations)
+async function restoreMatch(matchId) {
+  console.log('🔍 restoreMatch aangeroepen met matchId:', matchId, typeof matchId);
+  
+  // ÉÉN keer declareren ✅
+  const source = document.getElementById('backupSourceSelect')?.value;
+  console.log('📦 Bron:', source);
+  
+  let matchData = null;
+  
+  try {
+    if (source === 'local') {
+      const backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
+      const found = backups.find(b => {
+        const data = typeof b === 'string' ? JSON.parse(b) : b;
+        // Type-safe vergelijking: beide naar string
+        const backupId = String(data.matchId || data.id || '').trim();
+        const searchId = String(matchId).trim();
+        return backupId === searchId;
+      });
+      matchData = found ? (typeof found === 'string' ? JSON.parse(found) : found) : null;
+      
     } else {
-      localStorage.setItem('billiardState', JSON.stringify(matchData));
-      alert('✅ Match hersteld! De app wordt ververst...');
-      location.reload();
+      // Google Sheets bron
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups';
+      const res = await fetch(SCRIPT_URL);
+      const response = await res.json();
+      
+      if (!response.success) {
+        throw new Error('Sheets retourneerde success: false');
+      }
+      
+      const backups = response.backups || [];
+      const found = backups.find(b => {
+        const data = b.fullData || b;
+        const backupId = String(data.matchId || data.id || b.matchId || '').trim();
+        const searchId = String(matchId).trim();
+        return backupId === searchId;
+      });
+      matchData = found ? (found.fullData || found) : null;
     }
-    document.getElementById('backupRecoveryModal').style.display = 'none';
-  } else {
-    alert('❌ Match niet gevonden in backup');
+    
+    if (matchData) {
+      console.log('✅ Match gevonden:', matchData.matchId || matchData.id);
+      
+      if (typeof loadMatchFromBackup === 'function') {
+        loadMatchFromBackup(matchData);
+      } else {
+        localStorage.setItem('billiardState', JSON.stringify(matchData));
+        alert('✅ Match hersteld! De app wordt ververst...');
+        location.reload();
+      }
+      document.getElementById('backupRecoveryModal').style.display = 'none';
+    } else {
+      console.warn('❌ Match niet gevonden. Zoek-ID:', matchId);
+      alert('❌ Match niet gevonden in backup. Controleer of de match echt is opgeslagen.');
+    }
+    
+  } catch (err) {
+    console.error('❌ Restore fout:', err);
+    alert('⚠️ Fout bij herstellen: ' + err.message);
   }
 }
 
@@ -1232,7 +1299,7 @@ function openBackupRecoveryModal() {
 document.addEventListener('DOMContentLoaded', function() {
   const sourceSelect = document.getElementById('backupSourceSelect');
   if (sourceSelect) {
-    // Zorg dat er maar één listener is
+    // Verwijder eventuele oude listeners door element te clonen
     const newSelect = sourceSelect.cloneNode(true);
     sourceSelect.parentNode.replaceChild(newSelect, sourceSelect);
     
@@ -1242,11 +1309,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-// ✅ Herstel de refreshKlassement functie (was per ongeluk verwijderd)
+
+// ✅ refreshKlassement functie (voor de ranking pagina)
 function refreshKlassement() {
-    if (confirm('Klassement herberekenen met macro-logica?\n\nAlle berekeningen worden opnieuw uitgevoerd zoals in de Excel VBA macro.')) {
-        loadRankingPage();
-    }
+  if (confirm('Klassement herberekenen met macro-logica?\n\nAlle berekeningen worden opnieuw uitgevoerd zoals in de Excel VBA macro.')) {
+    loadRankingPage();
+  }
 }
 
 // ==================== GLOBAL EXPORTS ====================
@@ -1260,6 +1328,11 @@ window.exportMacroKlassement = exportMacroKlassement;
 window.exportSpelerData = exportSpelerData;
 window.exportPlayerExcel = exportPlayerExcel;
 window.printMacroKlassement = printMacroKlassement;
-window.refreshKlassement = refreshKlassement;
+window.refreshKlassement = refreshKlassement;  // ← Deze moet er staan!
+// Voeg deze toe als je de backup-functies ook globaal wilt maken:
+window.renderBackupMatches = renderBackupMatches;
+window.restoreMatch = restoreMatch;
+window.refreshBackupList = refreshBackupList;
+window.openBackupRecoveryModal = openBackupRecoveryModal;
 
 console.log('🎯 Excel VBA Macro stats.js functies geregistreerd');
