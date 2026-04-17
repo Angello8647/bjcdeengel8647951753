@@ -1248,6 +1248,7 @@ function refreshKlassement() {
         loadRankingPage();
     }
 }
+
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
