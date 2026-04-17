@@ -1103,6 +1103,39 @@ function refreshKlassement() {
     }
 }
 
+// ✅ 1. Luister naar wijzigingen in het keuzevak
+document.getElementById('backupSourceSelect').addEventListener('change', async (e) => {
+  await refreshBackupList(e.target.value);
+});
+
+// ✅ 2. De refresh-functie (scheidt ophalen & tonen)
+async function refreshBackupList(source) {
+  const listContainer = document.getElementById('backupList'); // ← PAS DIT ID AAN NAAR JOUW LIJST-DIV
+  if (!listContainer) return;
+
+  // Toon laadstatus & wis oude data
+  listContainer.innerHTML = '<div style="text-align:center; color:#ecf0f1; padding:20px;">⏳ Matchen laden...</div>';
+
+  try {
+    let backups = [];
+    if (source === 'local') {
+      // Vervang dit met jouw bestaande localStorage-functie
+      backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
+    } else {
+      // Vervang met jouw Apps Script URL + getBackups call
+      const res = await fetch('https://script.google.com/macros/s/JOUW_WEBAPP_URL/exec?action=getBackups');
+      const data = await res.json();
+      backups = data.success ? (data.backups || []) : [];
+    }
+    
+    // Roep hier jouw bestaande render-functie aan
+    renderBackupMatches(backups); 
+  } catch (err) {
+    listContainer.innerHTML = `<div style="text-align:center; color:#e74c3c; padding:20px;">❌ Laden mislukt: ${err.message}</div>`;
+    console.error('Backup laadfout:', err);
+  }
+}
+
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
