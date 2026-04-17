@@ -1,14 +1,21 @@
 // stats.js - EXACTE EXCEL VBA MACRO KLASSEMENT OPMAAK
 // ==================== INITIALISATIE ====================
+// ==================== INITIALISATIE ====================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ stats.js geladen - Exacte Excel VBA macro opmaak');
     
     const currentPage = document.querySelector('.page.active');
+    
     if (currentPage && currentPage.id === 'page8') {
         loadStatsPage();
     }
     if (currentPage && currentPage.id === 'page9') {
         loadRankingPage();
+    }
+    
+    // ✅ NIEUW: Initialisatie voor page5 (match-pagina)
+    if (currentPage && currentPage.id === 'page5') {
+        loadMatchPageFromStorage();
     }
 });
 
@@ -1342,6 +1349,66 @@ document.addEventListener('DOMContentLoaded', function() {
 function refreshKlassement() {
   if (confirm('Klassement herberekenen met macro-logica?\n\nAlle berekeningen worden opnieuw uitgevoerd zoals in de Excel VBA macro.')) {
     loadRankingPage();
+  }
+}
+
+// ✅ Laad match-data van localStorage naar page5 UI
+function loadMatchPageFromStorage() {
+  console.log('🔍 loadMatchPageFromStorage() gestart');
+  
+  const savedState = localStorage.getItem('billiardState');
+  if (!savedState) {
+    console.log('⚠️ Geen billiardState gevonden in localStorage');
+    return;
+  }
+  
+  try {
+    const state = JSON.parse(savedState);
+    console.log('📦 State geladen:', state);
+    
+    // 🎯 PAS DEZE SELECTORS AAN NAAR JOUW HTML
+    // Zoek in je HTML naar de elementen die de match tonen en vul de IDs in:
+    
+    // Spelersnamen
+    if (state.player1) safeSetText('player1Name', state.player1);
+    if (state.player2) safeSetText('player2Name', state.player2);
+    
+    // Scores
+    if (state.p1Score !== undefined) safeSetText('p1Score', state.p1Score);
+    if (state.p2Score !== undefined) safeSetText('p2Score', state.p2Score);
+    
+    // Targets (optioneel)
+    if (state.target1) safeSetText('target1', state.target1);
+    if (state.target2) safeSetText('target2', state.target2);
+    
+    // Match metadata
+    if (state.date) safeSetText('matchDate', state.date);
+    if (state.matchId) console.log('🆔 Match ID:', state.matchId);
+    
+    // Beurten/turns (als je die toont)
+    if (state.p1Turns?.length) safeSetText('p1TurnsCount', state.p1Turns.length);
+    if (state.p2Turns?.length) safeSetText('p2TurnsCount', state.p2Turns.length);
+    
+    // Status flags
+    if (state.completed) {
+      console.log('✅ Match is voltooid');
+      // Optioneel: toon een "match voltooid" banner
+    }
+    
+    console.log('✅ Match-pagina bijgewerkt met herstelde data');
+    
+  } catch (err) {
+    console.error('❌ Fout bij laden match-pagina:', err);
+  }
+}
+
+// ✅ Helper: veilige tekst-setter (voorkomt fouten als element niet bestaat)
+function safeSetText(elementId, text) {
+  const el = document.getElementById(elementId);
+  if (el) {
+    el.textContent = text;
+  } else {
+    // console.warn(`⚠️ Element #${elementId} niet gevonden`);
   }
 }
 
