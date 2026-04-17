@@ -1135,7 +1135,141 @@ async function refreshBackupList(source) {
     console.error('Backup laadfout:', err);
   }
 }
+// ✅ Render functie voor backup-lijst (past bij jouw Excel-stijl UI)
+function renderBackupMatches(backups) {
+  const listContainer = document.getElementById('backupList');
+  if (!listContainer) return;
+  
+  if (!backups || backups.length === 0) {
+    listContainer.innerHTML = '<p style="color:#ecf0f1; text-align:center; padding:20px;">Geen onderbroken matches gevonden</p>';
+    return;
+  }
+  
+  let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+  
+  backups.forEach(backup => {
+    // Parse de data (lokaal of van Sheets)
+    const data = typeof backup === 'string' ? JSON.parse(backup) : backup;
+    const matchDate = data.date || data.datum || 'Onbekend';
+    const player1 = data.player1 || data.p1 || 'Speler 1';
+    const player2 = data.player2 || data.p2 || 'Speler 2';
+    const p1Score = data.p1Score || data.score1 || 0;
+    const p2Score = data.p2Score || data.score2 || 0;
+    const matchId = data.matchId || Date.now();
+    
+    html += `
+      <div style="background:#2c3e50; padding:15px; border-radius:8px; border-left:4px solid #9b59b6;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <strong style="color:#ecf0f1;">${player1} vs ${player2}</strong>
+          <span style="color:#95a5a6; font-size:0.9em;">${matchDate}</span>
+        </div>
+        <div style="color:#ecf0f1; margin-bottom:10px;">
+          Score: <strong>${p1Score}</strong> - <strong>${p2Score}</strong>
+        </div>
+        <button onclick="restoreMatch('${matchId}')" 
+                style="background:#9b59b6; color:white; border:none; padding:8px 16px; border-radius:5px; cursor:pointer;">
+          ♻️ Herstel deze match
+        </button>
+      </div>
+    `;
+  });
+  
+  html += '</div>';
+  listContainer.innerHTML = html;
+}
 
+// ✅ Herstel-functie (laad match terug in state)
+async function restoreMatch(matchId) {
+  const source = document.getElementById('backupSourceSelect').value;
+  let matchData = null;
+  
+  if (source === 'local') {
+    const backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
+    const found = backups.find(b => {
+      const data = typeof b === 'string' ? JSON.parse(b) : b;
+      return data.matchId === matchId;
+    });
+    matchData = typeof found === 'string' ? JSON.parse(found) : found;
+  } else {
+    // Haal specifieke match op via Apps Script (optioneel: maak endpoint in Apps Script)
+    // Voor nu: haal alle backups op en filter client-side
+    const res = await fetch('https://script.google.com/macros/s/JOUW_WEBAPP_URL/exec?action=getBackups');
+    const data = await res.json();
+    const found = (data.backups || []).find(b => b.matchId === matchId);
+    matchData = found?.fullData || found;
+  }
+  
+  if (matchData) {
+    // Laad match in state (pas aan naar jouw state-structuur)
+    if (typeof loadMatchFromBackup === 'function') {
+      loadMatchFromBackup(matchData);
+    } else {
+      // Fallback: direct naar localStorage + herlaad app
+      localStorage.setItem('billiardState', JSON.stringify(matchData));
+      alert('✅ Match hersteld! De app wordt ververst...');
+      location.reload();
+    }
+    // Sluit modal
+    document.getElementById('backupRecoveryModal').style.display = 'none';
+  } else {
+    alert('❌ Match niet gevonden in backup');
+  }
+}
+
+// ✅ Refresh functie met change-event (gebruikt jouw exacte IDs)
+async function refreshBackupList(source) {
+  const listContainer = document.getElementById('backupList');
+  if (!listContainer) {
+    console.warn('⚠️ Element #backupList niet gevonden');
+    return;
+  }
+  
+  listContainer.innerHTML = '<div style="text-align:center; color:#ecf0f1; padding:20px;">⏳ Matchen laden...</div>';
+  
+  try {
+    let backups = [];
+    
+    if (source === 'local') {
+      backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
+    } else {
+      // ⚠️ VERVANG DEZE URL MET JOUW EIGEN WEB APP URL
+      const SCRIPT_URL = 'https://script.google.com/macros/s/JOUW_WEBAPP_URL/exec?action=getBackups';
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      backups = data.success ? (data.backups || []) : [];
+    }
+    
+    renderBackupMatches(backups);
+    
+  } catch (err) {
+    listContainer.innerHTML = `<div style="text-align:center; color:#e74c3c; padding:20px;">❌ Laden mislukt: ${err.message}</div>`;
+    console.error('Backup laadfout:', err);
+  }
+}
+
+// ✅ Zorg dat de lijst ververst wordt bij modal openen
+function openBackupRecoveryModal() {
+  const modal = document.getElementById('backupRecoveryModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    // Laad direct met de geselecteerde bron
+    const source = document.getElementById('backupSourceSelect').value;
+    refreshBackupList(source);
+  }
+}
+
+// ✅ Event listener voor de dropdown (gebruikt jouw exacte ID)
+document.addEventListener('DOMContentLoaded', function() {
+  const sourceSelect = document.getElementById('backupSourceSelect');
+  if (sourceSelect) {
+    // Verwijder eventuele dubbele listeners eerst
+    sourceSelect.replaceWith(sourceSelect.cloneNode(true));
+    // Voeg nieuwe listener toe
+    document.getElementById('backupSourceSelect').addEventListener('change', (e) => {
+      refreshBackupList(e.target.value);
+    });
+  }
+});
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
