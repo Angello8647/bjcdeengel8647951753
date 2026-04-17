@@ -1109,46 +1109,9 @@ function showErrorMessage(elementId, error) {
 // ============================================================
 
 // 🎨 Render functie voor backup-lijst (past bij jouw Excel-stijl UI)
-function renderBackupMatches(backups) {
-  const listContainer = document.getElementById('backupList');
-  if (!listContainer) return;
+
   
-  if (!backups || backups.length === 0) {
-    listContainer.innerHTML = '<p style="color:#ecf0f1; text-align:center; padding:20px;">Geen onderbroken matches gevonden</p>';
-    return;
-  }
-  
-  let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
-  
-  backups.forEach(backup => {
-    const data = typeof backup === 'string' ? JSON.parse(backup) : backup;
-    const matchDate = data.date || data.datum || 'Onbekend';
-    const player1 = data.player1 || data.p1 || 'Speler 1';
-    const player2 = data.player2 || data.p2 || 'Speler 2';
-    const p1Score = data.p1Score || data.score1 || 0;
-    const p2Score = data.p2Score || data.score2 || 0;
-    const matchId = data.matchId || Date.now();
-    
-    html += `
-      <div style="background:#2c3e50; padding:15px; border-radius:8px; border-left:4px solid #9b59b6;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <strong style="color:#ecf0f1;">${player1} vs ${player2}</strong>
-          <span style="color:#95a5a6; font-size:0.9em;">${matchDate}</span>
-        </div>
-        <div style="color:#ecf0f1; margin-bottom:10px;">
-          Score: <strong>${p1Score}</strong> - <strong>${p2Score}</strong>
-        </div>
-        <button onclick="restoreMatch('${matchId}')" 
-                style="background:#9b59b6; color:white; border:none; padding:8px 16px; border-radius:5px; cursor:pointer;">
-          ♻️ Herstel deze match
-        </button>
-      </div>
-    `;
-  });
-  
-  html += '</div>';
-  listContainer.innerHTML = html;
-}
+
 // ============================================================
 // ✅ BACKUP HERSTEL - SCHONE VERSIE (geen duplicates)
 // ============================================================
@@ -1199,10 +1162,10 @@ function renderBackupMatches(backups) {
 }
 
 // ♻️ Herstel-functie (robust, geen duplicate declarations)
+// ♻️ Herstel-functie (schone versie, geen syntax errors)
 async function restoreMatch(matchId) {
   console.log('🔍 restoreMatch aangeroepen met matchId:', matchId, typeof matchId);
   
-  // ÉÉN keer declareren ✅
   const source = document.getElementById('backupSourceSelect')?.value;
   console.log('📦 Bron:', source);
   
@@ -1213,15 +1176,12 @@ async function restoreMatch(matchId) {
       const backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
       const found = backups.find(b => {
         const data = typeof b === 'string' ? JSON.parse(b) : b;
-        // Type-safe vergelijking: beide naar string
         const backupId = String(data.matchId || data.id || '').trim();
         const searchId = String(matchId).trim();
         return backupId === searchId;
       });
       matchData = found ? (typeof found === 'string' ? JSON.parse(found) : found) : null;
-      
     } else {
-      // Google Sheets bron
       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups';
       const res = await fetch(SCRIPT_URL);
       const response = await res.json();
@@ -1240,65 +1200,53 @@ async function restoreMatch(matchId) {
       matchData = found ? (found.fullData || found) : null;
     }
     
-    // ============================================================
-    // ✅ MATCH HERSTELLEN - COMPLEET BLOK (copy-paste-klaar)
-    // ============================================================
-
+    // ✅ MATCH HERSTELLEN - SCHONE STRUCTUUR
     if (matchData) {
       console.log('✅ Match gevonden:', matchData.matchId || matchData.id);
-      console.log('📦 Match herstellen naar page5:', matchData);
       
-      // 1️⃣ Sla de state op in localStorage
+      // 1️⃣ Sla state op
       localStorage.setItem('billiardState', JSON.stringify(matchData));
       
-      // 2️⃣ Sluit de modal
+      // 2️⃣ Sluit modal
       document.getElementById('backupRecoveryModal').style.display = 'none';
       
-      // 3️⃣ Navigeer naar page5 (jouw match-pagina)
+      // 3️⃣ Navigeer naar page5
       if (typeof showPage === 'function') {
         showPage(5);
         console.log('🔀 Navigatie via showPage(5)');
       } else {
-        // Fallback: handmatig wisselen van pagina
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const page5 = document.getElementById('page5');
         if (page5) {
           page5.classList.add('active');
-          console.log('✅ page5 handmatig geactiveerd');
+          console.log('✅ page5 geactiveerd');
         }
       }
       
-      // 4️⃣ 🚀 BELANGRIJK: Herstel UI + INTERNE STATE (exacte structuur voor jouw changeScore)
+      // 4️⃣ Herstel UI + state na korte delay
       setTimeout(() => {
         console.log('⏱️ Timeout verstreken, state + UI laden...');
         
-        // 🎯 A. Laad eerst de UI
+        // UI laden
         if (typeof loadMatchPageFromStorage === 'function') {
           loadMatchPageFromStorage();
         }
         
-        // 🎯 B. HERSTEL DE GLOBALE STATE (exacte structuur voor jouw app)
-        // Jouw changeScore() verwacht: state.player1.score, state.player1.target, etc.
+        // State herstellen (cruciaal voor changeScore!)
         if (typeof window.state !== 'undefined') {
           console.log('🔄 Globale state herstellen...');
           
-          // Parse scores/targets naar getallen (veilig)
           const p1Score = parseInt(matchData.p1Score) || 0;
           const p2Score = parseInt(matchData.p2Score) || 0;
           const t1 = parseInt(matchData.target1) || 20;
           const t2 = parseInt(matchData.target2) || 20;
           
-          // 🎯 BELANGRIJK: Bouw de state exact zoals jouw app verwacht
           window.state = {
-            ...window.state, // behoud eventuele andere velden
-            
-            // Match meta
+            ...window.state,
             matchId: matchData.matchId,
             date: matchData.date,
             completed: matchData.completed || false,
             matchEnded: matchData.completed || false,
-            
-            // Spelers als OBJECTEN met .score en .target (cruciaal voor changeScore!)
             player1: {
               name: matchData.player1 || 'Speler 1',
               score: p1Score,
@@ -1313,91 +1261,29 @@ async function restoreMatch(matchId) {
               tsg: matchData.tsg2 || matchData.player2Tsg || '0,000',
               turns: matchData.p2Turns || []
             },
-            
-            // Game flow
             currentPlayer: matchData.currentPlayer || 1,
             currentInput: 0,
             whitePlayer: matchData.whitePlayer || 1,
             isNabeurt: matchData.isNabeurt || false,
-            
-            // Turn history
             p1Turns: matchData.p1Turns || [],
             p2Turns: matchData.p2Turns || [],
             turnNumber: matchData.turnNumber || 1,
-            
-            // UI helpers
             firstToTarget: matchData.firstToTarget || null
           };
-          
-          console.log('✅ State object hersteld:', {
-            p1: window.state.player1,
-            p2: window.state.player2,
-            current: window.state.currentPlayer
-          });
+          console.log('✅ State object hersteld');
         }
         
-        // 🎯 C. Update de UI componenten
-        if (typeof updatePlayerCards === 'function') {
-          updatePlayerCards();
-        }
+        // UI updates triggeren
+        if (typeof updatePlayerCards === 'function') updatePlayerCards();
+        if (typeof updateCurrentScoreDisplay === 'function') updateCurrentScoreDisplay();
+        if (typeof updateDynamicNeededDisplay === 'function') updateDynamicNeededDisplay();
+        if (typeof updateStaticNeededValues === 'function') updateStaticNeededValues();
+        if (typeof updateScoreButtons === 'function') updateScoreButtons();
         
-        // 🎯 D. Forceer her-berekening van de score-display
-        if (typeof updateCurrentScoreDisplay === 'function') {
-          updateCurrentScoreDisplay();
-        }
-        if (typeof updateDynamicNeededDisplay === 'function') {
-          updateDynamicNeededDisplay();
-        }
-        if (typeof updateStaticNeededValues === 'function') {
-          updateStaticNeededValues();
-        }
-        
-        // 🎯 E. Update knop-states (disable als target bereikt)
-        if (typeof updateScoreButtons === 'function') {
-          updateScoreButtons();
-        }
-        
-        console.log('✅ Restore compleet: state + UI bijgewerkt');
-        
-      }, 300); // 300ms voor veilige DOM-rendering
+        console.log('✅ Restore compleet');
+      }, 300);
       
-      // 5️⃣ Toon bevestiging aan gebruiker
-      alert('✅ Match hersteld! Je ziet nu de gespeelde punten op de match-pagina.');
-      
-    } else {
-          console.log('⚠️ Geen laadfunctie gevonden, probeer directe vulling...');
-          const state = matchData.player1 ? matchData : (matchData.matchData || {});
-          
-          // Directe element-vulling (voor de zekerheid)
-          const setIfFound = (id, val) => {
-            const el = document.getElementById(id);
-            if (el && val !== undefined) el.textContent = val;
-          };
-          
-          setIfFound('headerName1', state.player1);
-          setIfFound('headerName2', state.player2);
-          setIfFound('headerTarget1', state.target1);
-          setIfFound('headerTarget2', state.target2);
-          setIfFound('p1TotalVal', state.p1Score);
-          setIfFound('p2TotalVal', state.p2Score);
-          
-          // Bereken "nog nodig"
-          const t1 = parseInt(state.target1) || 0;
-          const t2 = parseInt(state.target2) || 0;
-          const s1 = parseInt(state.p1Score) || 0;
-          const s2 = parseInt(state.p2Score) || 0;
-          setIfFound('p1NeededVal', Math.max(0, t1 - s1));
-          setIfFound('p2NeededVal', Math.max(0, t2 - s2));
-          
-          // Huidige speler
-          const cp = state.currentPlayer || 1;
-          const cpName = cp === 1 ? state.player1 : state.player2;
-          setIfFound('currentPlayerDisplay', cpName ? `🎱 ${cpName}` : 'Klaar');
-          setIfFound('currentPlayerBtnName', cpName || 'Speler');
-        }
-      }, 300); // 300ms delay voor veilige DOM-rendering
-      
-      // 5️⃣ Toon bevestiging aan gebruiker
+      // 5️⃣ Bevestiging
       alert('✅ Match hersteld! Je ziet nu de gespeelde punten op de match-pagina.');
       
     } else {
