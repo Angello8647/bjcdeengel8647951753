@@ -1240,46 +1240,93 @@ async function restoreMatch(matchId) {
       matchData = found ? (found.fullData || found) : null;
     }
     
+    // ============================================================
+    // ✅ MATCH HERSTELLEN - COMPLEET BLOK (copy-paste-klaar)
+    // ============================================================
+
     if (matchData) {
       console.log('✅ Match gevonden:', matchData.matchId || matchData.id);
+      console.log('📦 Match herstellen naar page5:', matchData);
       
-        // ✅ NIEUW - direct naar page5 met herstelde match
-        console.log('📦 Match herstellen naar page5:', matchData);
-        
-        // 1. Sla de state op (belangrijk: voordat je navigeert)
-        localStorage.setItem('billiardState', JSON.stringify(matchData));
-        
-        // 2. Sluit de modal eerst
-        document.getElementById('backupRecoveryModal').style.display = 'none';
-        
-        // 3. Navigeer naar page5 (jouw match-pagina)
-        if (typeof showPage === 'function') {
-          showPage(5); // ✅ Ga direct naar page5
-        } else {
-          // Fallback: handmatig wisselen van pagina
-          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-          const page5 = document.getElementById('page5');
-          if (page5) {
-            page5.classList.add('active');
-            console.log('✅ page5 geactiveerd');
-          }
+      // 1️⃣ Sla de state op in localStorage
+      localStorage.setItem('billiardState', JSON.stringify(matchData));
+      
+      // 2️⃣ Sluit de modal
+      document.getElementById('backupRecoveryModal').style.display = 'none';
+      
+      // 3️⃣ Navigeer naar page5 (jouw match-pagina)
+      if (typeof showPage === 'function') {
+        showPage(5); // ✅ Ga direct naar page5
+        console.log('🔀 Navigatie via showPage(5)');
+      } else {
+        // Fallback: handmatig wisselen van pagina
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const page5 = document.getElementById('page5');
+        if (page5) {
+          page5.classList.add('active');
+          console.log('✅ page5 handmatig geactiveerd');
         }
+      }
+      
+      // 4️⃣ 🚀 BELANGRIJK: Laad de UI expliciet na korte delay
+      // (Geeft de browser tijd om page5 actief te maken voordat we de UI vullen)
+      setTimeout(() => {
+        console.log('⏱️ Timeout verstreken, UI laden...');
         
-        // 4. Trigger dat de match-pagina zijn state moet laden
-        // (Meeste apps luisteren naar dit event of checken localStorage bij pagina-activatie)
-        setTimeout(() => {
-          // Optioneel: forceer herlaad van de match-UI als je een init-functie hebt
-          if (typeof initMatchPage === 'function') {
-            initMatchPage();
-          } else if (typeof loadMatchFromBackup === 'function') {
-            loadMatchFromBackup(matchData);
-          }
-          // Anders: de match-pagina zou bij activatie automatisch localStorage moeten checken
-        }, 100);
-        
-        // 5. Toon bevestiging
-        alert('✅ Match hersteld! Je ziet nu de gespeelde punten op de match-pagina.');
+        // Probeer de officiële laadfunctie
+        if (typeof loadMatchPageFromStorage === 'function') {
+          console.log('🔄 loadMatchPageFromStorage() aanroepen...');
+          loadMatchPageFromStorage();
+        } 
+        // Fallback 1: alternatieve functie
+        else if (typeof initMatchPage === 'function') {
+          console.log('🔄 initMatchPage() aanroepen...');
+          initMatchPage();
+        }
+        // Fallback 2: direct laden uit matchData
+        else if (typeof loadMatchFromBackup === 'function') {
+          console.log('🔄 loadMatchFromBackup() aanroepen...');
+          loadMatchFromBackup(matchData);
+        }
+        // Fallback 3: ultra-simpele directe vulling (laatste redmiddel)
+        else {
+          console.log('⚠️ Geen laadfunctie gevonden, probeer directe vulling...');
+          const state = matchData.player1 ? matchData : (matchData.matchData || {});
+          
+          // Directe element-vulling (voor de zekerheid)
+          const setIfFound = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val !== undefined) el.textContent = val;
+          };
+          
+          setIfFound('headerName1', state.player1);
+          setIfFound('headerName2', state.player2);
+          setIfFound('headerTarget1', state.target1);
+          setIfFound('headerTarget2', state.target2);
+          setIfFound('p1TotalVal', state.p1Score);
+          setIfFound('p2TotalVal', state.p2Score);
+          
+          // Bereken "nog nodig"
+          const t1 = parseInt(state.target1) || 0;
+          const t2 = parseInt(state.target2) || 0;
+          const s1 = parseInt(state.p1Score) || 0;
+          const s2 = parseInt(state.p2Score) || 0;
+          setIfFound('p1NeededVal', Math.max(0, t1 - s1));
+          setIfFound('p2NeededVal', Math.max(0, t2 - s2));
+          
+          // Huidige speler
+          const cp = state.currentPlayer || 1;
+          const cpName = cp === 1 ? state.player1 : state.player2;
+          setIfFound('currentPlayerDisplay', cpName ? `🎱 ${cpName}` : 'Klaar');
+          setIfFound('currentPlayerBtnName', cpName || 'Speler');
+        }
+      }, 300); // 300ms delay voor veilige DOM-rendering
+      
+      // 5️⃣ Toon bevestiging aan gebruiker
+      alert('✅ Match hersteld! Je ziet nu de gespeelde punten op de match-pagina.');
+      
     } else {
+      // ❌ Match niet gevonden
       console.warn('❌ Match niet gevonden. Zoek-ID:', matchId);
       alert('❌ Match niet gevonden in backup. Controleer of de match echt is opgeslagen.');
     }
