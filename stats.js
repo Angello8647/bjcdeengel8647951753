@@ -1233,7 +1233,7 @@ async function refreshBackupList(source) {
       backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
     } else {
       // ⚠️ VERVANG DEZE URL MET JOUW EIGEN WEB APP URL
-      const SCRIPT_URL = 'https://script.google.com/macros/s/JOUW_WEBAPP_URL/exec?action=getBackups';
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups';
       const res = await fetch(SCRIPT_URL);
       const data = await res.json();
       backups = data.success ? (data.backups || []) : [];
