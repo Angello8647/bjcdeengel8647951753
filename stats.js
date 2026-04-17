@@ -1097,45 +1097,11 @@ function showErrorMessage(elementId, error) {
     }
 }
 
-function refreshKlassement() {
-    if (confirm('Klassement herberekenen met macro-logica?\n\nAlle berekeningen worden opnieuw uitgevoerd zoals in de Excel VBA macro.')) {
-        loadRankingPage();
-    }
-}
+// ============================================================
+// ✅ BACKUP HERSTEL - SCHONE VERSIE (één keer definiëren)
+// ============================================================
 
-// ✅ 1. Luister naar wijzigingen in het keuzevak
-document.getElementById('backupSourceSelect').addEventListener('change', async (e) => {
-  await refreshBackupList(e.target.value);
-});
-
-// ✅ 2. De refresh-functie (scheidt ophalen & tonen)
-async function refreshBackupList(source) {
-  const listContainer = document.getElementById('backupList'); // ← PAS DIT ID AAN NAAR JOUW LIJST-DIV
-  if (!listContainer) return;
-
-  // Toon laadstatus & wis oude data
-  listContainer.innerHTML = '<div style="text-align:center; color:#ecf0f1; padding:20px;">⏳ Matchen laden...</div>';
-
-  try {
-    let backups = [];
-    if (source === 'local') {
-      // Vervang dit met jouw bestaande localStorage-functie
-      backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
-    } else {
-      // Vervang met jouw Apps Script URL + getBackups call
-      const res = await fetch('https://script.google.com/macros/s/JOUW_WEBAPP_URL/exec?action=getBackups');
-      const data = await res.json();
-      backups = data.success ? (data.backups || []) : [];
-    }
-    
-    // Roep hier jouw bestaande render-functie aan
-    renderBackupMatches(backups); 
-  } catch (err) {
-    listContainer.innerHTML = `<div style="text-align:center; color:#e74c3c; padding:20px;">❌ Laden mislukt: ${err.message}</div>`;
-    console.error('Backup laadfout:', err);
-  }
-}
-// ✅ Render functie voor backup-lijst (past bij jouw Excel-stijl UI)
+// 🎨 Render functie voor backup-lijst (past bij jouw Excel-stijl UI)
 function renderBackupMatches(backups) {
   const listContainer = document.getElementById('backupList');
   if (!listContainer) return;
@@ -1148,7 +1114,6 @@ function renderBackupMatches(backups) {
   let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
   
   backups.forEach(backup => {
-    // Parse de data (lokaal of van Sheets)
     const data = typeof backup === 'string' ? JSON.parse(backup) : backup;
     const matchDate = data.date || data.datum || 'Onbekend';
     const player1 = data.player1 || data.p1 || 'Speler 1';
@@ -1178,45 +1143,47 @@ function renderBackupMatches(backups) {
   listContainer.innerHTML = html;
 }
 
-// ✅ Herstel-functie (laad match terug in state)
+// ♻️ Herstel-functie (laad match terug in state)
 async function restoreMatch(matchId) {
-  const source = document.getElementById('backupSourceSelect').value;
+  const source = document.getElementById('backupSourceSelect')?.value;
   let matchData = null;
   
   if (source === 'local') {
     const backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
     const found = backups.find(b => {
       const data = typeof b === 'string' ? JSON.parse(b) : b;
-      return data.matchId === matchId;
+      return (data.matchId || data.id) === matchId;
     });
     matchData = typeof found === 'string' ? JSON.parse(found) : found;
   } else {
-    // Haal specifieke match op via Apps Script (optioneel: maak endpoint in Apps Script)
-    // Voor nu: haal alle backups op en filter client-side
-    const res = await fetch('https://script.google.com/macros/s/JOUW_WEBAPP_URL/exec?action=getBackups');
-    const data = await res.json();
-    const found = (data.backups || []).find(b => b.matchId === matchId);
-    matchData = found?.fullData || found;
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups';
+    try {
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      const found = (data.backups || []).find(b => (b.matchId || b.id) === matchId);
+      matchData = found?.fullData || found;
+    } catch (err) {
+      console.error('Sheets fetch fout:', err);
+      alert('⚠️ Geen verbinding met Google Sheets. Probeer later of gebruik lokale backup.');
+      return;
+    }
   }
   
   if (matchData) {
-    // Laad match in state (pas aan naar jouw state-structuur)
     if (typeof loadMatchFromBackup === 'function') {
       loadMatchFromBackup(matchData);
     } else {
-      // Fallback: direct naar localStorage + herlaad app
       localStorage.setItem('billiardState', JSON.stringify(matchData));
       alert('✅ Match hersteld! De app wordt ververst...');
       location.reload();
     }
-    // Sluit modal
     document.getElementById('backupRecoveryModal').style.display = 'none';
   } else {
     alert('❌ Match niet gevonden in backup');
   }
 }
 
-// ✅ Refresh functie met change-event (gebruikt jouw exacte IDs)
+// 🔄 Refresh functie (énige versie)
 async function refreshBackupList(source) {
   const listContainer = document.getElementById('backupList');
   if (!listContainer) {
@@ -1232,7 +1199,6 @@ async function refreshBackupList(source) {
     if (source === 'local') {
       backups = JSON.parse(localStorage.getItem('biljartBackups') || '[]');
     } else {
-      // ⚠️ VERVANG DEZE URL MET JOUW EIGEN WEB APP URL
       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups';
       const res = await fetch(SCRIPT_URL);
       const data = await res.json();
@@ -1247,24 +1213,25 @@ async function refreshBackupList(source) {
   }
 }
 
-// ✅ Zorg dat de lijst ververst wordt bij modal openen
+// 🚪 Modal openen + direct laden
 function openBackupRecoveryModal() {
   const modal = document.getElementById('backupRecoveryModal');
   if (modal) {
     modal.style.display = 'flex';
-    // Laad direct met de geselecteerde bron
-    const source = document.getElementById('backupSourceSelect').value;
+    const source = document.getElementById('backupSourceSelect')?.value || 'local';
     refreshBackupList(source);
   }
 }
 
-// ✅ Event listener voor de dropdown (gebruikt jouw exacte ID)
+// 🎯 Event listener (één keer, netjes in DOMContentLoaded)
 document.addEventListener('DOMContentLoaded', function() {
   const sourceSelect = document.getElementById('backupSourceSelect');
   if (sourceSelect) {
-    // Verwijder eventuele dubbele listeners eerst
-    sourceSelect.replaceWith(sourceSelect.cloneNode(true));
-    // Voeg nieuwe listener toe
+    // Zorg dat er maar één listener is
+    const newSelect = sourceSelect.cloneNode(true);
+    sourceSelect.parentNode.replaceChild(newSelect, sourceSelect);
+    
+    // Nieuwe listener toevoegen
     document.getElementById('backupSourceSelect').addEventListener('change', (e) => {
       refreshBackupList(e.target.value);
     });
