@@ -1352,7 +1352,7 @@ function refreshKlassement() {
   }
 }
 
-// ✅ Laad match-data van localStorage naar page5 UI
+// ✅ Laad match-data van localStorage naar page5 UI (exacte IDs voor jouw HTML)
 function loadMatchPageFromStorage() {
   console.log('🔍 loadMatchPageFromStorage() gestart');
   
@@ -1366,34 +1366,45 @@ function loadMatchPageFromStorage() {
     const state = JSON.parse(savedState);
     console.log('📦 State geladen:', state);
     
-    // 🎯 PAS DEZE SELECTORS AAN NAAR JOUW HTML
-    // Zoek in je HTML naar de elementen die de match tonen en vul de IDs in:
+    // 🎯 HEADER: Spelersnamen en targets
+    safeSetText('headerName1', state.player1 || state.p1 || 'Speler 1');
+    safeSetText('headerName2', state.player2 || state.p2 || 'Speler 2');
+    safeSetText('headerTarget1', state.target1 || '0');
+    safeSetText('headerTarget2', state.target2 || '0');
     
-    // Spelersnamen
-    if (state.player1) safeSetText('player1Name', state.player1);
-    if (state.player2) safeSetText('player2Name', state.player2);
+    // 🎯 SCORES: Totaal (hoofdweergave)
+    safeSetText('p1TotalVal', state.p1Score ?? state.score1 ?? '0');
+    safeSetText('p2TotalVal', state.p2Score ?? state.score2 ?? '0');
     
-    // Scores
-    if (state.p1Score !== undefined) safeSetText('p1Score', state.p1Score);
-    if (state.p2Score !== undefined) safeSetText('p2Score', state.p2Score);
+    // 🎯 SCORES: Deze beurt (indien beschikbaar in state)
+    if (state.currentTurnScore1 !== undefined) safeSetText('p1CurrentVal', state.currentTurnScore1);
+    if (state.currentTurnScore2 !== undefined) safeSetText('p2CurrentVal', state.currentTurnScore2);
     
-    // Targets (optioneel)
-    if (state.target1) safeSetText('target1', state.target1);
-    if (state.target2) safeSetText('target2', state.target2);
+    // 🎯 SCORES: Nog nodig (target - totaal)
+    const t1 = parseInt(state.target1) || 0;
+    const t2 = parseInt(state.target2) || 0;
+    const s1 = parseInt(state.p1Score) || 0;
+    const s2 = parseInt(state.p2Score) || 0;
+    safeSetText('p1NeededVal', Math.max(0, t1 - s1));
+    safeSetText('p2NeededVal', Math.max(0, t2 - s2));
     
-    // Match metadata
-    if (state.date) safeSetText('matchDate', state.date);
-    if (state.matchId) console.log('🆔 Match ID:', state.matchId);
+    // 🎯 HUIDIGE SPELER (wie is aan de beurt?)
+    const currentPlayer = state.currentPlayer || 1;
+    const currentPlayerName = currentPlayer === 1 ? state.player1 : state.player2;
+    safeSetText('currentPlayerDisplay', currentPlayerName ? `${currentPlayerName} is aan de beurt 🎱` : 'Beurt starten');
+    safeSetText('currentPlayerBtnName', currentPlayerName || 'Speler');
     
-    // Beurten/turns (als je die toont)
-    if (state.p1Turns?.length) safeSetText('p1TurnsCount', state.p1Turns.length);
-    if (state.p2Turns?.length) safeSetText('p2TurnsCount', state.p2Turns.length);
-    
-    // Status flags
-    if (state.completed) {
-      console.log('✅ Match is voltooid');
-      // Optioneel: toon een "match voltooid" banner
+    // 🎯 MATCH STATUS (optioneel: toon alert als match voltooid)
+    const matchEndedAlert = document.getElementById('matchEndedAlert');
+    if (state.completed && matchEndedAlert) {
+      const winnaar = state.p1Score > state.p2Score ? state.player1 : state.player2;
+      matchEndedAlert.innerHTML = `🏆 Match voltooid! Winnaar: <strong>${winnaar}</strong>`;
+      matchEndedAlert.style.display = 'block';
     }
+    
+    // 🎯 BEURTEN (indien je die wilt tonen)
+    if (state.p1Turns?.length) console.log(`📊 ${state.player1}: ${state.p1Turns.length} beurten`);
+    if (state.p2Turns?.length) console.log(`📊 ${state.player2}: ${state.p2Turns.length} beurten`);
     
     console.log('✅ Match-pagina bijgewerkt met herstelde data');
     
@@ -1406,10 +1417,10 @@ function loadMatchPageFromStorage() {
 function safeSetText(elementId, text) {
   const el = document.getElementById(elementId);
   if (el) {
-    el.textContent = text;
-  } else {
-    // console.warn(`⚠️ Element #${elementId} niet gevonden`);
+    el.textContent = String(text);
   }
+  // Optioneel: uncomment voor debug
+  // else { console.warn(`⚠️ Element #${elementId} niet gevonden`); }
 }
 
 // ==================== GLOBAL EXPORTS ====================
@@ -1427,6 +1438,8 @@ window.refreshKlassement = refreshKlassement;  // ← Deze moet er staan!
 // Voeg deze toe als je de backup-functies ook globaal wilt maken:
 window.renderBackupMatches = renderBackupMatches;
 window.restoreMatch = restoreMatch;
+window.loadMatchPageFromStorage = loadMatchPageFromStorage;
+window.safeSetText = safeSetText;
 window.refreshBackupList = refreshBackupList;
 window.openBackupRecoveryModal = openBackupRecoveryModal;
 
