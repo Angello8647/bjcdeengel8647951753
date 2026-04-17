@@ -1236,14 +1236,42 @@ async function restoreMatch(matchId) {
     if (matchData) {
       console.log('✅ Match gevonden:', matchData.matchId || matchData.id);
       
-      if (typeof loadMatchFromBackup === 'function') {
-        loadMatchFromBackup(matchData);
-      } else {
+        // ✅ NIEUW - direct naar page5 met herstelde match
+        console.log('📦 Match herstellen naar page5:', matchData);
+        
+        // 1. Sla de state op (belangrijk: voordat je navigeert)
         localStorage.setItem('billiardState', JSON.stringify(matchData));
-        alert('✅ Match hersteld! De app wordt ververst...');
-        location.reload();
-      }
-      document.getElementById('backupRecoveryModal').style.display = 'none';
+        
+        // 2. Sluit de modal eerst
+        document.getElementById('backupRecoveryModal').style.display = 'none';
+        
+        // 3. Navigeer naar page5 (jouw match-pagina)
+        if (typeof showPage === 'function') {
+          showPage(5); // ✅ Ga direct naar page5
+        } else {
+          // Fallback: handmatig wisselen van pagina
+          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+          const page5 = document.getElementById('page5');
+          if (page5) {
+            page5.classList.add('active');
+            console.log('✅ page5 geactiveerd');
+          }
+        }
+        
+        // 4. Trigger dat de match-pagina zijn state moet laden
+        // (Meeste apps luisteren naar dit event of checken localStorage bij pagina-activatie)
+        setTimeout(() => {
+          // Optioneel: forceer herlaad van de match-UI als je een init-functie hebt
+          if (typeof initMatchPage === 'function') {
+            initMatchPage();
+          } else if (typeof loadMatchFromBackup === 'function') {
+            loadMatchFromBackup(matchData);
+          }
+          // Anders: de match-pagina zou bij activatie automatisch localStorage moeten checken
+        }, 100);
+        
+        // 5. Toon bevestiging
+        alert('✅ Match hersteld! Je ziet nu de gespeelde punten op de match-pagina.');
     } else {
       console.warn('❌ Match niet gevonden. Zoek-ID:', matchId);
       alert('❌ Match niet gevonden in backup. Controleer of de match echt is opgeslagen.');
