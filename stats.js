@@ -1361,6 +1361,7 @@ function refreshKlassement() {
 }
 
 // ✅ Laad match-data van localStorage naar page5 UI (gefixt voor jouw JSON-structuur)
+// ✅ Laad match-data van localStorage naar page5 UI (schone versie)
 function loadMatchPageFromStorage() {
   console.log('🔍 loadMatchPageFromStorage() gestart');
   
@@ -1373,9 +1374,7 @@ function loadMatchPageFromStorage() {
   try {
     const raw = JSON.parse(savedState);
     
-    // 🎯 BELANGRIJK: Gebruik de ROOT velden, niet de geneste matchData
-    // Als de data plat is: gebruik raw direct
-    // Als de data genest is: gebruik raw.matchData
+    // 🎯 Gebruik root velden of geneste matchData
     const state = raw.player1 ? raw : (raw.matchData || {});
     
     console.log('📦 State geladen (gebruik root):', state);
@@ -1386,32 +1385,29 @@ function loadMatchPageFromStorage() {
     safeSetText('headerTarget1', state.target1 || '0');
     safeSetText('headerTarget2', state.target2 || '0');
     
-    // 🎯 SCORES: Totaal (hoofdweergave) - forceer naar getal voor berekeningen
+    // 🎯 SCORES: Totaal
     const p1Score = parseInt(state.p1Score) || 0;
     const p2Score = parseInt(state.p2Score) || 0;
     safeSetText('p1TotalVal', p1Score);
     safeSetText('p2TotalVal', p2Score);
     
-    // 🎯 SCORES: Nog nodig (target - totaal)
+    // 🎯 SCORES: Nog nodig
     const t1 = parseInt(state.target1) || 0;
     const t2 = parseInt(state.target2) || 0;
     safeSetText('p1NeededVal', Math.max(0, t1 - p1Score));
     safeSetText('p2NeededVal', Math.max(0, t2 - p2Score));
     
-    // 🎯 SCORES: Deze beurt (optioneel - alleen als expliciet opgeslagen)
-    // Jouw JSON heeft geen 'currentTurnScore', dus we laten dit leeg of 0
+    // 🎯 SCORES: Deze beurt (leeg houden)
     safeSetText('p1CurrentVal', '0');
     safeSetText('p2CurrentVal', '0');
     
-    // 🎯 HUIDIGE SPELER (wie is aan de beurt?)
+    // 🎯 HUIDIGE SPELER
     const currentPlayer = state.currentPlayer || 1;
     const currentPlayerName = currentPlayer === 1 ? state.player1 : state.player2;
-    
-    // Toon wie aan de beurt is
     safeSetText('currentPlayerDisplay', currentPlayerName ? `🎱 ${currentPlayerName}` : 'Klaar');
     safeSetText('currentPlayerBtnName', currentPlayerName || 'Speler');
     
-    // 🎯 VISUELE FEEDBACK: Markeer de actieve speler (optioneel maar mooi)
+    // 🎯 VISUELE FEEDBACK: Player cards
     const p1Card = document.getElementById('player1Card');
     const p2Card = document.getElementById('player2Card');
     if (p1Card && p2Card) {
@@ -1421,7 +1417,7 @@ function loadMatchPageFromStorage() {
       p2Card.style.border = currentPlayer === 2 ? '3px solid #9b59b6' : '1px solid #34495e';
     }
     
-    // 🎯 MATCH STATUS: Toon alert als match voltooid
+    // 🎯 MATCH STATUS
     const matchEndedAlert = document.getElementById('matchEndedAlert');
     if (state.completed && matchEndedAlert) {
       const winnaar = p1Score > p2Score ? state.player1 : state.player2;
@@ -1431,11 +1427,10 @@ function loadMatchPageFromStorage() {
       matchEndedAlert.style.display = 'none';
     }
     
-    // 🎯 DEBUG: Log belangrijke waarden
     console.log(`✅ UI bijgewerkt: ${state.player1} (${p1Score}/${t1}) vs ${state.player2} (${p2Score}/${t2})`);
-    console.log(`🎯 Huidige speler: ${currentPlayerName} (beurt ${state.turnNumber || 1})`);
     
   } catch (err) {
+    // ✅ CATCH BLOK - DIT WAS WAARSCHIJNLIJK MIS!
     console.error('❌ Fout bij laden match-pagina:', err);
     console.error('📄 Raw state:', savedState?.substring(0, 200) + '...');
   }
