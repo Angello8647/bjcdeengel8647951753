@@ -1145,6 +1145,11 @@ function renderBackupMatches(backups) {
 
 // ♻️ Herstel-functie (laad match terug in state)
 async function restoreMatch(matchId) {
+  // 🔍 DEBUG: Log wat er binnenkomt
+  console.log('🔍 restoreMatch aangeroepen met matchId:', matchId, typeof matchId);
+  
+  const source = document.getElementById('backupSourceSelect')?.value;
+  console.log('📦 Bron:', source);
   const source = document.getElementById('backupSourceSelect')?.value;
   let matchData = null;
   
