@@ -1224,6 +1224,49 @@ function renderMatchSummary() {
     ${statHTML('📈', 'Te Spelen Gem.', tsg2)}
   `;
 }
+// 🗣️ AUDIO FEEDBACK VOOR PUNTEN (Web Speech API)
+let scoreVoice = null;
+let lastSpeechTime = 0;
+const SPEECH_COOLDOWN = 650; // ms - voorkomt overlappende geluiden bij snel klikken
+
+function initScoreAudio() {
+  // Browser laadt voices asynchroon; wacht op signaal of laad direct
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => { loadDutchVoice(); };
+  }
+  loadDutchVoice();
+}
+
+function loadDutchVoice() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return;
+  
+  // Filter op Nederlands, bij voorkeur mannelijk
+  const nlVoices = voices.filter(v => v.lang.startsWith('nl'));
+  // Probekende NL stemmen, fallback naar eerste NL stem
+  scoreVoice = nlVoices.find(v => /male|mannelijk|david|xander|claas|robert/i.test(v.name.toLowerCase())) || nlVoices[0] || null;
+}
+
+function playScoreSound(currentPoints) {
+  if (!window.speechSynthesis || currentPoints <= 0) return;
+  const now = Date.now();
+  if (now - lastSpeechTime < SPEECH_COOLDOWN) return; // Debounce
+
+  if (!scoreVoice) loadDutchVoice();
+
+  const utterance = new SpeechSynthesisUtterance(String(currentPoints));
+  utterance.lang = 'nl-NL';
+  if (scoreVoice) utterance.voice = scoreVoice;
+  utterance.rate = 1.05; // Iets vlotter dan standaard
+  utterance.pitch = 1.0;
+
+  speechSynthesis.cancel(); // Stop vorige direct als die nog loopt
+  speechSynthesis.speak(utterance);
+  lastSpeechTime = now;
+}
+
+// Initialiseer bij laden script
+initScoreAudio();
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
