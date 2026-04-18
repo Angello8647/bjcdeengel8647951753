@@ -1103,6 +1103,92 @@ function refreshKlassement() {
     }
 }
 
+// ============================================================
+// ✅ PUUR OVERZICHT ONDERBROKEN MATCH (GEEN RESTORE, ALLEEN WEERGEVEN)
+// ============================================================
+
+function showBackupOverview() {
+  console.log('🔍 showBackupOverview() gestart');
+  
+  const modal = document.getElementById('backupRecoveryModal');
+  const list = document.getElementById('backupList');
+  
+  if (!modal || !list) {
+    console.error('❌ Elementen niet gevonden');
+    return;
+  }
+
+  const saved = localStorage.getItem('currentMatchBackup');
+  
+  if (!saved) {
+    list.innerHTML = '<p style="color:#95a5a6; text-align:center; padding:20px;">💾 Geen opgeslagen match gevonden.</p>';
+  } else {
+    try {
+      const d = JSON.parse(saved);
+      
+      // Data ophalen (rekening houdend met zowel platte als geneste structuur)
+      const p1 = d.player1 || d.matchData?.player1 || 'Speler 1';
+      const p2 = d.player2 || d.matchData?.player2 || 'Speler 2';
+      const s1 = d.p1Score ?? d.matchData?.p1Score ?? 0;
+      const s2 = d.p2Score ?? d.matchData?.p2Score ?? 0;
+      
+      // Beurten arrays ophalen
+      const turns1 = d.p1Turns || d.matchData?.p1Turns || [];
+      const turns2 = d.p2Turns || d.matchData?.p2Turns || [];
+      
+      // 🚀 HOOGSTE REEKS BEREKENEN UIT BEURTEN (valt terug op 0 als leeg)
+      const h1 = d.p1Highest ?? d.matchData?.p1Highest ?? (turns1.length ? Math.max(...turns1) : 0);
+      const h2 = d.p2Highest ?? d.matchData?.p2Highest ?? (turns2.length ? Math.max(...turns2) : 0);
+      
+      // ✅ TIJDSTIP: Gebruik `timestamp` voor het exacte opslagmoment (incl. uur/min)
+      const rawDate = d.timestamp || d.matchData?.timestamp || d.date;
+      let formattedDate = 'Onbekend';
+      if (rawDate) {
+        const dateObj = new Date(rawDate);
+        if (!isNaN(dateObj.getTime())) {
+          formattedDate = dateObj.toLocaleString('nl-NL', {
+            day: 'numeric', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          }).replace(',', ' om');
+        }
+      }
+
+      list.innerHTML = `
+        <div style="background:#2c3e50; padding:20px; border-radius:12px; color:#ecf0f1; text-align:center;">
+          <div style="font-size:1.2em; font-weight:600; margin-bottom:10px;">⚔️ ${p1} vs ${p2}</div>
+          <div style="color:#7f8c8d; font-size:0.9em; margin-bottom:15px;">📅 ${formattedDate}</div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; text-align:center;">
+            <div style="background:#34495e; padding:15px; border-radius:8px;">
+              <div style="font-weight:bold; color:#ffffff; margin-bottom:5px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">⚪ ${p1} (Wit)</div>
+              <div style="font-size:1.8em; font-weight:bold;">${s1} pt</div>
+              <div style="font-size:0.9em; color:#bdc3c7; margin-top:5px;">🔄 ${turns1.length} beurten | 🎯 HR: ${h1}</div>
+            </div>
+            <div style="background:#34495e; padding:15px; border-radius:8px;">
+              <div style="font-weight:bold; color:#f1c40f; margin-bottom:5px;">🟡 ${p2} (Geel)</div>
+              <div style="font-size:1.8em; font-weight:bold;">${s2} pt</div>
+              <div style="font-size:0.9em; color:#bdc3c7; margin-top:5px;">🔄 ${turns2.length} beurten | 🎯 HR: ${h2}</div>
+            </div>
+          </div>
+          
+          <p style="margin-top:15px; color:#95a5a6; font-size:0.85em; line-height:1.4;">
+            ℹ️ Dit is alleen een overzicht.<br>Start een nieuwe match en vul de waarden handmatig in.
+          </p>
+        </div>
+      `;
+    } catch (e) {
+      console.error('❌ Fout bij parsen backup:', e);
+      list.innerHTML = '<p style="color:#e74c3c; text-align:center; padding:20px;">❌ Fout bij laden van backup</p>';
+    }
+  }
+  
+  modal.style.display = 'flex';
+  console.log('✅ Modal getoond');
+}
+
+function closeBackupModal() {
+  document.getElementById('backupRecoveryModal').style.display = 'none';
+}
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
@@ -1115,5 +1201,7 @@ window.exportSpelerData = exportSpelerData;
 window.exportPlayerExcel = exportPlayerExcel;
 window.printMacroKlassement = printMacroKlassement;
 window.refreshKlassement = refreshKlassement;
+window.showBackupOverview = showBackupOverview;
+window.closeBackupModal = closeBackupModal;
 
 console.log('🎯 Excel VBA Macro stats.js functies geregistreerd');
