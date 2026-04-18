@@ -1189,6 +1189,41 @@ function showBackupOverview() {
 function closeBackupModal() {
   document.getElementById('backupRecoveryModal').style.display = 'none';
 }
+// 🏁 MATCH SAMENVATTING RENDEREN
+function renderMatchSummary() {
+  const p1 = state.player1;
+  const p2 = state.player2;
+
+  const avg1 = p1.turns.length > 0 ? (p1.score / p1.turns.length).toFixed(2).replace('.', ',') : '0,00';
+  const avg2 = p2.turns.length > 0 ? (p2.score / p2.turns.length).toFixed(2).replace('.', ',') : '0,00';
+
+  const tsg1 = p1.fixedTSG || '—';
+  const tsg2 = p2.fixedTSG || '—';
+
+  const statHTML = (emoji, label, value) => `
+    <div class="summary-stat">
+      <div class="summary-label">${emoji} ${label}</div>
+      <div class="summary-value">${value}</div>
+    </div>`;
+
+  document.getElementById('summaryPlayer1').innerHTML = `
+    <div class="summary-player-name">${state.currentMatch.p1} ⚪</div>
+    ${statHTML('🔄', 'Beurten', p1.turns.length)}
+    ${statHTML('🎯', 'Score', p1.score)}
+    ${statHTML('📊', 'Gemiddelde', avg1)}
+    ${statHTML('🌟', 'Hoogste Reeks', p1.highestSeries)}
+    ${statHTML('📈', 'Te Spelen Gem.', tsg1)}
+  `;
+
+  document.getElementById('summaryPlayer2').innerHTML = `
+    <div class="summary-player-name">${state.currentMatch.p2} 🟡</div>
+    ${statHTML('🔄', 'Beurten', p2.turns.length)}
+    ${statHTML('🎯', 'Score', p2.score)}
+    ${statHTML('📊', 'Gemiddelde', avg2)}
+    ${statHTML('🌟', 'Hoogste Reeks', p2.highestSeries)}
+    ${statHTML('📈', 'Te Spelen Gem.', tsg2)}
+  `;
+}
 // ==================== GLOBAL EXPORTS ====================
 window.loadStatsPage = loadStatsPage;
 window.loadRankingPage = loadRankingPage;
@@ -1203,5 +1238,6 @@ window.printMacroKlassement = printMacroKlassement;
 window.refreshKlassement = refreshKlassement;
 window.showBackupOverview = showBackupOverview;
 window.closeBackupModal = closeBackupModal;
+window.renderMatchSummary = renderMatchSummary;
 
 console.log('🎯 Excel VBA Macro stats.js functies geregistreerd');
