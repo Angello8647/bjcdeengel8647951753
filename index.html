@@ -624,6 +624,72 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     line-height: 1 !important;
 }
     
+/* 💾 BACKUP KNOP OPMaak */
+.backup-btn {
+    background: linear-gradient(135deg, #9b59b6, #7d3c98);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    height: 44px; /* ✅ Matcht met jouw andere knoppen */
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(155, 89, 182, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.backup-btn:hover {
+    background: linear-gradient(135deg, #8e44ad, #6c3483);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(155, 89, 182, 0.4);
+}
+.backup-btn:active {
+    transform: translateY(0);
+}
+/* 🎯 UNIFORME HEADER KNOPPEN PAGINA 2 */
+.page2-btn {
+    height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+}
+.page2-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.btn-blue { background: #3498db; }
+.btn-purple { background: linear-gradient(135deg, #9b59b6, #7d3c98); }
+.btn-green { background: #2ecc71; }
+
+/* Grid layout voor perfecte uitlijning */
+#page2 .header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 15px;
+}
+#page2 .header h1 {
+    text-align: center;
+    font-size: 1.4em;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 </style>
 </head>
 <body id="bodyElement">
@@ -656,24 +722,23 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 <button onclick="showPage(9)" style="font-size:1.2rem; padding:14px 24px;">🏆 Rangschikking</button>
 </div>
 <div id="page2" class="page">
+
 <div class="header">
-<div>
-<button class="home-btn" onclick="showPage(1)">🏠 Hoofdmenu</button>
-<button class="back-btn" onclick="showPage(1)">← Terug</button>
-</div>
-<h1 id="matchListTitle">Matchen</h1>
-<div style="display: flex; gap: 10px;">
-<button class="new-match-btn" onclick="createNewMatch()">➕ Nieuwe Match</button>
-<button class="download-btn" onclick="showBackupRecovery()" style="background: #9b59b6;">💾➜♻️ Herstel Onderbroken Match</button>
-</div>
+    <button class="page2-btn btn-blue" onclick="showPage(1)">🏠 Home</button>
+    
+    <h1 id="matchListTitle">Matchen</h1>
+    
+    <div style="display: flex; gap: 10px;">
+        <button class="page2-btn btn-blue" onclick="createNewMatch()">➕ Nieuwe Match</button>
+        <button class="page2-btn btn-purple" onclick="showBackupOverview()">💾 Onderbroken match</button>
+    </div>
 </div>
 <div id="matchList"></div>
 </div>
 <div id="page3" class="page">
 <div class="header">
 <div>
-<button class="home-btn" onclick="showPage(1)">🏠 Hoofdmenu</button>
-<button class="back-btn" onclick="showPage(2)">← Terug</button>
+<button class="back-btn" onclick="showPage(2)">🔙 Terug</button>
 </div>
 <h1 id="newMatchTitle">Nieuwe Match Aanmaken</h1>
 <div style="width: 70px;"></div>
@@ -827,7 +892,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 <div id="page8" class="page">
 <div class="header">
 <button class="home-btn" onclick="showPage(1)">🏠 Hoofdmenu</button>
-<button class="back-btn" onclick="showPage('1')">← Terug</button>
 <h1>Speler Statistieken</h1>
 </div>
 <div id="statsContent"></div>
@@ -835,27 +899,22 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 <div id="page9" class="page">
 <div class="header">
 <button class="home-btn" onclick="showPage(1)">🏠 Hoofdmenu</button>
-<button class="back-btn" onclick="showPage('1')">← Terug</button>
 <h1>Rangschikking</h1>
 </div>
 <div id="rankingContent"></div>
 </div>
 <div id="backupRecoveryModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
 <div style="background: #34495e; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
-<h2 style="color: #9b59b6; margin-bottom: 20px;"> 💾➜♻️ Herstel Onderbroken Match</h2>
+<h2 style="color: #9b59b6; margin-bottom: 20px;"> ♻️ Onderbroken Match Data</h2>
 <div style="margin-bottom: 20px;">
-<label style="color: #ecf0f1; display: block; margin-bottom: 10px;">Backup bron:</label>
-<select id="backupSourceSelect" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: 2px solid #9b59b6; border-radius: 8px; margin-bottom: 15px;">
-<option value="local">💾 Lokale backup (automatisch)</option>
-<option value="google">☁️ Google Sheets backup</option>
-</select>
+<l
+
 </div>
-<div id="backupListContainer" style="margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
+<div id="backupList" style="margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
 <div style="text-align: center; color: #95a5a6; padding: 20px;"><p>Geen backups gevonden</p></div>
 </div>
 <div style="display: flex; gap: 10px; justify-content: flex-end;">
 <button onclick="closeBackupModal()" style="background: #7f8c8d; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">Annuleren</button>
-<button id="restoreBackupBtn" onclick="restoreSelectedBackup()" style="background: #9b59b6; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;" disabled>🔄 Herstel Match</button>
 </div>
 </div>
 </div>
@@ -1106,7 +1165,7 @@ function loadFilteredMatches() {
     const ml=document.getElementById('matchList'), tl=document.getElementById('matchListTitle');
     tl.textContent=`Matchen - ${formatDateDisplay(state.selectedDate)}`;
     const fm=state.matches.filter(m=>m.date===state.selectedDate && !m.completed);
-    if(!fm.length) { ml.innerHTML=`<div style="text-align:center;padding:40px;color:#95a5a6;"><p>Maak een nieuwe match</p><button class="new-match-btn" onclick="createNewMatch()">➕ Nieuwe Match</button></div>`; return; }
+    
     ml.innerHTML=fm.map(m=>`<div class="match-card" onclick="selectMatch(${m.id})"><h3>${m.p1} ⚔️ ${m.p2}</h3><p class="match-info">⚪🟡🔴 Punten: ${m.target1} - ${m.target2}<br>📅 Datum: ${formatDateDisplay(m.date)}</p></div>`).join('');
     window.matchListFocusIndex = 0;
     highlightMatch(document.querySelectorAll('#matchList .match-card'));
@@ -1247,18 +1306,15 @@ function updateStaticNeededValues() {
         else { el2.style.color = ''; el2.style.fontWeight = ''; }
     }
 }
-window.showBackupRecovery = function() { document.getElementById('backupRecoveryModal').style.display='flex'; loadAvailableBackups(); }
-window.closeBackupModal = function() { document.getElementById('backupRecoveryModal').style.display='none'; }
-async function loadAvailableBackups() {
-    const src=document.getElementById('backupSourceSelect').value, c=document.getElementById('backupListContainer'), b=document.getElementById('restoreBackupBtn'); b.disabled=true;
-    if(src==='local') {
-        const lb=localStorage.getItem('currentMatchBackup');
-        if(lb) try { displayBackupList([JSON.parse(lb)]); } catch(e) { c.innerHTML='<div style="color:#e74c3c;padding:20px;">❌ Lokale backup is beschadigd</div>'; }
-        else c.innerHTML='<div style="color:#95a5a6;padding:20px;">📭 Geen lokale backup gevonden</div>';
-    } else {
-        c.innerHTML='<div style="text-align:center;padding:20px;">⏳ Backups laden...</div>';
-        try { const res=await fetch('https://script.google.com/macros/s/AKfycbwpghGcQjnwXCxFe1EHjRjZ0p4KuG06YpcmcUpuO4AmS5K2E9cmkzewsi6ROZXaiIqA/exec?action=getBackups'); displayBackupList((await res.json()).backups||[]); } catch(e) { c.innerHTML=`<div style="color:#e74c3c;padding:20px;">❌ Fout: ${e.message}</div>`; }
-    }
+
+
+function closeBackupModal() {
+  console.log('🚪 closeBackupModal() gestart');
+  const modal = document.getElementById('backupRecoveryModal');
+  if (modal) {
+    modal.style.display = 'none';
+    console.log('✅ Modal gesloten');
+  }
 }
 function displayBackupList(backups) {
     const c=document.getElementById('backupListContainer');
@@ -1269,30 +1325,7 @@ function displayBackupList(backups) {
     });
     h+='</div>'; c.innerHTML=h; window.currentBackupList=backups;
 }
-window.selectBackup = function(i) { document.querySelectorAll('[id^="backupSelect_"]').forEach(e=>e.style.background='transparent'); const s=document.getElementById(`backupSelect_${i}`); if(s)s.style.background='#9b59b6'; window.selectedBackupIndex=i; document.getElementById('restoreBackupBtn').disabled=false; }
-window.restoreSelectedBackup = function() { if(window.selectedBackupIndex===undefined||!window.currentBackupList) return; if(!confirm('Weet je zeker dat je deze match wilt herstellen?')) return; restoreMatchFromBackup(window.currentBackupList[window.selectedBackupIndex]); closeBackupModal(); }
-function restoreMatchFromBackup(b) {
-    const d=b.fullData||b;
-    let m=state.matches.find(x=>x.id===d.matchId);
-    if(!m) { const nid=state.matches.length?Math.max(...state.matches.map(x=>x.id))+1:1; m={id:nid,date:d.date||new Date().toISOString().split('T')[0],p1:d.player1,p2:d.player2,target1:d.target1||50,target2:d.target2||50,completed:d.completed||false,whitePlayer:d.whitePlayer||1,p1Score:d.p1Score||0,p2Score:d.p2Score||0,p1Turns:d.p1Turns||[],p2Turns:d.p2Turns||[],p1Highest:Math.max(...(d.p1Turns||[]),0),p2Highest:Math.max(...(d.p2Turns||[]),0)}; state.matches.push(m); }
-    else { m.p1Score=d.p1Score||0; m.p2Score=d.p2Score||0; m.p1Turns=d.p1Turns||[]; m.p2Turns=d.p2Turns||[]; m.completed=d.completed||false; m.p1Highest=Math.max(...m.p1Turns,0); m.p2Highest=Math.max(...m.p2Turns,0); }
-    state.currentMatch=m; state.selectedWhitePlayer=m.whitePlayer;
-    state.player1={score:m.p1Score,turns:[...m.p1Turns],target:m.target1,beurtNummer:m.p1Turns.length+1,highestSeries:m.p1Highest,isWhite:true,fixedTSG:d.player1TSG||'−'};
-    state.player2={score:m.p2Score,turns:[...m.p2Turns],target:m.target2,beurtNummer:m.p2Turns.length+1,highestSeries:m.p2Highest,isWhite:false,fixedTSG:d.player2TSG||'−'};
-    state.currentPlayer=d.currentPlayer!==undefined?d.currentPlayer:1;
-    state.turnNumber=state.player2.turns.length+1; state.isFirstPlayerInRound=(state.currentPlayer===1);
-    state.firstToTarget=d.firstToTarget||null; state.isNabeurt=d.isNabeurt||false; state.matchEnded=d.completed||false; state.currentInput=0; lastStateBeforeAdd=null;
-    document.getElementById('matchTitle').textContent=`${m.p1} ⚔️ ${m.p2}`;
-    document.getElementById('p1CurrentVal').textContent='0'; document.getElementById('p2CurrentVal').textContent='0';
-    document.getElementById('p1TotalVal').textContent='0'; document.getElementById('p2TotalVal').textContent='0';
-    ['p1CurrentCell','p2CurrentCell','p1NeededCell','p2NeededCell'].forEach(id=>{
-        const el = document.getElementById(id);
-        if(el) el.classList.remove('active-player','turn-hidden','dimmed');
-    });
-    if(state.matchEnded) disableScoreButtons(); else enableScoreButtons();
-    document.getElementById('matchEndedAlert').style.display=state.matchEnded?'block':'none';
-    updateScoringPage(); showPage(5); updateHeaderButtons();
-}
+
 function backupMatchSilently(md) {
     const fb={matchData:md,timestamp:new Date().toISOString(),player1:state.currentMatch.p1,player2:state.currentMatch.p2,p1Score:state.player1.score,p2Score:state.player2.score,p1Turns:[...state.player1.turns],p2Turns:[...state.player2.turns],currentPlayer:state.currentPlayer,turnNumber:state.turnNumber,isFirstPlayerInRound:state.isFirstPlayerInRound,firstToTarget:state.firstToTarget,isNabeurt:state.isNabeurt,completed:state.matchEnded,whitePlayer:state.currentMatch.whitePlayer,matchId:state.currentMatch.id,date:state.currentMatch.date,target1:state.player1.target,target2:state.player2.target};
     localStorage.setItem('currentMatchBackup',JSON.stringify(fb));
