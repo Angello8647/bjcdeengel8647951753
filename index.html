@@ -1436,6 +1436,7 @@ window.changeScore = function(delta) {
     const pot=state.currentInput+delta;
     if(p.score+pot>t) { state.currentInput=Math.max(0,t-p.score); updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); return; }
     state.currentInput=Math.max(0,pot);
+    if (delta > 0) playScoreSound(state.currentInput);
     updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); updateStaticNeededValues();
 }
 function updateDynamicNeededDisplay() {
