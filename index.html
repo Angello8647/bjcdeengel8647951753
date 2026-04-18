@@ -694,17 +694,20 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 #page6.active { 
     display: flex !important; 
     flex-direction: column; 
-    justify-content: center; 
+    justify-content: space-between; /* ✅ Duwt hint naar onderen */
     align-items: center; 
     background: #1a252f; 
     padding: 10px;
     box-sizing: border-box;
+    color: #ffffff;
 }
 .match-summary-container { 
+    flex: 1; /* ✅ Neemt alle beschikbare ruimte, blijft gecentreerd */
     display: flex; 
     width: 98%; 
-    height: calc(100vh - 100px); 
+    max-height: calc(100vh - 140px); /* ✅ Laat ruimte vrij voor de hint */
     gap: 20px; 
+    align-items: center;
 }
 .summary-half { 
     flex: 1; 
@@ -718,7 +721,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     background: linear-gradient(135deg, #2c3e50, #34495e); 
     box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     overflow: hidden;
-    color: #ffffff; /* ✅ Fallback voor alle tekst in dit vak */
+    color: #ffffff;
 }
 .summary-player-name { 
     font-size: clamp(2.5rem, 5vw, 4rem);
@@ -752,6 +755,17 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     .match-summary-container { flex-direction: column; height: auto; gap: 15px; }
     .summary-half { padding: 20px 10px; }
 }
+/* ✅ NIEUW: Hint onderaan */
+.kiosk-hint {
+    width: 100%;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    padding: 12px 10px;
+    background: rgba(0,0,0,0.15);
+    border-top: 1px solid #34495e;
+    border-radius: 0 0 12px 12px;
+}
 /* 🏁 Header Pagina 6 - Gegarandeerde uitlijning */
 .page6-header {
   display: grid;
@@ -772,6 +786,25 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
   font-size: 1.5rem;
   text-align: center;
   justify-self: center; /* ✅ Titel altijd exact midden */
+}
+/* 🔥 NOG NODIG - VUURBALLEN & PULSE */
+.needed-emoji { 
+  display: block; text-align: center; font-size: 1.5rem; 
+  margin-bottom: 6px; opacity: 0; transition: opacity 0.3s; min-height: 1.8rem; 
+}
+.needed-cell.danger-zone { 
+  animation: danger-pulse 1.5s infinite; 
+  border-color: #e74c3c !important; 
+  background: rgba(231, 76, 60, 0.05) !important; 
+}
+.needed-cell.danger-zone .cell-label, 
+.needed-cell.danger-zone .cell-value { 
+  color: #e74c3c !important; font-weight: 800 !important; 
+}
+.needed-cell.danger-zone .needed-emoji { opacity: 1; }
+@keyframes danger-pulse { 
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.4); } 
+  50% { box-shadow: 0 0 25px 6px rgba(231,76,60,0.25); } 
 }
 </style>
 </head>
@@ -941,6 +974,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     <div class="summary-half summary-left" id="summaryPlayer1"></div>
     <div class="summary-half summary-right" id="summaryPlayer2"></div>
   </div>
+  <div class="kiosk-hint">⬆️ Houd de pijl-omhoog toets 3 seconden ingedrukt voor het hoofdmenu</div>
 </div>
 <div id="page7" class="page">
 <div class="header">
@@ -1217,25 +1251,57 @@ function updateCurrentScoreDisplay() {
     const p2CurrentCell = document.getElementById('p2CurrentCell');
     const p1NeededCell  = document.getElementById('p1NeededCell');
     const p2NeededCell  = document.getElementById('p2NeededCell');
+
     if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
     if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
+
     const n1 = Math.max(0, state.player1.target - state.player1.score - (state.currentPlayer === 1 ? state.currentInput : 0));
     const n2 = Math.max(0, state.player2.target - state.player2.score - (state.currentPlayer === 2 ? state.currentInput : 0));
+
     if (p1NeededEl) p1NeededEl.textContent = n1;
     if (p2NeededEl) p2NeededEl.textContent = n2;
+
     updateSideScoreDisplays();
     updateStaticNeededValues();
+
+    // ✅ HERSTEL: Bal-kleuren & verbergen niet-actieve speler (ORIGINELE LOGICA)
     p1CurrentCell.className = 'score-cell current-turn-cell';
     p2CurrentCell.className = 'score-cell current-turn-cell';
     if (state.currentPlayer === 1) {
-        p1CurrentCell.classList.add('active-player');
-        p2CurrentCell.classList.add('turn-hidden');
+        p1CurrentCell.classList.add('active-player'); // Witte bal
+        p2CurrentCell.classList.add('turn-hidden');   // Verberg geel
     } else {
-        p2CurrentCell.classList.add('active-player');
-        p1CurrentCell.classList.add('turn-hidden');
+        p2CurrentCell.classList.add('active-player'); // Gele bal
+        p1CurrentCell.classList.add('turn-hidden');   // Verberg wit
     }
+
+    // Dimmed voor "Nog nodig" cellen (behouden)
     if (p1NeededCell) p1NeededCell.classList.toggle('dimmed', state.currentPlayer !== 1);
     if (p2NeededCell) p2NeededCell.classList.toggle('dimmed', state.currentPlayer !== 2);
+
+    // 🔥 NIEUW: Vuurballen & danger-zone updaten
+    updateNeededCell(p1NeededCell, n1);
+    updateNeededCell(p2NeededCell, n2);
+}
+
+// 🔥 Helper: stuurt emoji, pulse en kleur aan
+function updateNeededCell(cellEl, needed) {
+    if (!cellEl) return;
+    
+    let emDiv = cellEl.querySelector('.needed-emoji');
+    if (!emDiv) {
+        emDiv = document.createElement('div');
+        emDiv.className = 'needed-emoji';
+        cellEl.insertBefore(emDiv, cellEl.firstChild);
+    }
+
+    if (needed > 0 && needed <= 5) {
+        cellEl.classList.add('danger-zone');
+        emDiv.textContent = '🔥'.repeat(needed);
+    } else {
+        cellEl.classList.remove('danger-zone');
+        emDiv.textContent = '';
+    }
 }
 window.showPage = function(pageNum) {
     let actualPageNum = typeof pageNum === 'string' ? (pageNum.startsWith('Page') ? parseInt(pageNum.replace('Page','')) : parseInt(pageNum)) : pageNum;
