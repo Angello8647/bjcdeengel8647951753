@@ -221,7 +221,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 #p1TotalCell { background: white !important; color: black !important; border: 3px solid #3182ce !important; }
 #p2TotalCell { background: #f1c40f !important; color: black !important; border: 3px solid #3182ce !important; }
 #p1TotalCell .cell-label, #p2TotalCell .cell-label { color: #2d3748 !important; }
-#p1TotalCell .cell-value, #p2TotalCell .cell-value { color: #000 !important; font-size: 4rem !important; font-weight: 900; }
+#p1TotalCell .cell-value, #p2TotalCell .cell-value { color: #000 !important; font-size: 6.5rem !important; font-weight: 900; }
 #p1TotalCell.active-player, #p1TotalCell.dimmed,
 #p2TotalCell.active-player, #p2TotalCell.dimmed {
     opacity: 1 !important; transform: none !important; filter: none !important;
@@ -231,7 +231,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
     .scoring-row-container { gap: 6px; }
     .score-cell { min-width: 70px; padding: 8px 4px; }
     .cell-value { font-size: 1.8rem; }
-    #p1TotalCell .cell-value, #p2TotalCell .cell-value { font-size: 2.8rem !important; }
+    #p1TotalCell .cell-value, #p2TotalCell .cell-value { font-size: 6.5rem !important; }
     .score-cell.center-info { min-width: 140px; }
 }
 
@@ -258,7 +258,18 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .stat-item { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 5px; font-size: 0.85em; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .stat-icon { font-size: 1.2em; margin-bottom: 3px; }
 .stat-value { font-weight: bold; font-size: 1.1em; }
-.turns-scroll-container { flex-grow: 1; margin-top: 10px; overflow-y: auto; background: rgba(0,0,0,0.05); border-radius: 8px; padding: 8px; max-height: 200px; }
+/* 📜 BEURTEN LIJST: VASTE HOOGTE, GEEN MEEGROEI */
+.turns-scroll-container {
+    height: 300px !important;       /* ✅ Vaste hoogte (was max-height) */
+    min-height: 350px !important;   /* ✅ Forceer minimum */
+    max-height: 350px !important;   /* ✅ Forceer maximum */
+    margin-top: 10px !important;
+    overflow-y: auto !important;    /* ✅ Scrollen als er meer dan past */
+    background: rgba(0,0,0,0.05) !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+    flex-grow: 0 !important;        /* ✅ Stop het uitrekken */
+}
 .turns-list { display: flex; flex-direction: column; gap: 3px; }
 .turn-row { display: flex; justify-content: space-between; padding: 5px 8px; background: rgba(255,255,255,0.1); border-radius: 4px; font-size: 0.85em; }
 .turn-row:first-child { background: rgba(52, 152, 219, 0.2); font-weight: bold; }
@@ -310,8 +321,6 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 .tab-content.active { display: block; }
 .match-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
 .new-match-btn { background: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 20px auto; display: block; }
-.dynamic-needed { position: absolute; top: -25px; left: 0; right: 0; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1em; box-shadow: 0 4px 6px rgba(0,0,0,0.2); z-index: 10; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 /* ========== SPELERS BEHEER STIJLEN ========== */
 .players-management-container { padding: 20px; }
 .player-form-container { background: #34495e; border-radius: 10px; padding: 20px; margin-bottom: 30px; border-left: 4px solid #3498db; }
@@ -787,24 +796,199 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
   text-align: center;
   justify-self: center; /* ✅ Titel altijd exact midden */
 }
-/* 🔥 NOG NODIG - VUURBALLEN & PULSE */
-.needed-emoji { 
-  display: block; text-align: center; font-size: 1.5rem; 
-  margin-bottom: 6px; opacity: 0; transition: opacity 0.3s; min-height: 1.8rem; 
+/* 🔍 NOG NODIG: Alleen cijfer groter, perfect gecentreerd, nul interferentie */
+/* Verberg eventuele oude label → neemt 0px ruimte in */
+/* Emoji voor vuurballen (vast formaat, breekt layout niet) */
+/* Cijfer: groot + exact gecentreerd */
+#p1NeededCell .cell-value,
+#p2NeededCell .cell-value {
+    font-size: 6rem !important; /* Pas naar wens: 5rem / 6rem / 7rem */
+    line-height: 1 !important;
+    margin: 0 !important; padding: 0 !important;
+    width: 100% !important;
+    text-align: center !important;
 }
-.needed-cell.danger-zone { 
-  animation: danger-pulse 1.5s infinite; 
-  border-color: #e74c3c !important; 
-  background: rgba(231, 76, 60, 0.05) !important; 
+/* Pulse & danger-zone (voor vuurballen ≤5) */
+.needed-cell.danger-zone {
+    animation: danger-pulse 1.5s infinite;
+    border-color: #e74c3c !important;
+    background: rgba(231, 76, 60, 0.05) !important;
 }
-.needed-cell.danger-zone .cell-label, 
-.needed-cell.danger-zone .cell-value { 
-  color: #e74c3c !important; font-weight: 800 !important; 
-}
+.needed-cell.danger-zone .cell-value { color: #e74c3c !important; font-weight: 800 !important; }
 .needed-cell.danger-zone .needed-emoji { opacity: 1; }
-@keyframes danger-pulse { 
-  0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.4); } 
-  50% { box-shadow: 0 0 25px 6px rgba(231,76,60,0.25); } 
+@keyframes danger-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.4); }
+    50% { box-shadow: 0 0 25px 6px rgba(231,76,60,0.25); }
+}
+/* 🔍 NOG NODIG: Groot cijfer, perfect gecentreerd, geen interferentie */
+/* 🔍 UNIFORME DIKTE & CENTRERING (net als Totaal-blok) */
+/* 🔍 UNIFORME LOOK: Vet (900) + perfecte maten */
+#p1NeededCell .cell-value,
+#p2NeededCell .cell-value {
+    font-weight: 900 !important;
+    font-size: 6rem !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+#p1CurrentCell .cell-value,
+#p2CurrentCell .cell-value {
+    font-weight: 900 !important;
+    font-size: 6rem !important;
+    line-height: 1 !important;
+}
+#p1TotalCell .cell-value,
+#p2TotalCell .cell-value {
+    font-weight: 900 !important;
+    font-size: 6.5rem !important; /* ✅ Totaal iets groter */
+    line-height: 1 !important;
+}
+.needed-cell .cell-label { display: none !important; }
+/* 🔴 NOG NODIG: Rood bij ≤5 punten */
+/* 🔴 NOG NODIG: Rood kader + achtergrond + tekst bij ≤5 punten */
+.needed-cell.danger {
+    border-color: #e74c3c !important;
+    background: rgba(231, 76, 60, 0.15) !important;
+}
+.needed-cell.danger .cell-value {
+    color: #e74c3c !important;
+    font-weight: 900 !important;
+}
+/* 🎯 SCORE CONTROLS: Knoppen exact gepositioneerd, stats ertussen gecentreerd */
+/* 🎯 SCORE CONTROLS: Flexbox wiskundig symmetrisch */
+.score-controls {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0 20px !important;
+    margin: 35px 0 20px 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Stat-groepen vullen exact de beschikbare ruimte (50/50) */
+.stat-group {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-evenly !important; /* Verdeelt 3 blokjes perfect binnen de groep */
+    gap: 8px !important;
+    min-width: 0 !important;
+}
+
+/* Knoppen: vaste grootte, krimpen niet */
+.score-controls .score-btn {
+    width: 120px !important; height: 120px !important;
+    border-radius: 50% !important;
+    font-size: 52px !important; font-weight: 900 !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    border-width: 3px !important; cursor: pointer !important;
+    flex-shrink: 0 !important;
+}
+.plus-btn { background: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
+.minus-btn { background: #e74c3c !important; color: white !important; border-color: #c0392b !important; }
+
+/* Stat-blokjes: vaste grootte, vierkant */
+/* 🎯 SCORE CONTROLS: Gekleurde stat-blokjes voor beter onderscheid */
+.stat-box {
+    width: 120px !important; height: 120px !important;
+    border-radius: 16px !important;
+    background: rgba(44, 62, 80, 0.95) !important; color: #ffffff !important;
+    border-width: 3px !important; border-style: solid !important;
+    font-size: 1.8rem !important; font-weight: 900 !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    cursor: default !important; line-height: 1 !important; text-align: center !important;
+    flex-shrink: 0 !important;
+    position: relative !important; overflow: hidden !important;
+}
+
+/* ✅ KLEURCODERING PER BLOK */
+/* Gespeeld gemiddelde (Blauw - neutraal/statistisch) */
+#p1PlayedAvg, #p2PlayedAvg { border-color: #3498db !important; }
+/* Hoogste reeks (Goud/Geel - prestatie) */
+#p1Highest, #p2Highest { border-color: #f1c40f !important; }
+/* Te spelen gemiddelde (Oranje/Rood - doel/target) */
+#p1TargetAvg, #p2TargetAvg { border-color: #e67e22 !important; }
+
+/* 🔍 SUBTIELE ACHTERGROND-EMOJI'S (Afgestemd op randkleur) */
+.stat-box::before {
+    position: absolute !important;
+    top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 5rem !important;
+    opacity: 0.15 !important; /* Iets zichtbaarder door kleurfilter */
+    filter: brightness(1.2) !important;
+    pointer-events: none !important; z-index: 1 !important;
+}
+/* Emoji toewijzen */
+#p1PlayedAvg::before, #p2PlayedAvg::before { content: "📈"; color: #3498db; }
+#p1Highest::before, #p2Highest::before { content: "⭐"; color: #f1c40f; }
+#p1TargetAvg::before, #p2TargetAvg::before { content: "🎯"; color: #e67e22; }
+
+/* 📱 Responsive aanpassingen (behoud kleuren) */
+@media (max-width: 1100px) {
+    .score-controls { padding: 0 10px !important; }
+    .score-controls .score-btn, .stat-box { width: 90px !important; height: 90px !important; }
+    .score-controls .score-btn { font-size: 2.2rem !important; }
+    .stat-box { font-size: 1.3rem !important; border-radius: 12px !important; }
+    .stat-group { gap: 5px !important; }
+    .stat-box::before { font-size: 3.5rem !important; }
+}
+@media (max-width: 750px) {
+    .score-controls .score-btn, .stat-box { width: 70px !important; height: 70px !important; }
+    .score-controls .score-btn { font-size: 1.8rem !important; }
+    .stat-box { font-size: 1rem !important; }
+    .stat-group { gap: 3px !important; }
+    .stat-box::before { font-size: 2.5rem !important; }
+}
+
+/* ✅ Login scherm verbergen voor lokaal gebruik */
+#loginPage { display: none !important; }
+#loginPage { display: none !important; }
+/* 📜 BEURTEN LIJST: 4 KOLOMMEN LAYOUT */
+/* 📜 BEURTEN LIJST: 4 KOLOMMEN + LEESBARE TEKST */
+/* 📜 BEURTEN LIJST: VERTICAAL VULLEN + NAAR ELKAAR */
+.turns-scroll-container {
+    height: 350px !important;
+    min-height: 350px !important;
+    max-height: 350px !important;
+    margin-top: 10px !important;
+    overflow-y: auto !important;
+    background: rgba(0,0,0,0.05) !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    flex-grow: 0 !important;
+}
+
+.turns-list {
+    display: grid !important;
+    grid-template-rows: repeat(8, 1fr) !important; /* ✅ Max 8 rijen hoog (8x4=32 beurten zichtbaar) */
+    grid-auto-flow: column !important;             /* ✅ Vul EERST naar beneden, dan next kolom */
+    grid-auto-columns: 1fr !important;             /* ✅ Kolommen even breed */
+    gap: 8px 10px !important;                      /* Ruimte tussen rijen en kolommen */
+    align-content: start !important;
+}
+
+.turn-row {
+    display: flex !important;
+    align-items: center !important;                /* Centreer verticaal */
+    justify-content: center !important;            /* Centreer horizontaal */
+    padding: 6px 4px !important;
+    background: rgba(255,255,255,0.6) !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(0,0,0,0.1);
+    white-space: nowrap !important;                /* Zorg dat het op 1 regel blijft */
+}
+
+/* Tekststijl: even groot, donker, leesbaar */
+.turn-row span {
+    font-size: 1rem !important;                    /* ✅ Even groot voor Beurt én Punten */
+    color: #2c3e50 !important;                     /* ✅ Donker voor contrast op wit/geel */
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
 }
 </style>
 </head>
@@ -920,40 +1104,49 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 <div id="matchEndedAlert" class="match-ended" style="display: none;"></div>
 
 <!-- NIEUWE HORIZONTALE SCORE LAYOUT -->
+<!-- NIEUWE HORIZONTALE SCORE LAYOUT -->
 <div class="scoring-row-container">
+    <!-- P1: Nog nodig (GEEN LABEL, alleen cijfer) -->
     <div class="score-cell needed-cell" id="p1NeededCell">
-        <div class="cell-label">Nog nodig</div>
         <div class="cell-value" id="p1NeededVal">0</div>
     </div>
+    <!-- P1: Deze beurt -->
     <div class="score-cell current-turn-cell" id="p1CurrentCell">
-        <div class="cell-label">Deze beurt</div>
         <div class="cell-value" id="p1CurrentVal">0</div>
     </div>
+    <!-- P1: Totaal -->
     <div class="score-cell total-cell" id="p1TotalCell">
-       <!-- <div class="cell-label">Totaal</div> -->
         <div class="cell-value" id="p1TotalVal">0</div>
     </div>
+    <!-- Midden: Beurt info -->
     <div class="score-cell center-info" id="currentPlayerDisplay"></div>
+    <!-- P2: Totaal -->
     <div class="score-cell total-cell" id="p2TotalCell">
-        <!-- <div class="cell-label">Totaal</div> -->
         <div class="cell-value" id="p2TotalVal">0</div>
     </div>
+    <!-- P2: Deze beurt -->
     <div class="score-cell current-turn-cell" id="p2CurrentCell">
-        <div class="cell-label">Deze beurt</div>
         <div class="cell-value" id="p2CurrentVal">0</div>
     </div>
+    <!-- P2: Nog nodig (GEEN LABEL, alleen cijfer) -->
     <div class="score-cell needed-cell" id="p2NeededCell">
-        <div class="cell-label">Nog nodig</div>
         <div class="cell-value" id="p2NeededVal">0</div>
     </div>
 </div>
-
 <div class="score-controls">
-<button class="score-btn plus-btn left-plus" onclick="changeScore(1)">+</button>
-<div class="score-middle">
-<button class="score-btn minus-btn" onclick="changeScore(-1)">−</button>
-</div>
-<button class="score-btn plus-btn right-plus" onclick="changeScore(1)">+</button>
+    <button class="score-btn plus-btn" onclick="changeScore(1)">+</button>
+    <div class="stat-group left-group">
+        <div class="stat-box" id="p1PlayedAvg">0,00</div>
+        <div class="stat-box" id="p1Highest">0</div>
+        <div class="stat-box" id="p1TargetAvg">−</div>
+    </div>
+    <button class="score-btn minus-btn" onclick="changeScore(-1)">−</button>
+    <div class="stat-group right-group">
+        <div class="stat-box" id="p2TargetAvg">−</div>
+        <div class="stat-box" id="p2Highest">0</div>
+        <div class="stat-box" id="p2PlayedAvg">0,00</div>
+    </div>
+    <button class="score-btn plus-btn" onclick="changeScore(1)">+</button>
 </div>
 <div class="action-buttons" style="display: none;">
 <button class="action-btn undo-btn" onclick="undoLastAdd()" id="undoBtn" disabled>↩️ Einde beurt ongedaan maken</button>
@@ -965,7 +1158,7 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 </div>
 </div>
 <div id="page6" class="page">
-  <<div class="page6-header">
+  <div class="page6-header">
   <button class="home-btn" onclick="showPage(1)">🏠 Hoofdmenu</button>
   <h1>🏁 Match Overzicht</h1>
   <div></div> <!-- Leeg spacer-element voor perfecte symmetrie -->
@@ -1205,7 +1398,9 @@ function initPresenterControls() {
 
 
 document.getElementById('passwordInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); });
-if (sessionStorage.getItem('biljart_authenticated')) { document.getElementById('bodyElement').classList.add('logged-in'); initializeApp(); }
+// ✅ AUTO-START VOOR LOKAAL GEBRUIK
+document.getElementById('bodyElement').classList.add('logged-in');
+initializeApp();
 function initializeApp() {
 window.state = {
 currentPage: 1, selectedDate: '', matches: [], downloadedMatches: [], players: [], currentMatch: null,
@@ -1243,6 +1438,7 @@ function updateSideScoreDisplays() {
     document.getElementById('p2TotalVal').textContent = state.player2.score;
 }
 function updateCurrentScoreDisplay() {
+    // === 1. ELEMENTEN OPHALEN ===
     const p1CurrentEl = document.getElementById('p1CurrentVal');
     const p2CurrentEl = document.getElementById('p2CurrentVal');
     const p1NeededEl  = document.getElementById('p1NeededVal');
@@ -1252,57 +1448,66 @@ function updateCurrentScoreDisplay() {
     const p1NeededCell  = document.getElementById('p1NeededCell');
     const p2NeededCell  = document.getElementById('p2NeededCell');
 
+    // === 2. HUIDIGE INVOER UPDATEN ===
     if (p1CurrentEl) p1CurrentEl.textContent = state.currentInput;
     if (p2CurrentEl) p2CurrentEl.textContent = state.currentInput;
 
+    // === 3. "NOG NODIG" BEREKENEN ===
     const n1 = Math.max(0, state.player1.target - state.player1.score - (state.currentPlayer === 1 ? state.currentInput : 0));
     const n2 = Math.max(0, state.player2.target - state.player2.score - (state.currentPlayer === 2 ? state.currentInput : 0));
-
     if (p1NeededEl) p1NeededEl.textContent = n1;
     if (p2NeededEl) p2NeededEl.textContent = n2;
 
+    // === 4. SIDEBAR & STATISCHE WAARDEN ===
     updateSideScoreDisplays();
     updateStaticNeededValues();
 
-    // ✅ HERSTEL: Bal-kleuren & verbergen niet-actieve speler (ORIGINELE LOGICA)
+    // === 5. BAL-KLEUREN & TURN-HIDDEN (originele logica) ===
     p1CurrentCell.className = 'score-cell current-turn-cell';
     p2CurrentCell.className = 'score-cell current-turn-cell';
     if (state.currentPlayer === 1) {
-        p1CurrentCell.classList.add('active-player'); // Witte bal
-        p2CurrentCell.classList.add('turn-hidden');   // Verberg geel
+        p1CurrentCell.classList.add('active-player');
+        p2CurrentCell.classList.add('turn-hidden');
     } else {
-        p2CurrentCell.classList.add('active-player'); // Gele bal
-        p1CurrentCell.classList.add('turn-hidden');   // Verberg wit
+        p2CurrentCell.classList.add('active-player');
+        p1CurrentCell.classList.add('turn-hidden');
     }
 
-    // Dimmed voor "Nog nodig" cellen (behouden)
+    // === 6. "NOG NODIG" CELLEN: dimmed + danger (rood bij ≤5) ===
     if (p1NeededCell) p1NeededCell.classList.toggle('dimmed', state.currentPlayer !== 1);
     if (p2NeededCell) p2NeededCell.classList.toggle('dimmed', state.currentPlayer !== 2);
+    if (p1NeededCell) p1NeededCell.classList.toggle('danger', n1 <= 5 && n1 > 0);
+    if (p2NeededCell) p2NeededCell.classList.toggle('danger', n2 <= 5 && n2 > 0);
 
-    // 🔥 NIEUW: Vuurballen & danger-zone updaten
-    updateNeededCell(p1NeededCell, n1);
-    updateNeededCell(p2NeededCell, n2);
+    // === 7. 📊 STAT-BLOKJES UPDATEN (symmetrisch: P1 links, P2 rechts) ===
+    const fmtAvg = (p) => p.turns.length > 0 
+        ? (p.score / p.turns.length).toFixed(2).replace('.', ',') 
+        : '0,00';
+    
+    // Helper: zet target om naar 2 decimalen met komma
+    const fmtTarget = (val) => {
+        if (!val || val === '−') return '−';
+        return parseFloat(val.replace(',', '.')).toFixed(2).replace('.', ',');
+    };
+
+    // Speler 1 (links van de min-knop)
+    const p1Played = document.getElementById('p1PlayedAvg');
+    const p1Highest = document.getElementById('p1Highest');
+    const p1Target = document.getElementById('p1TargetAvg');
+    if(p1Played) p1Played.textContent = fmtAvg(state.player1);
+    if(p1Highest) p1Highest.textContent = state.player1.highestSeries || 0;
+    if(p1Target) p1Target.textContent = fmtTarget(state.player1.fixedTSG);
+    
+    // Speler 2 (rechts van de min-knop)
+    const p2Played = document.getElementById('p2PlayedAvg');
+    const p2Highest = document.getElementById('p2Highest');
+    const p2Target = document.getElementById('p2TargetAvg');
+    if(p2Played) p2Played.textContent = fmtAvg(state.player2);
+    if(p2Highest) p2Highest.textContent = state.player2.highestSeries || 0;
+    if(p2Target) p2Target.textContent = fmtTarget(state.player2.fixedTSG);
 }
 
 // 🔥 Helper: stuurt emoji, pulse en kleur aan
-function updateNeededCell(cellEl, needed) {
-    if (!cellEl) return;
-    
-    let emDiv = cellEl.querySelector('.needed-emoji');
-    if (!emDiv) {
-        emDiv = document.createElement('div');
-        emDiv.className = 'needed-emoji';
-        cellEl.insertBefore(emDiv, cellEl.firstChild);
-    }
-
-    if (needed > 0 && needed <= 5) {
-        cellEl.classList.add('danger-zone');
-        emDiv.textContent = '🔥'.repeat(needed);
-    } else {
-        cellEl.classList.remove('danger-zone');
-        emDiv.textContent = '';
-    }
-}
 window.showPage = function(pageNum) {
     let actualPageNum = typeof pageNum === 'string' ? (pageNum.startsWith('Page') ? parseInt(pageNum.replace('Page','')) : parseInt(pageNum)) : pageNum;
     if (isNaN(actualPageNum) || actualPageNum < 1) actualPageNum = 1;
@@ -1434,23 +1639,10 @@ window.changeScore = function(delta) {
     const p=state.currentPlayer===1?state.player1:state.player2, t=p.target;
     if(p.score>=t) { state.currentInput=0; return alert("Speler heeft al zijn target bereikt!"); }
     const pot=state.currentInput+delta;
-    if(p.score+pot>t) { state.currentInput=Math.max(0,t-p.score); updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); return; }
+    if(p.score+pot>t) { state.currentInput=Math.max(0,t-p.score); updateCurrentScoreDisplay(); return; }
     state.currentInput=Math.max(0,pot);
     if (delta > 0) playScoreSound(state.currentInput);
-    updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); updateStaticNeededValues();
-}
-function updateDynamicNeededDisplay() {
-    document.querySelectorAll('.dynamic-needed').forEach(el=>el.remove());
-    const p=state.currentPlayer===1?state.player1:state.player2, t=p.target;
-    const need=Math.max(0,t-p.score-state.currentInput);
-    if(need<=5 && need>0) {
-        const card=state.currentPlayer===1?document.getElementById('player1Card'):document.getElementById('player2Card');
-        const d=document.createElement('div'); d.className='dynamic-needed';
-        d.innerHTML=need<=3?`🔥 Nog ${need} punt${need!==1?'en':''} nodig!`:`⚪🟡🔴 Nog ${need} punt${need!==1?'en':''} nodig`;
-        if(need<=3) d.style.background='linear-gradient(135deg,#ff6b6b,#ee5a24)';
-        card.appendChild(d);
-    }
-    updateStaticNeededValues();
+    updateCurrentScoreDisplay(); updateStaticNeededValues();
 }
 function updateStaticNeededValues() {
     const n1 = Math.max(0, state.player1.target - state.player1.score - (state.currentPlayer === 1 ? state.currentInput : 0));
@@ -1507,7 +1699,7 @@ window.addScore = function() {
     const reached=p.score>=t;
     if(reached && state.firstToTarget===null) {
         state.firstToTarget=state.currentPlayer;
-        if(state.currentPlayer===1) { state.isNabeurt=true; state.currentPlayer=2; state.isFirstPlayerInRound=false; state.currentInput=0; updateCurrentScoreDisplay(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateSideScoreDisplays(); updateScoringPage(); return; }
+        if(state.currentPlayer===1) { state.isNabeurt=true; state.currentPlayer=2; state.isFirstPlayerInRound=false; state.currentInput=0; updateCurrentScoreDisplay(); updateSideScoreDisplays(); updateScoringPage(); return; }
         else { endMatch(); return; }
     }
     if(state.isNabeurt) { endMatch(); return; }
@@ -1515,7 +1707,7 @@ window.addScore = function() {
     else { state.currentPlayer=1; state.isFirstPlayerInRound=true; state.turnNumber++; }
     state.currentInput=0;
     backupMatchSilently({matchId:state.currentMatch.id,player1:state.currentMatch.p1,player2:state.currentMatch.p2,date:state.currentMatch.date,p1Score:state.player1.score,p2Score:state.player2.score,p1Turns:[...state.player1.turns],p2Turns:[...state.player2.turns],currentPlayer:state.currentPlayer,isNabeurt:state.isNabeurt,firstToTarget:state.firstToTarget,completed:state.matchEnded});
-    updateCurrentScoreDisplay(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateSideScoreDisplays(); updateScoringPage();
+    updateCurrentScoreDisplay(); updateSideScoreDisplays(); updateScoringPage();
 }
 function endMatch() {
     state.matchEnded = true;
@@ -1534,7 +1726,6 @@ function endMatch() {
     archiveCompletedMatch(state.currentMatch);
 
     // UI opschonen
-    document.querySelectorAll('.dynamic-needed').forEach(e => e.remove());
     updateScoringPage();
     updateHeaderButtons();
 
@@ -1551,34 +1742,71 @@ window.undoLastAdd = function() {
     state.currentPlayer=lastStateBeforeAdd.currentPlayer; state.turnNumber=lastStateBeforeAdd.turnNumber; state.isFirstPlayerInRound=lastStateBeforeAdd.isFirstPlayerInRound;
     state.firstToTarget=lastStateBeforeAdd.firstToTarget; state.isNabeurt=lastStateBeforeAdd.isNabeurt; state.matchEnded=lastStateBeforeAdd.matchEnded; state.currentInput=lastStateBeforeAdd.currentInput;
     if(!state.matchEnded) { document.getElementById('matchEndedAlert').style.display='none'; enableScoreButtons(); } else disableScoreButtons();
-    lastStateBeforeAdd=null; updateCurrentScoreDisplay(); document.querySelectorAll('.dynamic-needed').forEach(e=>e.remove()); updateSideScoreDisplays(); updateScoringPage();
+    lastStateBeforeAdd=null; updateCurrentScoreDisplay(); updateSideScoreDisplays(); updateScoringPage();
 }
 function updateScoringPage() {
-    const p1c=document.getElementById('player1Card'), p2c=document.getElementById('player2Card'), cn=state.currentPlayer===1?state.currentMatch.p1:state.currentMatch.p2;
-    document.getElementById('currentPlayerBtnName').textContent=cn;
-    p1c.className=state.player1.isWhite?'player-card player-white':'player-card player-yellow';
-    p2c.className=state.player2.isWhite?'player-card player-white':'player-card player-yellow';
-    p1c.classList.add(state.currentPlayer===1?'player-active':'player-inactive');
-    p2c.classList.add(state.currentPlayer===2?'player-active':'player-inactive');
+    const p1c = document.getElementById('player1Card');
+    const p2c = document.getElementById('player2Card');
+    const cn = state.currentPlayer === 1 ? state.currentMatch.p1 : state.currentMatch.p2;
+    
+    document.getElementById('currentPlayerBtnName').textContent = cn;
+    
+    // Kaart kleuren & active status
+    p1c.className = state.player1.isWhite ? 'player-card player-white' : 'player-card player-yellow';
+    p2c.className = state.player2.isWhite ? 'player-card player-white' : 'player-card player-yellow';
+    p1c.classList.add(state.currentPlayer === 1 ? 'player-active' : 'player-inactive');
+    p2c.classList.add(state.currentPlayer === 2 ? 'player-active' : 'player-inactive');
+    
     updateCurrentTurnSize();
-    const a1=state.player1.turns.length?(state.player1.score/state.player1.turns.length).toFixed(2):'0.00', a2=state.player2.turns.length?(state.player2.score/state.player2.turns.length).toFixed(2):'0.00';
-    const n1=Math.max(0,state.player1.target-state.player1.score), n2=Math.max(0,state.player2.target-state.player2.score);
     
-    // ✅ CORRECTIE: cc variabele toegevoegd
-    const cc=(state.currentPlayer===1&&state.player1.isWhite)||(state.currentPlayer===2&&state.player2.isWhite)?'Wit':'Geel';
+    // ✅ CORRECTIE: cc variabele voor Wit/Geel badge
+    const cc = (state.currentPlayer === 1 && state.player1.isWhite) || (state.currentPlayer === 2 && state.player2.isWhite) ? 'Wit' : 'Geel';
     
-    p1c.innerHTML=`<div><h3>${state.currentMatch.p1} ${state.player1.isWhite?'⚪':'🟡'}</h3><div class="stats-grid"><div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player1.turns.length}</div></div><div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${a1}</div></div><div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed1">${n1}</div></div><div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${state.player1.fixedTSG}</div></div><div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player1.highestSeries}</div></div></div></div><div class="turns-scroll-container"><div class="turns-list">${[...state.player1.turns].reverse().map((t,i)=>`<div class="turn-row"><span>Beurt ${state.player1.turns.length-i}:</span><span>${t} punt${t!==1?'en':''}</span></div>`).join('')}${state.player1.turns.length?'':'<div style="text-align:center;color:#666;padding:10px;font-size:0.9em;">Geen beurten</div>'}</div></div>`;
-    
-    p2c.innerHTML=`<div><h3>${state.currentMatch.p2} ${state.player2.isWhite?'⚪':'🟡'}</h3><div class="stats-grid"><div class="stat-item"><div class="stat-icon">🔢</div><div>Beurten:</div><div class="stat-value">${state.player2.turns.length}</div></div><div class="stat-item"><div class="stat-icon">📈</div><div>Gemiddelde:</div><div class="stat-value">${a2}</div></div><div class="stat-item"><div class="stat-icon">⚪🟡🔴</div><div>Nog nodig:</div><div class="stat-value" id="needed2">${n2}</div></div><div class="stat-item"><div class="stat-icon">⏳</div><div>Te spelen gem.:</div><div class="stat-value">${state.player2.fixedTSG}</div></div><div class="stat-item"><div class="stat-icon">⭐</div><div>Hoogste reeks:</div><div class="stat-value">${state.player2.highestSeries}</div></div></div></div><div class="turns-scroll-container"><div class="turns-list">${[...state.player2.turns].reverse().map((t,i)=>`<div class="turn-row"><span>Beurt ${state.player2.turns.length-i}:</span><span>${t} punt${t!==1?'en':''}</span></div>`).join('')}${state.player2.turns.length?'':'<div style="text-align:center;color:#666;padding:10px;font-size:0.9em;">Geen beurten</div>'}</div></div>`;
-    
+    // Helper voor compacte beurt-weergave: "B1: 3"
+    const renderTurns = (turns, playerName) => {
+        if (!turns.length) return '<div style="text-align:center;color:#666;padding:20px;font-size:0.9em;">Nog geen beurten</div>';
+        return [...turns].reverse().map((t, i) => 
+            `<div class="turn-row"><span>B${turns.length - i}: ${t}</span></div>`
+        ).join('');
+    };
+
+    // HTML opbouw spelerkaarten met nieuwe turns-list structuur
+    p1c.innerHTML = `
+        <div><h3>${state.currentMatch.p1} ${state.player1.isWhite ? '⚪' : '🟡'}</h3></div>
+        <div class="turns-scroll-container">
+            <div class="turns-list">${renderTurns(state.player1.turns)}</div>
+        </div>`;
+
+    p2c.innerHTML = `
+        <div><h3>${state.currentMatch.p2} ${state.player2.isWhite ? '⚪' : '🟡'}</h3></div>
+        <div class="turns-scroll-container">
+            <div class="turns-list">${renderTurns(state.player2.turns)}</div>
+        </div>`;
+
+    // Middenblok: Beurt nummer
     let cb = state.currentPlayer === 1 ? state.player1.beurtNummer : state.player2.beurtNummer;
-    if (state.matchEnded) cb = Math.max(1, cb - 1); // ✅ Trek 1 af bij match-einde
-    let ei=''; if(state.isNabeurt) ei='<div style="margin-top:15px;font-size:1rem;color:#ffcc00;">⚠️ NABEURT</div>'; else if(state.firstToTarget===1) ei='<div style="margin-top:15px;font-size:1rem;color:#ffcc00;">✅ Laatste beurt voor speler 2</div>';
+    if (state.matchEnded) cb = Math.max(1, cb - 1); // Trek 1 af bij match-einde
     
-    document.getElementById('currentPlayerDisplay').innerHTML=`<div style="text-align:center;"><div style="font-size:4rem;font-weight:bold;color:white;line-height:1.2;">Beurt ${cb}</div><div style="margin-top:15px;"><span style="background:${cc==='Wit'?'white':'#f1c40f'};color:black;font-size:2rem;font-weight:bold;padding:8px 30px;border-radius:50px;display:inline-block;">${cc}</span></div>${ei}</div>`;
+    let ei = ''; 
+    if (state.isNabeurt) ei = '<div style="margin-top:15px;font-size:1rem;color:#ffcc00;">⚠️ NABEURT</div>'; 
+    else if (state.firstToTarget === 1) ei = '<div style="margin-top:15px;font-size:1rem;color:#ffcc00;">✅ Laatste beurt voor speler 2</div>';
     
-    updateSideScoreDisplays(); updateCurrentScoreDisplay(); updateDynamicNeededDisplay(); updateHeaderButtons();
-    const ub=document.getElementById('undoBtn'); if(ub) ub.disabled=!lastStateBeforeAdd;
+    document.getElementById('currentPlayerDisplay').innerHTML = `
+        <div style="text-align:center;">
+            <div style="font-size:4rem;font-weight:bold;color:white;line-height:1.2;">B ${cb}</div>
+            <div style="margin-top:15px;">
+                <span style="background:${cc === 'Wit' ? 'white' : '#f1c40f'};color:black;font-size:2rem;font-weight:bold;padding:8px 30px;border-radius:50px;display:inline-block;">${cc}</span>
+            </div>
+            ${ei}
+        </div>`;
+    
+    // Updates aanroepen
+    updateSideScoreDisplays(); 
+    updateCurrentScoreDisplay(); 
+    updateHeaderButtons();
+    
+    const ub = document.getElementById('undoBtn'); 
+    if (ub) ub.disabled = !lastStateBeforeAdd;
 }
 function fixEncoding(text) { if(!text)return ''; const r={'Ã©':'é','Ã¨':'è','Ãª':'ê','Ã«':'ë','Ã':'à','Ã¢':'â','Ã¤':'ä','Ã¥':'å','Ãç':'ç','Ã¯':'ï','Ã®':'î','Ã´':'ô','Ã¶':'ö','Ã¹':'ù','Ã»':'û','Ã¼':'ü','Ã±':'ñ','â‚¬':'€','Ã  ':'Â'}; let f=text.toString(); Object.keys(r).forEach(b=>{const re=new RegExp(b,'g');f=f.replace(re,r[b]);}); return f; }
 function parseSpeeldagenCSVMetKopteksten(csvText) { const l=csvText.split(/\r\n|\n/); const s=[]; for(let i=1;i<l.length;i++){const line=l[i].trim();if(!line)continue;const p=line.split(';');if(p.length>=2&&p[0]&&p[1]&&!isNaN(parseInt(p[1]))){const d=new Date((parseInt(p[1])>=60?-2:-1)*24*60*60*1000+new Date(1900,0,1).getTime());s.push({volgnummer:parseInt(p[0]),excelDatum:parseInt(p[1]),jsDatum:d,displayDatum:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,fullDate:`${['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'][d.getDay()]} ${d.getDate()} ${['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'][d.getMonth()]} ${d.getFullYear()}`});}} s.sort((a,b)=>a.volgnummer-b.volgnummer); return s; }
