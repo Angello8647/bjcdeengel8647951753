@@ -26,10 +26,6 @@ function getPlayers() {
         }
     }
     
-    if (players.length === 0) {
-        players = JSON.parse(localStorage.getItem('biljartPlayers') || '[]');
-    }
-    
     return players;
 }
 
