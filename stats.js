@@ -36,7 +36,7 @@ function getMatches() {
     if (savedState) {
         try {
             const state = JSON.parse(savedState);
-            allMatches = state.matches || [];
+            allMatches = (state.matches || []).concat(state.downloadedMatches || []);
         } catch (e) {
             console.error('❌ Fout bij laden matches:', e);
         }
