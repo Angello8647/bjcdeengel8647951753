@@ -1717,7 +1717,7 @@ window.changeScore = function(delta) {
     const pot=state.currentInput+delta;
     if(p.score+pot>t) { state.currentInput=Math.max(0,t-p.score); updateCurrentScoreDisplay(); return; }
     state.currentInput=Math.max(0,pot);
-    if (delta > 0) playScoreSound(state.currentInput);
+    // spraak uitgezet: if (delta > 0) playScoreSound(state.currentInput);
     updateCurrentScoreDisplay(); updateStaticNeededValues();
 }
 function updateStaticNeededValues() {
