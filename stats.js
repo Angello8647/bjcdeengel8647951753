@@ -63,7 +63,22 @@ function getSeizoen() {
         return players[0].seizoen;
     }
     
-    return '2024-2025';
+    // Seizoen afleiden uit de eerste speeldag (een seizoen start in juli)
+    let dagen = [];
+    try {
+        const s = JSON.parse(localStorage.getItem('billiardState') || '{}');
+        dagen = (s.speeldagen || []).map(d => d.displayDatum).filter(Boolean).sort();
+    } catch (e) {}
+    if (dagen.length > 0) {
+        const p = dagen[0].split('-');
+        const jaar = parseInt(p[0]);
+        const maand = parseInt(p[1]);
+        const start = maand >= 7 ? jaar : jaar - 1;
+        return `${start}-${start + 1}`;
+    }
+    const nu = new Date();
+    const startNu = nu.getMonth() >= 6 ? nu.getFullYear() : nu.getFullYear() - 1;
+    return `${startNu}-${startNu + 1}`;
 }
 
 // ==================== EXACTE MACRO LOGICA ====================
