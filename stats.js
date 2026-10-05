@@ -42,14 +42,23 @@ function getMatches() {
         }
     }
     
-    // Filter alleen VOLTOOIDE matches
-    const completedMatches = allMatches.filter(m => m.completed === true);
+    // Filter alleen VOLTOOIDE matches van het actieve seizoen
+    let actiefId = null;
+    try {
+        actiefId = JSON.parse(savedState || '{}').actiefSeizoenId || null;
+    } catch (e) {}
+    const completedMatches = allMatches.filter(m => m.completed === true && m.seizoenId === actiefId);
     console.log(`🏁 ${completedMatches.length} voltooide matches voor klassement`);
     
     return completedMatches;
 }
 
 function getSeizoen() {
+    try {
+        const st = JSON.parse(localStorage.getItem('billiardState') || '{}');
+        const actief = (st.seizoenen || []).find(s => s.id === st.actiefSeizoenId);
+        if (actief) return actief.naam;
+    } catch (e) {}
     const savedState = localStorage.getItem('billiardState');
     if (savedState) {
         try {
@@ -107,7 +116,7 @@ function berekenExactMacroKlassement() {
         try {
             const state = JSON.parse(savedState);
             if (state.speeldagen && Array.isArray(state.speeldagen)) {
-                speeldagenData = state.speeldagen;
+                speeldagenData = state.speeldagen.filter(s => s.seizoenId === state.actiefSeizoenId);
             }
         } catch (e) {
             console.error('Fout bij laden speeldagen uit state:', e);
