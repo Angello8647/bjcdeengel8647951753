@@ -1014,8 +1014,8 @@ body { background: #2c3e50; color: black; position: fixed; width: 100%; height: 
 </div>
 </div>
 <div class="selection-container">
-<div class="selection-title">Selecteer Datum</div>
-<input type="date" id="dateSelect" class="date-input">
+<div class="selection-title">Selecteer speeldag</div>
+<select id="dateSelect" class="date-input"></select>
 <button class="next-btn" onclick="goToPage2()">Maak match of kies een match uit de lijst →</button>
 </div>
 <button onclick="showPage(8)" style="font-size:1.2rem; padding:14px 24px;">📊 Statistieken</button>
@@ -1577,7 +1577,22 @@ window.showPage = function(pageNum) {
     if (!target) return;
     target.classList.add('active');
     state.currentPage = actualPageNum;
-    if (actualPageNum === 1) { const d=document.getElementById('dateSelect'); if(d){d.value=formatDateForInput(new Date()); state.selectedDate=d.value;} }
+    if (actualPageNum === 1) {
+        const d=document.getElementById('dateSelect');
+        if(d){
+            const dagen=state.speeldagen.filter(s=>s.seizoenId===state.actiefSeizoenId).sort((a,b)=>a.displayDatum.localeCompare(b.displayDatum));
+            if(!dagen.length){
+                d.innerHTML='<option value="">Geen speeldagen - maak eerst een seizoen en speeldagen aan</option>';
+                state.selectedDate='';
+            } else {
+                d.innerHTML=dagen.map(s=>`<option value="${s.displayDatum}">Speeldag ${s.volgnummer} - ${s.fullDate}</option>`).join('');
+                const vandaag=formatDateForInput(new Date());
+                const keuze=dagen.find(s=>s.displayDatum>=vandaag)||dagen[dagen.length-1];
+                d.value=keuze.displayDatum;
+                state.selectedDate=d.value;
+            }
+        }
+    }
     else if (actualPageNum === 2) { if(typeof loadFilteredMatches==='function') loadFilteredMatches(); }
     else if (actualPageNum === 3) { if(typeof setupNewMatchPage==='function') setupNewMatchPage(); }
     else if (actualPageNum === 4) { if(typeof updateBallSelectionPage==='function') updateBallSelectionPage(); }
@@ -1639,7 +1654,7 @@ window.createManualMatch = function() {
     if(state.newMatch.player1.name===state.newMatch.player2.name) return alert("Kies twee verschillende spelers!");
     if(state.newMatch.target1<=0||state.newMatch.target2<=0) return alert("Vul geldige target punten in!");
     const nid=state.matches.length?Math.max(...state.matches.map(m=>m.id))+1:1;
-    state.matches.push({id:nid,date:state.selectedDate,p1:state.newMatch.player1.name,p2:state.newMatch.player2.name,target1:state.newMatch.target1,target2:state.newMatch.target2,completed:false,whitePlayer:null,p1Score:0,p2Score:0,p1Turns:[],p2Turns:[],p1Highest:0,p2Highest:0});
+    state.matches.push({id:nid,seizoenId:state.actiefSeizoenId,date:state.selectedDate,p1:state.newMatch.player1.name,p2:state.newMatch.player2.name,target1:state.newMatch.target1,target2:state.newMatch.target2,completed:false,whitePlayer:null,p1Score:0,p2Score:0,p1Turns:[],p2Turns:[],p1Highest:0,p2Highest:0});
     saveStateToStorage(); showPage(2);
 }
 function updateBallSelectionPage() {
