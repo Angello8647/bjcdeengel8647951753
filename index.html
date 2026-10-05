@@ -2012,7 +2012,7 @@ window.deleteSpeeldag=function(i){
     saveStateToStorage();
     loadSpeeldagenManagementTab();
     updateSpeeldagenBadge();
-}}
+}
 window.clearAllSpeeldagen=function(){if(confirm("ALLE speeldagen verwijderen?")){state.speeldagen=[];saveStateToStorage();loadSpeeldagenManagementTab();}}
 function updateSpeeldagenBadge(){const b=document.getElementById('badgeSpeeldagen');if(b)b.textContent=state.speeldagen.length;}
 function loadMatchesTabContent(){updateTabBadges();if(state.currentMatchesTab==='active')loadActiveMatches();else if(state.currentMatchesTab==='completed')loadCompletedMatches();else if(state.currentMatchesTab==='downloaded')loadDownloadedMatches();else if(state.currentMatchesTab==='players')loadPlayersManagementTab();else if(state.currentMatchesTab==='speeldagen')loadSpeeldagenManagementTab();}
