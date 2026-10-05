@@ -146,27 +146,28 @@ function berekenExactMacroKlassement() {
         
         spelerMatches.forEach(match => {
             if (puntenPerDatum[match.date]) {
-                const isWinnaar = match.winner === spelerNaam;
-                
-                // Bepaal de score en het aantal beurten van de speler in deze match
+                // Bepaal score, beurten en target van de speler in deze match
                 let spelerScore = 0;
                 let beurten = 0;
+                let doel = 0;
                 if (match.p1 === spelerNaam) {
                     spelerScore = match.p1Score || 0;
                     beurten = match.p1Turns ? match.p1Turns.length : 0;
+                    doel = match.target1 || 0;
                 } else if (match.p2 === spelerNaam) {
                     spelerScore = match.p2Score || 0;
                     beurten = match.p2Turns ? match.p2Turns.length : 0;
+                    doel = match.target2 || 0;
                 }
                 
-                // Bereken het gemiddelde van de speler in deze match
+                // Gewonnen = target gehaald (bij gelijkspel dus beide spelers)
+                const isWinnaar = doel > 0 && spelerScore >= doel;
+                
+                // Excel-regel: gemiddelde minstens target / 20, in maximaal 20 beurten
                 const gemiddelde = beurten > 0 ? spelerScore / beurten : 0;
+                const gemiddeldeGehaald = beurten <= 20 && gemiddelde >= (doel / 20);
                 
-                // Haal TSG van de speler op
-                const tsg = playerTsgMap[spelerNaam] || 0;
-                const gemiddeldeGehaald = gemiddelde >= tsg;
-                
-                // Bepaal matchpunten volgens de regels
+                // Matchpunten: 4 / 3 / 2 / 1
                 let matchpunten;
                 if (isWinnaar) {
                     matchpunten = gemiddeldeGehaald ? 4 : 2;
@@ -460,7 +461,7 @@ function loadStatsPage() {
                 return;
             }
             
-            const gewonnenMatches = spelerMatches.filter(m => m.winner === spelerNaam);
+            const gewonnenMatches = spelerMatches.filter(m => m.p1 === spelerNaam ? (m.p1Score || 0) >= (m.target1 || 1) : (m.p2Score || 0) >= (m.target2 || 1));
             const winPercentage = (gewonnenMatches.length / spelerMatches.length * 100).toFixed(1);
             
             // Bereken gemiddelde score
@@ -568,7 +569,8 @@ function generateExcelStylePlayerDetail(playerName) {
             (match.p1Turns ? match.p1Turns.length : 0) : 
             (match.p2Turns ? match.p2Turns.length : 0);
         const hoogsteReeks = isPlayer1 ? (match.p1Highest || 0) : (match.p2Highest || 0);
-        const gewonnen = match.winner === playerName;
+        const doel = isPlayer1 ? (match.target1 || 0) : (match.target2 || 0);
+        const gewonnen = doel > 0 && punten >= doel;
         
         const aantalPartijen = index + 1;
         if (gewonnen) totaalGewonnen++;
@@ -594,10 +596,9 @@ function generateExcelStylePlayerDetail(playerName) {
         const percGewonnen = (totaalGewonnen / aantalPartijen) * 100;
         const percVerloren = 100 - percGewonnen;
         
-        // Nieuwe matchpunten berekening op basis van gemiddelde
+        // Matchpunten volgens de Excel-regel: gemiddelde minstens target / 20, in maximaal 20 beurten
         const gemiddeldeDezeMatch = gemiddeldePerPartij; // punten/beurten
-        const tsgValue = parseFloat(player.tsg?.replace(',', '.') || 0);
-        const gemiddeldeGehaald = gemiddeldeDezeMatch >= tsgValue;
+        const gemiddeldeGehaald = beurten <= 20 && gemiddeldeDezeMatch >= (doel / 20);
         const matchpunten = gewonnen ? (gemiddeldeGehaald ? 4 : 2) : (gemiddeldeGehaald ? 3 : 1);
         
         resultRows.push({
@@ -962,9 +963,12 @@ function exportSpelerData(spelerNaam) {
         const tegenstander = isPlayer1 ? match.p2 : match.p1;
         const eigenScore = isPlayer1 ? (match.p1Score || 0) : (match.p2Score || 0);
         const tegenScore = isPlayer1 ? (match.p2Score || 0) : (match.p1Score || 0);
-        const gewonnen = match.winner === spelerNaam ? 'Ja' : 'Nee';
+        const doel = isPlayer1 ? (match.target1 || 0) : (match.target2 || 0);
+        const beurten = isPlayer1 ? (match.p1Turns ? match.p1Turns.length : 0) : (match.p2Turns ? match.p2Turns.length : 0);
+        const gewonnen = (doel > 0 && eigenScore >= doel) ? 'Ja' : 'Nee';
         const hoogsteReeks = isPlayer1 ? (match.p1Highest || 0) : (match.p2Highest || 0);
-        const matchpunten = gewonnen === 'Ja' ? 2 : 1;
+        const gemiddeldeGehaald = beurten > 0 && beurten <= 20 && (eigenScore / beurten) >= (doel / 20);
+        const matchpunten = gewonnen === 'Ja' ? (gemiddeldeGehaald ? 4 : 2) : (gemiddeldeGehaald ? 3 : 1);
         
         csv += `${match.date};${tegenstander};${eigenScore};${tegenScore};${gewonnen};${hoogsteReeks};${matchpunten}\n`;
     });
